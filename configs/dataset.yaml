@@ -1,0 +1,110 @@
+# gridmon dataset configuration (PROJECT_BRIEF v0.2, sections B4-B6).
+# Units: voltages pu of nominal LL peak; ratios as fractions; angles deg (converted in code);
+# frequency Hz; time s.
+generator_version: "0.2.0"
+nominal_hz: 50.0
+classes: [normal, sag_bal, sag_unbal, swell, phase_jump, freq_event, oscillation]
+
+record:
+  duration_s: 1.0
+  fs_synth_hz: 20000
+  fs_hz: 5000
+  onset_s: [0.20, 0.40]
+
+adc:
+  bits: 12
+  full_scale_pu: 2.0          # +/- 2 pu -> LSB = 4/4096 pu
+
+aa_fir:                       # designed by gridmon.generator.synth.design_aa_fir, saved to configs/aa_fir.json
+  numtaps: 49
+  cutoff_hz: 1750.0
+  kaiser_beta: 5.0
+  passband_hz: 1000.0         # requirement: passband >= 1.0 kHz
+  stopband_hz: 2500.0         # requirement: >= 40 dB attenuation at >= 2.5 kHz
+  min_atten_db: 40.0
+
+splits:
+  train:         {seed: 1001, per_class: 800, nuisance: iid}
+  val:           {seed: 2002, per_class: 250, nuisance: iid}
+  test_iid:      {seed: 3003, per_class: 250, nuisance: iid,   sealed: true}
+  test_shift:    {seed: 4004, per_class: 250, nuisance: shift, sealed: true}
+  preview_iid:   {seed: 9009, total: 200, nuisance: iid,   preview: true}
+  preview_shift: {seed: 9010, total: 200, nuisance: shift, preview: true}
+fast_fraction: 0.1
+chunk_records: 250
+max_redraws: 500
+
+nuisance:
+  iid:
+    u_pre: [0.96, 1.04]               # |V1| pre-event, pu
+    unbalance: [0.0, 0.015]           # background |V2|/|V1|
+    harmonics_pct: {5: [0, 3], 7: [0, 2], 11: [0, 1], 13: [0, 1]}
+    f_pre_hz: [49.9, 50.1]
+    drift_hz_per_s: [-0.03, 0.03]
+    gain: [-0.005, 0.005]             # per-channel relative gain error
+    offset_pu: [-0.005, 0.005]        # per-channel offset, pu of nominal peak
+    snr_db: [35.0, 60.0]              # relative to nominal LL RMS
+    transient: {p: 0.0}
+  shift:
+    u_pre: [0.96, 1.04]
+    unbalance: [0.0, 0.025]
+    harmonics_pct: {5: [0, 5], 7: [0, 4], 11: [0, 2], 13: [0, 2]}
+    f_pre_hz: [49.5, 50.5]
+    drift_hz_per_s: [-0.03, 0.03]
+    gain: [-0.02, 0.02]
+    offset_pu: [-0.02, 0.02]
+    snr_db: [25.0, 35.0]
+    transient: {p: 0.3, freq_hz: [300.0, 900.0], amp_pu: [0.2, 0.6], tau_s: [0.003, 0.015], time_s: [0.15, 0.95]}
+
+events:
+  sag_bal:
+    V: [0.10, 0.85]
+    psi_deg: [-30.0, 0.0]
+    duration_s: [0.06, 0.50]
+    p_abrupt: 0.5
+    rec_level: [0.90, 0.98]
+    rec_tau_s: [0.05, 0.30]
+  sag_unbal:
+    V: [0.0, 0.85]
+    psi_deg: [-30.0, 0.0]
+    duration_s: [0.06, 0.50]
+    p_abrupt: 0.5
+    rec_level: [0.90, 0.98]
+    rec_tau_s: [0.05, 0.30]
+  swell:
+    S: [1.10, 1.30]
+    angle_deg: [0.0, 3.0]             # random sign
+    extra_v2: [0.0, 0.01]
+    duration_s: [0.05, 0.60]
+  phase_jump:
+    dphi_deg: [6.0, 30.0]             # random sign
+    dv1: [-0.03, 0.03]
+  freq_event:
+    rocof_hz_per_s: [0.5, 4.0]
+    p_negative: 0.6
+    df_hz: [0.3, 1.5]
+    dv1: [-0.01, 0.01]
+  oscillation:
+    depth: [0.02, 0.08]
+    ang_deg: [0.0, 4.0]
+    f_m_hz: [5.0, 25.0]
+    sigma_per_s: [-1.0, 2.0]
+    ramp_s: 0.05
+  normal:
+    time_s: [0.20, 0.90]
+    v1_step: {p: 0.3, mag: [0.005, 0.02]}
+    ang_step: {p: 0.2, deg: [0.5, 2.0]}
+    harm_step: {p: 0.2, add_pct: [0.5, 2.0]}
+    v1_ramp: {p: 0.1, mag: [0.005, 0.015], dur_s: [0.2, 0.5]}
+
+margins:
+  sag_min_ll: 0.87
+  swell_max_ll: 1.13
+  normal_ll: [0.92, 1.08]
+  normal_max_ang_deg: 2.0
+  normal_max_drift: 0.03
+  jump_min_deg: 6.0
+  jump_max_dv1: 0.03
+  freq_min_df: 0.25
+  osc_min_depth: 0.02
+  grid_hz: 2000                       # analytic margin evaluation grid

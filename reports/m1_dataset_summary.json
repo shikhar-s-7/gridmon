@@ -1,0 +1,153 @@
+{
+  "train": {
+    "n_records": 5600,
+    "counts": {
+      "normal": 800,
+      "sag_bal": 800,
+      "sag_unbal": 800,
+      "swell": 800,
+      "phase_jump": 800,
+      "freq_event": 800,
+      "oscillation": 800
+    },
+    "runtime_s": 36.13,
+    "margin_rejection_rate": {
+      "freq_event": 0.0,
+      "normal": 0.0,
+      "oscillation": 0.0,
+      "phase_jump": 0.0,
+      "sag_bal": 0.0,
+      "sag_unbal": 0.0012484394506866417,
+      "swell": 0.14802981895633652
+    },
+    "max_abs_count": 1417,
+    "n_records_saturated": 0,
+    "config_hash": "01a3e00eafc2d25d"
+  },
+  "val": {
+    "n_records": 1750,
+    "counts": {
+      "normal": 250,
+      "sag_bal": 250,
+      "sag_unbal": 250,
+      "swell": 250,
+      "phase_jump": 250,
+      "freq_event": 250,
+      "oscillation": 250
+    },
+    "runtime_s": 14.5,
+    "margin_rejection_rate": {
+      "freq_event": 0.0,
+      "normal": 0.0,
+      "oscillation": 0.0,
+      "phase_jump": 0.0,
+      "sag_bal": 0.00398406374501992,
+      "sag_unbal": 0.0,
+      "swell": 0.17218543046357615
+    },
+    "max_abs_count": 1420,
+    "n_records_saturated": 0,
+    "config_hash": "01a3e00eafc2d25d"
+  },
+  "test_iid": {
+    "n_records": 1750,
+    "counts": {
+      "normal": 250,
+      "sag_bal": 250,
+      "sag_unbal": 250,
+      "swell": 250,
+      "phase_jump": 250,
+      "freq_event": 250,
+      "oscillation": 250
+    },
+    "runtime_s": 17.71,
+    "margin_rejection_rate": {
+      "freq_event": 0.0,
+      "normal": 0.0,
+      "oscillation": 0.0,
+      "phase_jump": 0.0,
+      "sag_bal": 0.0,
+      "sag_unbal": 0.007936507936507936,
+      "swell": 0.1987179487179487
+    },
+    "max_abs_count": 1415,
+    "n_records_saturated": 0,
+    "config_hash": "01a3e00eafc2d25d"
+  },
+  "test_shift": {
+    "n_records": 1750,
+    "counts": {
+      "normal": 250,
+      "sag_bal": 250,
+      "sag_unbal": 250,
+      "swell": 250,
+      "phase_jump": 250,
+      "freq_event": 250,
+      "oscillation": 250
+    },
+    "runtime_s": 14.88,
+    "margin_rejection_rate": {
+      "freq_event": 0.0,
+      "normal": 0.0,
+      "oscillation": 0.0,
+      "phase_jump": 0.0,
+      "sag_bal": 0.0,
+      "sag_unbal": 0.0,
+      "swell": 0.1610738255033557
+    },
+    "max_abs_count": 1879,
+    "n_records_saturated": 0,
+    "config_hash": "01a3e00eafc2d25d"
+  },
+  "preview_iid": {
+    "n_records": 200,
+    "counts": {
+      "normal": 29,
+      "sag_bal": 29,
+      "sag_unbal": 29,
+      "swell": 29,
+      "phase_jump": 28,
+      "freq_event": 28,
+      "oscillation": 28
+    },
+    "runtime_s": 1.89,
+    "margin_rejection_rate": {
+      "freq_event": 0.0,
+      "normal": 0.0,
+      "oscillation": 0.0,
+      "phase_jump": 0.0,
+      "sag_bal": 0.0,
+      "sag_unbal": 0.0,
+      "swell": 0.17142857142857143
+    },
+    "max_abs_count": 1387,
+    "n_records_saturated": 0,
+    "config_hash": "01a3e00eafc2d25d"
+  },
+  "preview_shift": {
+    "n_records": 200,
+    "counts": {
+      "normal": 29,
+      "sag_bal": 29,
+      "sag_unbal": 29,
+      "swell": 29,
+      "phase_jump": 28,
+      "freq_event": 28,
+      "oscillation": 28
+    },
+    "runtime_s": 1.58,
+    "margin_rejection_rate": {
+      "freq_event": 0.0,
+      "normal": 0.0,
+      "oscillation": 0.0,
+      "phase_jump": 0.0,
+      "sag_bal": 0.0,
+      "sag_unbal": 0.0,
+      "swell": 0.06451612903225806
+    },
+    "max_abs_count": 1686,
+    "n_records_saturated": 0,
+    "config_hash": "01a3e00eafc2d25d"
+  },
+  "total_runtime_s": 87.0
+}
