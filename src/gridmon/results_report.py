@@ -104,7 +104,9 @@ def render_results_md(res: dict[str, Any], findings: str | None) -> str:
     sb = res["snr_by_bin_pooled"]
     for i, g in enumerate(sb["bins"]):
         L.append(f"| {g} | {sb['rules']['n'][i]} | " + " | ".join(_f(sb[m]["f1"][i], 4) for m in M) + " |")
-    L += ["", "Severity (recall per bin, ML seed mean; iid / shift):", "",
+    L += ["", "Severity (recall per bin, ML seed mean; iid / shift). Listed: bins where some method is below 0.99 on",
+          "either set; every unlisted bin (bins: sag depth, swell height, abs(dphi), abs(ROCOF), oscillation depth)",
+          "is >= 0.99 for every method on both sets (all bins in results.json):", "",
           "| class | variable | bin | n iid / shift | " + " | ".join(MN[m] for m in M) + " |", "|---|---|---|---|---|---|---|"]
     for cl in CLASSES[1:]:
         si, ss = ps["test_iid"]["breakdowns"]["severity_recall"][cl], ps["test_shift"]["breakdowns"]["severity_recall"][cl]
@@ -112,6 +114,9 @@ def render_results_md(res: dict[str, Any], findings: str | None) -> str:
             def v(src, m):
                 x = src[m][g]["value"]
                 return "-" if x is None else _f(x, 2)
+            vals = [src[m][g]["value"] for src in (si, ss) for m in M if src[m][g]["value"] is not None]
+            if vals and min(vals) >= 0.99:
+                continue
             L.append(f"| {cl} | {si['variable']} | {g} | {si['rules'][g]['n']} / {ss['rules'][g]['n']} | "
                      + " | ".join(f"{v(si, m)} / {v(ss, m)}" for m in M) + " |")
     tb = ps["test_shift"]["breakdowns"]["shift_transient"]
@@ -143,6 +148,6 @@ def render_results_md(res: dict[str, Any], findings: str | None) -> str:
         L += [findings.strip(), ""]
     else:
         L += ["## 9. Findings", "", "(to be written)", ""]
-    L += ["Figures: reports/figures/m4_confusions.png, m4_f1_by_snr.png, m4_shift_degradation.png, m4_disagreements.png;",
+    L += ["Figures: reports/figures/m4_confusions.png, m4_f1_by_snr.png, m4_shift_degradation.png, m4_disagreements.png; "
           "all numbers: reports/results.json."]
     return "\n".join(L) + "\n"

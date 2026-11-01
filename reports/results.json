@@ -1,0 +1,3158 @@
+{
+  "git_commit": "6240f60a6edc56bb3d4bfff7e25cf5d774f15515",
+  "freeze_commit": "6240f60a6edc56bb3d4bfff7e25cf5d774f15515",
+  "fast": false,
+  "dry_run": false,
+  "splits": {
+    "test_iid": "test_iid",
+    "test_shift": "test_shift"
+  },
+  "frozen": {
+    "description": "M4 freeze (PROMPT_02 A1.4): everything that defines the methods. Written by scripts/freeze_methods.py from TRAIN/VAL results only; verified by gridmon.frozen.verify before any test split is loaded.",
+    "feature_code_commit": "e11cc1d3328e5b59d43e408dc56f47d18805695d",
+    "rules": {
+      "thresholds": {
+        "dip_pu": 0.9,
+        "swell_pu": 1.1,
+        "rho_th": 0.25,
+        "osc_mag_pct": 1.0,
+        "osc_ang_deg": 1.0,
+        "osc_prom": 4.0,
+        "jump_deg": 5.0,
+        "jump_max_dv1": 0.1,
+        "df_hz": 0.2
+      },
+      "source": "reports/m2_baseline_val.json thresholds.tuned (TRAIN-tuned, D-036)",
+      "train_macro_f1": 0.9974952158309226,
+      "val_macro_f1": 0.9965643850631681
+    },
+    "gbm_embedded": {
+      "estimator": "sklearn.ensemble.GradientBoostingClassifier",
+      "config": {
+        "n_estimators": 20,
+        "max_leaf_nodes": 4,
+        "learning_rate": 0.1,
+        "subsample": 1.0
+      },
+      "fixed": {
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "loss": "log_loss"
+      },
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "primary_seed": 0,
+      "evaluation": "float32 reference walker (gridmon.export_gbm.Float32Walker) on the exported JSON",
+      "input_nan_fill": 0.0,
+      "val_macro_f1_mean": 1.0,
+      "models": [
+        {
+          "seed": 0,
+          "path": "models/gbm_embedded.json",
+          "sha256": "e25501759a5f84fe90af605a709559d17ad06164f0d06379ee080a107233d95a",
+          "size_bytes": 13972,
+          "n_trees": 140,
+          "sum_max_depth": 357
+        },
+        {
+          "seed": 1,
+          "path": "models/gbm_embedded_seed1.json",
+          "sha256": "491c83b8e918ce7e00f712688df8b51d7400c8920e547f4b0e994d599f04a154",
+          "size_bytes": 13972,
+          "n_trees": 140,
+          "sum_max_depth": 357
+        },
+        {
+          "seed": 2,
+          "path": "models/gbm_embedded_seed2.json",
+          "sha256": "097210a8757c127fe4a00b586b5883103e9a1d61e5a2b1d9ce2167ce93a0edd2",
+          "size_bytes": 13972,
+          "n_trees": 140,
+          "sum_max_depth": 357
+        }
+      ],
+      "sklearn_pickles": [
+        {
+          "seed": 0,
+          "path": "models/gbm_embedded_seed0.joblib",
+          "sha256": "53be135dbcdac9aeb45bf08c2d27f3462be60083ded12a2de03f504c7a02f5c6"
+        },
+        {
+          "seed": 1,
+          "path": "models/gbm_embedded_seed1.joblib",
+          "sha256": "cd6daa1adffebc91e3eb9994bbfab75d54bc3ab89c241bd45a9943c84e858ede"
+        },
+        {
+          "seed": 2,
+          "path": "models/gbm_embedded_seed2.joblib",
+          "sha256": "39ca2cbc79f16e73cbdbd0b8f0589a90fcc600ac34065497985ecfaf4e0a133f"
+        }
+      ]
+    },
+    "gbm_unconstrained": {
+      "estimator": "sklearn.ensemble.HistGradientBoostingClassifier",
+      "config": {
+        "max_leaf_nodes": 15,
+        "learning_rate": 0.1
+      },
+      "fixed": {
+        "max_iter": 1000,
+        "early_stopping": true,
+        "validation_fraction": 0.15,
+        "n_iter_no_change": 10,
+        "scoring": "loss"
+      },
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val_macro_f1_mean": 0.999809523047616,
+      "bytes_equivalent": 174888,
+      "models": [
+        {
+          "seed": 0,
+          "path": "models/gbm_unconstrained_seed0.joblib",
+          "sha256": "71decca15afde16a5a84fd0c20948d8ec34f4d8d98d741498ba9bbaaaf5b1cf3"
+        },
+        {
+          "seed": 1,
+          "path": "models/gbm_unconstrained_seed1.joblib",
+          "sha256": "c567f83fe31da764860b936168910685dc0f583890f42500af8474cf786c2a48"
+        },
+        {
+          "seed": 2,
+          "path": "models/gbm_unconstrained_seed2.joblib",
+          "sha256": "1a923e521efceeb344a34d2800fa3325b40e77d973c88dcf29782a043efb116f"
+        }
+      ]
+    },
+    "evaluation_plan": {
+      "splits": [
+        "test_iid",
+        "test_shift"
+      ],
+      "primary_metric": "macro_f1",
+      "bootstrap_resamples": 2000,
+      "bootstrap_stratified_by_class": true,
+      "bootstrap_seed": 20261104,
+      "mcnemar": "exact binomial, two-sided, per seed",
+      "snr_bins_db": [
+        25,
+        30,
+        35,
+        40,
+        50,
+        60
+      ],
+      "jump_bins_deg": [
+        6,
+        12,
+        20,
+        30
+      ],
+      "naive_pll_hz": 1.0,
+      "severity_bins": "gridmon.evaluation.SEVERITY"
+    },
+    "method_files": {
+      "c/generated/gm_model_gbm.c": "5bad357fa2260f9cc0910d0237186885f3bf88aefb35cc0165ce34d2439792a3",
+      "c/generated/gm_model_gbm.h": "cc24c993717a82cd8710d0ad4acaa48f580b41712250f0195d22792695a0c6bc",
+      "configs/baseline.yaml": "7c12df4296253605c87f2b15733e0b2a53ba679908b93fdf46a8d8cc556c725c",
+      "configs/ml.yaml": "9440eafd954b0acd27e640dc8818a0200da5ebcffd6409072be6679e355fb58e",
+      "src/gridmon/baseline_rules.py": "2081669ea513865c5e07f964e3905b7b0e5ba95cbff9457868e249861ec69098",
+      "src/gridmon/dsp/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/gridmon/dsp/envelope.py": "14bdc2f50b47b5be4c7d0e452968a9d811fa3ffd4e1aaab03cefa588810ac23a",
+      "src/gridmon/dsp/freq.py": "b114be283302858f4367eee19a60a561d5ece5803f5d3e5d29b3977b845dcad9",
+      "src/gridmon/dsp/phasor.py": "54fbddfadb2ebe00310ee67b020215daea5b09b65aad25f82abe4362ef269d34",
+      "src/gridmon/dsp/pll.py": "a38d7a8966677aec0c577d073296e2e44f494305a2e598361e0602e2730085f4",
+      "src/gridmon/dsp/rms.py": "8d363ab7010ccd8281b3f071950863aee05b5ba18b38a1ca99f4032e33ec79f2",
+      "src/gridmon/dsp/thd.py": "f9bb330d0e9eb89ec798f4a7b8ee44f4f32d39c7a30138f5a5297bdc4923d9d7",
+      "src/gridmon/export_gbm.py": "490f74d711c7f6ced10c2f655000f7c57ff80cac6506fd5cc3365708ed69994a",
+      "src/gridmon/features.py": "e7a12579f912562009ff9b04c62db60596b61efdb7e6dfebdaca1dcaf1a2ad83",
+      "src/gridmon/ml_gbm.py": "8d08d573ae2981161f2a80d3a5edfa8842266695bda767f2fcf0f7b1b1f8080e",
+      "src/gridmon/units.py": "fd3a294da2ae64f34766a23921e66ea1585bc12a262b25fd76e99f058ab87225"
+    },
+    "sklearn_version": "1.9.1"
+  },
+  "per_split": {
+    "test_iid": {
+      "n": 1750,
+      "data_meta": {
+        "split": "test_iid",
+        "git_commit": "d713ccc0cc8579346923b7b8f96c9527ed104d66",
+        "config_hash": "c5de516f0be89437",
+        "n_records": 1750
+      },
+      "methods": {
+        "rules": {
+          "macro_f1": {
+            "mean": 0.998285693713984,
+            "sd": 0.0,
+            "per_seed": [
+              0.998285693713984
+            ]
+          },
+          "accuracy": {
+            "mean": 0.9982857142857143,
+            "sd": 0.0,
+            "per_seed": [
+              0.9982857142857143
+            ]
+          },
+          "false_alarm_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0
+            ]
+          },
+          "miss_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0
+            ]
+          },
+          "per_class_mean": {
+            "normal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "sag_bal": {
+              "precision": 1.0,
+              "recall": 0.996,
+              "f1": 0.9979959919839679
+            },
+            "sag_unbal": {
+              "precision": 0.9960159362549801,
+              "recall": 1.0,
+              "f1": 0.998003992015968
+            },
+            "swell": {
+              "precision": 0.9920634920634921,
+              "recall": 1.0,
+              "f1": 0.9960159362549801
+            },
+            "phase_jump": {
+              "precision": 1.0,
+              "recall": 0.992,
+              "f1": 0.9959839357429718
+            },
+            "freq_event": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "oscillation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "critical_confusions_mean": {
+            "phase_jump->freq_event": 0.0,
+            "freq_event->phase_jump": 0.0,
+            "sag_bal->normal": 0.0,
+            "sag_unbal->normal": 0.0,
+            "sag_bal->sag_unbal": 1.0,
+            "sag_unbal->sag_bal": 0.0,
+            "sag_*->normal": 0.0,
+            "phase_jump<->freq_event": 0.0,
+            "sag_bal<->sag_unbal": 1.0
+          },
+          "primary": {
+            "n": 1750,
+            "accuracy": 0.9982857142857143,
+            "macro_f1": 0.998285693713984,
+            "per_class": {
+              "normal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "sag_bal": {
+                "precision": 1.0,
+                "recall": 0.996,
+                "f1": 0.9979959919839679,
+                "support": 250
+              },
+              "sag_unbal": {
+                "precision": 0.9960159362549801,
+                "recall": 1.0,
+                "f1": 0.998003992015968,
+                "support": 250
+              },
+              "swell": {
+                "precision": 0.9920634920634921,
+                "recall": 1.0,
+                "f1": 0.9960159362549801,
+                "support": 250
+              },
+              "phase_jump": {
+                "precision": 1.0,
+                "recall": 0.992,
+                "f1": 0.9959839357429718,
+                "support": 250
+              },
+              "freq_event": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "oscillation": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              }
+            },
+            "confusion": {
+              "classes": [
+                "normal",
+                "sag_bal",
+                "sag_unbal",
+                "swell",
+                "phase_jump",
+                "freq_event",
+                "oscillation"
+              ],
+              "matrix": [
+                [
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  249,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  2,
+                  248,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250
+                ]
+              ],
+              "rows": "true",
+              "cols": "predicted"
+            },
+            "false_alarm_rate": 0.0,
+            "miss_rate": 0.0,
+            "critical_confusions": {
+              "phase_jump->freq_event": 0,
+              "freq_event->phase_jump": 0,
+              "sag_bal->normal": 0,
+              "sag_unbal->normal": 0,
+              "sag_bal->sag_unbal": 1,
+              "sag_unbal->sag_bal": 0,
+              "sag_*->normal": 0,
+              "phase_jump<->freq_event": 0,
+              "sag_bal<->sag_unbal": 1
+            }
+          },
+          "n_seeds": 1,
+          "macro_f1_seeds": [
+            0.998285693713984
+          ]
+        },
+        "gbm_embedded": {
+          "macro_f1": {
+            "mean": 1.0,
+            "sd": 0.0,
+            "per_seed": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "accuracy": {
+            "mean": 1.0,
+            "sd": 0.0,
+            "per_seed": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "false_alarm_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "miss_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "per_class_mean": {
+            "normal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "sag_bal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "sag_unbal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "swell": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "phase_jump": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "freq_event": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "oscillation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "critical_confusions_mean": {
+            "phase_jump->freq_event": 0.0,
+            "freq_event->phase_jump": 0.0,
+            "sag_bal->normal": 0.0,
+            "sag_unbal->normal": 0.0,
+            "sag_bal->sag_unbal": 0.0,
+            "sag_unbal->sag_bal": 0.0,
+            "sag_*->normal": 0.0,
+            "phase_jump<->freq_event": 0.0,
+            "sag_bal<->sag_unbal": 0.0
+          },
+          "primary": {
+            "n": 1750,
+            "accuracy": 1.0,
+            "macro_f1": 1.0,
+            "per_class": {
+              "normal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "sag_bal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "sag_unbal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "swell": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "phase_jump": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "freq_event": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "oscillation": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              }
+            },
+            "confusion": {
+              "classes": [
+                "normal",
+                "sag_bal",
+                "sag_unbal",
+                "swell",
+                "phase_jump",
+                "freq_event",
+                "oscillation"
+              ],
+              "matrix": [
+                [
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250
+                ]
+              ],
+              "rows": "true",
+              "cols": "predicted"
+            },
+            "false_alarm_rate": 0.0,
+            "miss_rate": 0.0,
+            "critical_confusions": {
+              "phase_jump->freq_event": 0,
+              "freq_event->phase_jump": 0,
+              "sag_bal->normal": 0,
+              "sag_unbal->normal": 0,
+              "sag_bal->sag_unbal": 0,
+              "sag_unbal->sag_bal": 0,
+              "sag_*->normal": 0,
+              "phase_jump<->freq_event": 0,
+              "sag_bal<->sag_unbal": 0
+            }
+          },
+          "n_seeds": 3,
+          "macro_f1_seeds": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "gbm_unconstrained": {
+          "macro_f1": {
+            "mean": 1.0,
+            "sd": 0.0,
+            "per_seed": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "accuracy": {
+            "mean": 1.0,
+            "sd": 0.0,
+            "per_seed": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "false_alarm_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "miss_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "per_class_mean": {
+            "normal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "sag_bal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "sag_unbal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "swell": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "phase_jump": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "freq_event": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "oscillation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "critical_confusions_mean": {
+            "phase_jump->freq_event": 0.0,
+            "freq_event->phase_jump": 0.0,
+            "sag_bal->normal": 0.0,
+            "sag_unbal->normal": 0.0,
+            "sag_bal->sag_unbal": 0.0,
+            "sag_unbal->sag_bal": 0.0,
+            "sag_*->normal": 0.0,
+            "phase_jump<->freq_event": 0.0,
+            "sag_bal<->sag_unbal": 0.0
+          },
+          "primary": {
+            "n": 1750,
+            "accuracy": 1.0,
+            "macro_f1": 1.0,
+            "per_class": {
+              "normal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "sag_bal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "sag_unbal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "swell": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "phase_jump": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "freq_event": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "oscillation": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              }
+            },
+            "confusion": {
+              "classes": [
+                "normal",
+                "sag_bal",
+                "sag_unbal",
+                "swell",
+                "phase_jump",
+                "freq_event",
+                "oscillation"
+              ],
+              "matrix": [
+                [
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250
+                ]
+              ],
+              "rows": "true",
+              "cols": "predicted"
+            },
+            "false_alarm_rate": 0.0,
+            "miss_rate": 0.0,
+            "critical_confusions": {
+              "phase_jump->freq_event": 0,
+              "freq_event->phase_jump": 0,
+              "sag_bal->normal": 0,
+              "sag_unbal->normal": 0,
+              "sag_bal->sag_unbal": 0,
+              "sag_unbal->sag_bal": 0,
+              "sag_*->normal": 0,
+              "phase_jump<->freq_event": 0,
+              "sag_bal<->sag_unbal": 0
+            }
+          },
+          "n_seeds": 3,
+          "macro_f1_seeds": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "comparisons": {
+        "gbm_embedded_minus_rules": {
+          "bootstrap": {
+            "n_boot": 2000,
+            "stratified": true,
+            "diff_seed_mean": 0.0017143062860159874,
+            "ci95_seed_mean": [
+              0.0,
+              0.004000208011584627
+            ],
+            "frac_resamples_diff_le_0": 0.0515,
+            "per_seed": [
+              {
+                "diff": 0.0017143062860159874,
+                "ci95": [
+                  0.0,
+                  0.004000208011584627
+                ]
+              },
+              {
+                "diff": 0.0017143062860159874,
+                "ci95": [
+                  0.0,
+                  0.004000208011584627
+                ]
+              },
+              {
+                "diff": 0.0017143062860159874,
+                "ci95": [
+                  0.0,
+                  0.004000208011584627
+                ]
+              }
+            ],
+            "excludes_zero": false
+          },
+          "mcnemar_per_seed": [
+            {
+              "a_correct_b_wrong": 3,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 3,
+              "p_value": 0.25
+            },
+            {
+              "a_correct_b_wrong": 3,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 3,
+              "p_value": 0.25
+            },
+            {
+              "a_correct_b_wrong": 3,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 3,
+              "p_value": 0.25
+            }
+          ],
+          "note": "B = rules"
+        },
+        "gbm_unconstrained_minus_rules": {
+          "bootstrap": {
+            "n_boot": 2000,
+            "stratified": true,
+            "diff_seed_mean": 0.0017143062860159874,
+            "ci95_seed_mean": [
+              0.0,
+              0.004000208011584627
+            ],
+            "frac_resamples_diff_le_0": 0.0495,
+            "per_seed": [
+              {
+                "diff": 0.0017143062860159874,
+                "ci95": [
+                  0.0,
+                  0.004000208011584627
+                ]
+              },
+              {
+                "diff": 0.0017143062860159874,
+                "ci95": [
+                  0.0,
+                  0.004000208011584627
+                ]
+              },
+              {
+                "diff": 0.0017143062860159874,
+                "ci95": [
+                  0.0,
+                  0.004000208011584627
+                ]
+              }
+            ],
+            "excludes_zero": false
+          },
+          "mcnemar_per_seed": [
+            {
+              "a_correct_b_wrong": 3,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 3,
+              "p_value": 0.25
+            },
+            {
+              "a_correct_b_wrong": 3,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 3,
+              "p_value": 0.25
+            },
+            {
+              "a_correct_b_wrong": 3,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 3,
+              "p_value": 0.25
+            }
+          ],
+          "note": "B = rules"
+        },
+        "gbm_unconstrained_minus_gbm_embedded": {
+          "bootstrap": {
+            "n_boot": 2000,
+            "stratified": true,
+            "diff_seed_mean": 0.0,
+            "ci95_seed_mean": [
+              0.0,
+              0.0
+            ],
+            "frac_resamples_diff_le_0": 1.0,
+            "per_seed": [
+              {
+                "diff": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "diff": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "diff": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "excludes_zero": false
+          },
+          "mcnemar_per_seed": [
+            {
+              "a_correct_b_wrong": 0,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 0,
+              "p_value": 1.0
+            },
+            {
+              "a_correct_b_wrong": 0,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 0,
+              "p_value": 1.0
+            },
+            {
+              "a_correct_b_wrong": 0,
+              "a_wrong_b_correct": 0,
+              "n_discordant": 0,
+              "p_value": 1.0
+            }
+          ],
+          "note": "B = gbm_embedded primary seed"
+        }
+      },
+      "breakdowns": {
+        "snr": {
+          "bins": [
+            "25-30",
+            "30-35",
+            "35-40",
+            "40-50",
+            "50-60"
+          ],
+          "rules": {
+            "25-30": {
+              "n": 0,
+              "value": null
+            },
+            "30-35": {
+              "n": 0,
+              "value": null
+            },
+            "35-40": {
+              "n": 359,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "40-50": {
+              "n": 709,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "50-60": {
+              "n": 682,
+              "value": 0.9956006225703548,
+              "accuracy": 0.9956011730205279
+            }
+          },
+          "gbm_embedded": {
+            "25-30": {
+              "n": 0,
+              "value": null
+            },
+            "30-35": {
+              "n": 0,
+              "value": null
+            },
+            "35-40": {
+              "n": 359,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "40-50": {
+              "n": 709,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "50-60": {
+              "n": 682,
+              "value": 1.0,
+              "accuracy": 1.0
+            }
+          },
+          "gbm_unconstrained": {
+            "25-30": {
+              "n": 0,
+              "value": null
+            },
+            "30-35": {
+              "n": 0,
+              "value": null
+            },
+            "35-40": {
+              "n": 359,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "40-50": {
+              "n": 709,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "50-60": {
+              "n": 682,
+              "value": 1.0,
+              "accuracy": 1.0
+            }
+          }
+        },
+        "severity_recall": {
+          "sag_bal": {
+            "variable": "min LL fundamental in the dip (pu)",
+            "bins": [
+              "0-0.4",
+              "0.4-0.7",
+              "0.7-0.87"
+            ],
+            "rules": {
+              "0-0.4": {
+                "n": 97,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 104,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 49,
+                "value": 0.9795918367346939,
+                "errors_primary": 1
+              }
+            },
+            "gbm_embedded": {
+              "0-0.4": {
+                "n": 97,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 104,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 49,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "0-0.4": {
+                "n": 97,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 104,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 49,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          },
+          "sag_unbal": {
+            "variable": "min LL fundamental in the dip (pu)",
+            "bins": [
+              "0-0.4",
+              "0.4-0.7",
+              "0.7-0.87"
+            ],
+            "rules": {
+              "0-0.4": {
+                "n": 74,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 129,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 47,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "0-0.4": {
+                "n": 74,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 129,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 47,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "0-0.4": {
+                "n": 74,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 129,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 47,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          },
+          "swell": {
+            "variable": "max LL fundamental in the swell (pu)",
+            "bins": [
+              "1.13-1.2",
+              "1.2-1.3",
+              "1.3-1.45"
+            ],
+            "rules": {
+              "1.13-1.2": {
+                "n": 93,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.2-1.3": {
+                "n": 138,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.3-1.45": {
+                "n": 19,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "1.13-1.2": {
+                "n": 93,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.2-1.3": {
+                "n": 138,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.3-1.45": {
+                "n": 19,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "1.13-1.2": {
+                "n": 93,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.2-1.3": {
+                "n": 138,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.3-1.45": {
+                "n": 19,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          },
+          "phase_jump": {
+            "variable": "abs(dphi) (deg)",
+            "bins": [
+              "6-12",
+              "12-20",
+              "20-30"
+            ],
+            "rules": {
+              "6-12": {
+                "n": 52,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "12-20": {
+                "n": 85,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "20-30": {
+                "n": 113,
+                "value": 0.9823008849557522,
+                "errors_primary": 2
+              }
+            },
+            "gbm_embedded": {
+              "6-12": {
+                "n": 52,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "12-20": {
+                "n": 85,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "20-30": {
+                "n": 113,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "6-12": {
+                "n": 52,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "12-20": {
+                "n": 85,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "20-30": {
+                "n": 113,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          },
+          "freq_event": {
+            "variable": "abs(ROCOF) (Hz/s)",
+            "bins": [
+              "0.5-1",
+              "1-2",
+              "2-4"
+            ],
+            "rules": {
+              "0.5-1": {
+                "n": 36,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1-2": {
+                "n": 80,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "2-4": {
+                "n": 134,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "0.5-1": {
+                "n": 36,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1-2": {
+                "n": 80,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "2-4": {
+                "n": 134,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "0.5-1": {
+                "n": 36,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1-2": {
+                "n": 80,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "2-4": {
+                "n": 134,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          },
+          "oscillation": {
+            "variable": "modulation depth (%)",
+            "bins": [
+              "2-4",
+              "4-6",
+              "6-8"
+            ],
+            "rules": {
+              "2-4": {
+                "n": 169,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "4-6": {
+                "n": 72,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "6-8": {
+                "n": 9,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "2-4": {
+                "n": 169,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "4-6": {
+                "n": 72,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "6-8": {
+                "n": 9,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "2-4": {
+                "n": 169,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "4-6": {
+                "n": 72,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "6-8": {
+                "n": 9,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          }
+        },
+        "shift_transient": {
+          "n_with": 0,
+          "rules": {
+            "without_transient": {
+              "n": 1750,
+              "value": 0.998285693713984,
+              "accuracy": 0.9982857142857143
+            },
+            "with_transient": {
+              "n": 0,
+              "value": null
+            }
+          },
+          "gbm_embedded": {
+            "without_transient": {
+              "n": 1750,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "with_transient": {
+              "n": 0,
+              "value": null
+            }
+          },
+          "gbm_unconstrained": {
+            "without_transient": {
+              "n": 1750,
+              "value": 1.0,
+              "accuracy": 1.0
+            },
+            "with_transient": {
+              "n": 0,
+              "value": null
+            }
+          }
+        }
+      },
+      "naive_pll": {
+        "threshold_hz": 1.0,
+        "by_class": {
+          "normal": {
+            "flagged": 0,
+            "n": 250,
+            "rate": 0.0
+          },
+          "sag_bal": {
+            "flagged": 250,
+            "n": 250,
+            "rate": 1.0
+          },
+          "sag_unbal": {
+            "flagged": 247,
+            "n": 250,
+            "rate": 0.988
+          },
+          "swell": {
+            "flagged": 90,
+            "n": 250,
+            "rate": 0.36
+          },
+          "phase_jump": {
+            "flagged": 250,
+            "n": 250,
+            "rate": 1.0
+          },
+          "freq_event": {
+            "flagged": 106,
+            "n": 250,
+            "rate": 0.424
+          },
+          "oscillation": {
+            "flagged": 81,
+            "n": 250,
+            "rate": 0.324
+          }
+        },
+        "by_jump_deg": {
+          "6-12": {
+            "flagged": 52,
+            "n": 52
+          },
+          "12-20": {
+            "flagged": 85,
+            "n": 85
+          },
+          "20-30": {
+            "flagged": 113,
+            "n": 113
+          }
+        }
+      },
+      "gbm_embedded_comparisons_per_record": {
+        "mean": 239.07542857142857,
+        "max": 267
+      },
+      "rules_vs_gbm_embedded_disagreements_primary": 3,
+      "gbm_embedded_walker_vs_sklearn_label_agreement": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "test_shift": {
+      "n": 1750,
+      "data_meta": {
+        "split": "test_shift",
+        "git_commit": "d713ccc0cc8579346923b7b8f96c9527ed104d66",
+        "config_hash": "c5de516f0be89437",
+        "n_records": 1750
+      },
+      "methods": {
+        "rules": {
+          "macro_f1": {
+            "mean": 0.9902500465966211,
+            "sd": 0.0,
+            "per_seed": [
+              0.9902500465966211
+            ]
+          },
+          "accuracy": {
+            "mean": 0.9902857142857143,
+            "sd": 0.0,
+            "per_seed": [
+              0.9902857142857143
+            ]
+          },
+          "false_alarm_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0
+            ]
+          },
+          "miss_rate": {
+            "mean": 0.0,
+            "sd": 0.0,
+            "per_seed": [
+              0.0
+            ]
+          },
+          "per_class_mean": {
+            "normal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "sag_bal": {
+              "precision": 0.9920634920634921,
+              "recall": 1.0,
+              "f1": 0.9960159362549801
+            },
+            "sag_unbal": {
+              "precision": 0.9765625,
+              "recall": 1.0,
+              "f1": 0.9881422924901185
+            },
+            "swell": {
+              "precision": 0.9652509652509652,
+              "recall": 1.0,
+              "f1": 0.9823182711198428
+            },
+            "phase_jump": {
+              "precision": 1.0,
+              "recall": 0.948,
+              "f1": 0.973305954825462
+            },
+            "freq_event": {
+              "precision": 1.0,
+              "recall": 0.992,
+              "f1": 0.9959839357429718
+            },
+            "oscillation": {
+              "precision": 1.0,
+              "recall": 0.992,
+              "f1": 0.9959839357429718
+            }
+          },
+          "critical_confusions_mean": {
+            "phase_jump->freq_event": 0.0,
+            "freq_event->phase_jump": 0.0,
+            "sag_bal->normal": 0.0,
+            "sag_unbal->normal": 0.0,
+            "sag_bal->sag_unbal": 0.0,
+            "sag_unbal->sag_bal": 0.0,
+            "sag_*->normal": 0.0,
+            "phase_jump<->freq_event": 0.0,
+            "sag_bal<->sag_unbal": 0.0
+          },
+          "primary": {
+            "n": 1750,
+            "accuracy": 0.9902857142857143,
+            "macro_f1": 0.9902500465966211,
+            "per_class": {
+              "normal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "sag_bal": {
+                "precision": 0.9920634920634921,
+                "recall": 1.0,
+                "f1": 0.9960159362549801,
+                "support": 250
+              },
+              "sag_unbal": {
+                "precision": 0.9765625,
+                "recall": 1.0,
+                "f1": 0.9881422924901185,
+                "support": 250
+              },
+              "swell": {
+                "precision": 0.9652509652509652,
+                "recall": 1.0,
+                "f1": 0.9823182711198428,
+                "support": 250
+              },
+              "phase_jump": {
+                "precision": 1.0,
+                "recall": 0.948,
+                "f1": 0.973305954825462,
+                "support": 250
+              },
+              "freq_event": {
+                "precision": 1.0,
+                "recall": 0.992,
+                "f1": 0.9959839357429718,
+                "support": 250
+              },
+              "oscillation": {
+                "precision": 1.0,
+                "recall": 0.992,
+                "f1": 0.9959839357429718,
+                "support": 250
+              }
+            },
+            "confusion": {
+              "classes": [
+                "normal",
+                "sag_bal",
+                "sag_unbal",
+                "swell",
+                "phase_jump",
+                "freq_event",
+                "oscillation"
+              ],
+              "matrix": [
+                [
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  6,
+                  6,
+                  237,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  2,
+                  0,
+                  248,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  0,
+                  1,
+                  0,
+                  0,
+                  248
+                ]
+              ],
+              "rows": "true",
+              "cols": "predicted"
+            },
+            "false_alarm_rate": 0.0,
+            "miss_rate": 0.0,
+            "critical_confusions": {
+              "phase_jump->freq_event": 0,
+              "freq_event->phase_jump": 0,
+              "sag_bal->normal": 0,
+              "sag_unbal->normal": 0,
+              "sag_bal->sag_unbal": 0,
+              "sag_unbal->sag_bal": 0,
+              "sag_*->normal": 0,
+              "phase_jump<->freq_event": 0,
+              "sag_bal<->sag_unbal": 0
+            }
+          },
+          "n_seeds": 1,
+          "macro_f1_seeds": [
+            0.9902500465966211
+          ]
+        },
+        "gbm_embedded": {
+          "macro_f1": {
+            "mean": 0.8652860173074678,
+            "sd": 0.0014398762918071506,
+            "per_seed": [
+              0.8661665994235178,
+              0.8660670677612151,
+              0.8636243847376707
+            ]
+          },
+          "accuracy": {
+            "mean": 0.8761904761904762,
+            "sd": 0.0016495721976846007,
+            "per_seed": [
+              0.8771428571428571,
+              0.8771428571428571,
+              0.8742857142857143
+            ]
+          },
+          "false_alarm_rate": {
+            "mean": 0.2333333333333333,
+            "sd": 0.010066445913694327,
+            "per_seed": [
+              0.224,
+              0.232,
+              0.244
+            ]
+          },
+          "miss_rate": {
+            "mean": 0.07266666666666667,
+            "sd": 0.0,
+            "per_seed": [
+              0.07266666666666667,
+              0.07266666666666667,
+              0.07266666666666667
+            ]
+          },
+          "per_class_mean": {
+            "normal": {
+              "precision": 0.6374553228249757,
+              "recall": 0.7666666666666666,
+              "f1": 0.6961077362932958
+            },
+            "sag_bal": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "sag_unbal": {
+              "precision": 0.9677548588054424,
+              "recall": 1.0,
+              "f1": 0.9836099453750956
+            },
+            "swell": {
+              "precision": 0.9960159362549801,
+              "recall": 1.0,
+              "f1": 0.9980039920159681
+            },
+            "phase_jump": {
+              "precision": 0.9693877551020408,
+              "recall": 0.38000000000000006,
+              "f1": 0.5459770114942528
+            },
+            "freq_event": {
+              "precision": 1.0,
+              "recall": 0.9946666666666667,
+              "f1": 0.9973226238286479
+            },
+            "oscillation": {
+              "precision": 0.7223963775687915,
+              "recall": 0.992,
+              "f1": 0.8359808121450144
+            }
+          },
+          "critical_confusions_mean": {
+            "phase_jump->freq_event": 0.0,
+            "freq_event->phase_jump": 0.0,
+            "sag_bal->normal": 0.0,
+            "sag_unbal->normal": 0.0,
+            "sag_bal->sag_unbal": 0.0,
+            "sag_unbal->sag_bal": 0.0,
+            "sag_*->normal": 0.0,
+            "phase_jump<->freq_event": 0.0,
+            "sag_bal<->sag_unbal": 0.0
+          },
+          "primary": {
+            "n": 1750,
+            "accuracy": 0.8771428571428571,
+            "macro_f1": 0.8661665994235178,
+            "per_class": {
+              "normal": {
+                "precision": 0.6402640264026402,
+                "recall": 0.776,
+                "f1": 0.701627486437613,
+                "support": 250
+              },
+              "sag_bal": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 250
+              },
+              "sag_unbal": {
+                "precision": 0.9652509652509652,
+                "recall": 1.0,
+                "f1": 0.9823182711198428,
+                "support": 250
+              },
+              "swell": {
+                "precision": 0.9960159362549801,
+                "recall": 1.0,
+                "f1": 0.998003992015968,
+                "support": 250
+              },
+              "phase_jump": {
+                "precision": 0.9693877551020408,
+                "recall": 0.38,
+                "f1": 0.5459770114942528,
+                "support": 250
+              },
+              "freq_event": {
+                "precision": 1.0,
+                "recall": 0.992,
+                "f1": 0.9959839357429718,
+                "support": 250
+              },
+              "oscillation": {
+                "precision": 0.7272727272727273,
+                "recall": 0.992,
+                "f1": 0.8392554991539763,
+                "support": 250
+              }
+            },
+            "confusion": {
+              "classes": [
+                "normal",
+                "sag_bal",
+                "sag_unbal",
+                "swell",
+                "phase_jump",
+                "freq_event",
+                "oscillation"
+              ],
+              "matrix": [
+                [
+                  194,
+                  0,
+                  0,
+                  0,
+                  3,
+                  0,
+                  53
+                ],
+                [
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  107,
+                  0,
+                  9,
+                  1,
+                  95,
+                  0,
+                  38
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  248,
+                  2
+                ],
+                [
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  248
+                ]
+              ],
+              "rows": "true",
+              "cols": "predicted"
+            },
+            "false_alarm_rate": 0.224,
+            "miss_rate": 0.07266666666666667,
+            "critical_confusions": {
+              "phase_jump->freq_event": 0,
+              "freq_event->phase_jump": 0,
+              "sag_bal->normal": 0,
+              "sag_unbal->normal": 0,
+              "sag_bal->sag_unbal": 0,
+              "sag_unbal->sag_bal": 0,
+              "sag_*->normal": 0,
+              "phase_jump<->freq_event": 0,
+              "sag_bal<->sag_unbal": 0
+            }
+          },
+          "n_seeds": 3,
+          "macro_f1_seeds": [
+            0.8661665994235178,
+            0.8660670677612151,
+            0.8636243847376707
+          ]
+        },
+        "gbm_unconstrained": {
+          "macro_f1": {
+            "mean": 0.8483604717522161,
+            "sd": 0.006590498598659014,
+            "per_seed": [
+              0.8556436139250867,
+              0.8428079972547623,
+              0.8466298040767996
+            ]
+          },
+          "accuracy": {
+            "mean": 0.8620952380952381,
+            "sd": 0.009166635745155053,
+            "per_seed": [
+              0.8708571428571429,
+              0.8525714285714285,
+              0.8628571428571429
+            ]
+          },
+          "false_alarm_rate": {
+            "mean": 0.5813333333333334,
+            "sd": 0.08775724091682313,
+            "per_seed": [
+              0.632,
+              0.48,
+              0.632
+            ]
+          },
+          "miss_rate": {
+            "mean": 0.007555555555555556,
+            "sd": 0.013086606101631518,
+            "per_seed": [
+              0.0,
+              0.02266666666666667,
+              0.0
+            ]
+          },
+          "per_class_mean": {
+            "normal": {
+              "precision": 0.9308943089430896,
+              "recall": 0.4186666666666667,
+              "f1": 0.5680142384947877
+            },
+            "sag_bal": {
+              "precision": 0.9842311377744449,
+              "recall": 0.9973333333333333,
+              "f1": 0.9907354708151521
+            },
+            "sag_unbal": {
+              "precision": 0.7712098735676048,
+              "recall": 1.0,
+              "f1": 0.8675213143233359
+            },
+            "swell": {
+              "precision": 0.9086425885915951,
+              "recall": 1.0,
+              "f1": 0.9516845087961624
+            },
+            "phase_jump": {
+              "precision": 0.7194968384809691,
+              "recall": 0.648,
+              "f1": 0.6808912293668391
+            },
+            "freq_event": {
+              "precision": 0.9627586676167827,
+              "recall": 0.9706666666666667,
+              "f1": 0.9663669293905532
+            },
+            "oscillation": {
+              "precision": 0.8453513974622956,
+              "recall": 1.0,
+              "f1": 0.913309611078683
+            }
+          },
+          "critical_confusions_mean": {
+            "phase_jump->freq_event": 2.6666666666666665,
+            "freq_event->phase_jump": 1.3333333333333333,
+            "sag_bal->normal": 0.0,
+            "sag_unbal->normal": 0.0,
+            "sag_bal->sag_unbal": 0.6666666666666666,
+            "sag_unbal->sag_bal": 0.0,
+            "sag_*->normal": 0.0,
+            "phase_jump<->freq_event": 4.0,
+            "sag_bal<->sag_unbal": 0.6666666666666666
+          },
+          "primary": {
+            "n": 1750,
+            "accuracy": 0.8708571428571429,
+            "macro_f1": 0.8556436139250867,
+            "per_class": {
+              "normal": {
+                "precision": 1.0,
+                "recall": 0.368,
+                "f1": 0.5380116959064328,
+                "support": 250
+              },
+              "sag_bal": {
+                "precision": 0.9920634920634921,
+                "recall": 1.0,
+                "f1": 0.9960159362549801,
+                "support": 250
+              },
+              "sag_unbal": {
+                "precision": 0.6983240223463687,
+                "recall": 1.0,
+                "f1": 0.8223684210526315,
+                "support": 250
+              },
+              "swell": {
+                "precision": 0.9398496240601504,
+                "recall": 1.0,
+                "f1": 0.9689922480620156,
+                "support": 250
+              },
+              "phase_jump": {
+                "precision": 0.7520661157024794,
+                "recall": 0.728,
+                "f1": 0.7398373983739837,
+                "support": 250
+              },
+              "freq_event": {
+                "precision": 0.9727626459143969,
+                "recall": 1.0,
+                "f1": 0.9861932938856015,
+                "support": 250
+              },
+              "oscillation": {
+                "precision": 0.8833922261484098,
+                "recall": 1.0,
+                "f1": 0.9380863039399624,
+                "support": 250
+              }
+            },
+            "confusion": {
+              "classes": [
+                "normal",
+                "sag_bal",
+                "sag_unbal",
+                "swell",
+                "phase_jump",
+                "freq_event",
+                "oscillation"
+              ],
+              "matrix": [
+                [
+                  92,
+                  2,
+                  54,
+                  4,
+                  60,
+                  7,
+                  31
+                ],
+                [
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  250,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  54,
+                  12,
+                  182,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250
+                ]
+              ],
+              "rows": "true",
+              "cols": "predicted"
+            },
+            "false_alarm_rate": 0.632,
+            "miss_rate": 0.0,
+            "critical_confusions": {
+              "phase_jump->freq_event": 0,
+              "freq_event->phase_jump": 0,
+              "sag_bal->normal": 0,
+              "sag_unbal->normal": 0,
+              "sag_bal->sag_unbal": 0,
+              "sag_unbal->sag_bal": 0,
+              "sag_*->normal": 0,
+              "phase_jump<->freq_event": 0,
+              "sag_bal<->sag_unbal": 0
+            }
+          },
+          "n_seeds": 3,
+          "macro_f1_seeds": [
+            0.8556436139250867,
+            0.8428079972547623,
+            0.8466298040767996
+          ]
+        }
+      },
+      "comparisons": {
+        "gbm_embedded_minus_rules": {
+          "bootstrap": {
+            "n_boot": 2000,
+            "stratified": true,
+            "diff_seed_mean": -0.12496402928915329,
+            "ci95_seed_mean": [
+              -0.14071119736469653,
+              -0.11012212495125608
+            ],
+            "frac_resamples_diff_le_0": 1.0,
+            "per_seed": [
+              {
+                "diff": -0.12408344717310327,
+                "ci95": [
+                  -0.14001813395542528,
+                  -0.10912993263012453
+                ]
+              },
+              {
+                "diff": -0.12418297883540597,
+                "ci95": [
+                  -0.1395643606689771,
+                  -0.10944697801243863
+                ]
+              },
+              {
+                "diff": -0.1266256618589504,
+                "ci95": [
+                  -0.14226737335310569,
+                  -0.11209534803844735
+                ]
+              }
+            ],
+            "excludes_zero": true
+          },
+          "mcnemar_per_seed": [
+            {
+              "a_correct_b_wrong": 11,
+              "a_wrong_b_correct": 209,
+              "n_discordant": 220,
+              "p_value": 1.4217484873548103e-48
+            },
+            {
+              "a_correct_b_wrong": 11,
+              "a_wrong_b_correct": 209,
+              "n_discordant": 220,
+              "p_value": 1.4217484873548103e-48
+            },
+            {
+              "a_correct_b_wrong": 11,
+              "a_wrong_b_correct": 214,
+              "n_discordant": 225,
+              "p_value": 5.714400361738666e-50
+            }
+          ],
+          "note": "B = rules"
+        },
+        "gbm_unconstrained_minus_rules": {
+          "bootstrap": {
+            "n_boot": 2000,
+            "stratified": true,
+            "diff_seed_mean": -0.141889574844405,
+            "ci95_seed_mean": [
+              -0.15670216928467126,
+              -0.128022531678323
+            ],
+            "frac_resamples_diff_le_0": 1.0,
+            "per_seed": [
+              {
+                "diff": -0.13460643267153438,
+                "ci95": [
+                  -0.15079185507051152,
+                  -0.12004259738950802
+                ]
+              },
+              {
+                "diff": -0.14744204934185878,
+                "ci95": [
+                  -0.16320642264430957,
+                  -0.13158864645685373
+                ]
+              },
+              {
+                "diff": -0.14362024251982153,
+                "ci95": [
+                  -0.16023899502348884,
+                  -0.12865255353022265
+                ]
+              }
+            ],
+            "excludes_zero": true
+          },
+          "mcnemar_per_seed": [
+            {
+              "a_correct_b_wrong": 16,
+              "a_wrong_b_correct": 225,
+              "n_discordant": 241,
+              "p_value": 2.2653750179467743e-48
+            },
+            {
+              "a_correct_b_wrong": 13,
+              "a_wrong_b_correct": 254,
+              "n_discordant": 267,
+              "p_value": 3.7163107120654226e-59
+            },
+            {
+              "a_correct_b_wrong": 12,
+              "a_wrong_b_correct": 235,
+              "n_discordant": 247,
+              "p_value": 7.643875647735249e-55
+            }
+          ],
+          "note": "B = rules"
+        },
+        "gbm_unconstrained_minus_gbm_embedded": {
+          "bootstrap": {
+            "n_boot": 2000,
+            "stratified": true,
+            "diff_seed_mean": -0.01780612767130174,
+            "ci95_seed_mean": [
+              -0.031169467076871026,
+              -0.004314474331978141
+            ],
+            "frac_resamples_diff_le_0": 0.995,
+            "per_seed": [
+              {
+                "diff": -0.010522985498431114,
+                "ci95": [
+                  -0.026400356769582807,
+                  0.005003186509077919
+                ]
+              },
+              {
+                "diff": -0.023358602168755516,
+                "ci95": [
+                  -0.036692462924713044,
+                  -0.009431880925260493
+                ]
+              },
+              {
+                "diff": -0.01953679534671826,
+                "ci95": [
+                  -0.03502482413090036,
+                  -0.003857918357614757
+                ]
+              }
+            ],
+            "excludes_zero": true
+          },
+          "mcnemar_per_seed": [
+            {
+              "a_correct_b_wrong": 94,
+              "a_wrong_b_correct": 105,
+              "n_discordant": 199,
+              "p_value": 0.4784912009825469
+            },
+            {
+              "a_correct_b_wrong": 49,
+              "a_wrong_b_correct": 92,
+              "n_discordant": 141,
+              "p_value": 0.00036817558628419794
+            },
+            {
+              "a_correct_b_wrong": 81,
+              "a_wrong_b_correct": 106,
+              "n_discordant": 187,
+              "p_value": 0.07897134041071456
+            }
+          ],
+          "note": "B = gbm_embedded primary seed"
+        }
+      },
+      "breakdowns": {
+        "snr": {
+          "bins": [
+            "25-30",
+            "30-35",
+            "35-40",
+            "40-50",
+            "50-60"
+          ],
+          "rules": {
+            "25-30": {
+              "n": 894,
+              "value": 0.9942784178856495,
+              "accuracy": 0.9944071588366891
+            },
+            "30-35": {
+              "n": 856,
+              "value": 0.9861993537258614,
+              "accuracy": 0.985981308411215
+            },
+            "35-40": {
+              "n": 0,
+              "value": null
+            },
+            "40-50": {
+              "n": 0,
+              "value": null
+            },
+            "50-60": {
+              "n": 0,
+              "value": null
+            }
+          },
+          "gbm_embedded": {
+            "25-30": {
+              "n": 894,
+              "value": 0.7819312998228787,
+              "accuracy": 0.8355704697986578
+            },
+            "30-35": {
+              "n": 856,
+              "value": 0.9221704380618624,
+              "accuracy": 0.9186137071651089
+            },
+            "35-40": {
+              "n": 0,
+              "value": null
+            },
+            "40-50": {
+              "n": 0,
+              "value": null
+            },
+            "50-60": {
+              "n": 0,
+              "value": null
+            }
+          },
+          "gbm_unconstrained": {
+            "25-30": {
+              "n": 894,
+              "value": 0.7980286945349399,
+              "accuracy": 0.8337061894108874
+            },
+            "30-35": {
+              "n": 856,
+              "value": 0.8903057620830094,
+              "accuracy": 0.8917445482866043
+            },
+            "35-40": {
+              "n": 0,
+              "value": null
+            },
+            "40-50": {
+              "n": 0,
+              "value": null
+            },
+            "50-60": {
+              "n": 0,
+              "value": null
+            }
+          }
+        },
+        "severity_recall": {
+          "sag_bal": {
+            "variable": "min LL fundamental in the dip (pu)",
+            "bins": [
+              "0-0.4",
+              "0.4-0.7",
+              "0.7-0.87"
+            ],
+            "rules": {
+              "0-0.4": {
+                "n": 111,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 101,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 38,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "0-0.4": {
+                "n": 111,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 101,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 38,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "0-0.4": {
+                "n": 111,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 101,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 38,
+                "value": 0.9824561403508772,
+                "errors_primary": 0
+              }
+            }
+          },
+          "sag_unbal": {
+            "variable": "min LL fundamental in the dip (pu)",
+            "bins": [
+              "0-0.4",
+              "0.4-0.7",
+              "0.7-0.87"
+            ],
+            "rules": {
+              "0-0.4": {
+                "n": 75,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 137,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 38,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "0-0.4": {
+                "n": 75,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 137,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 38,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "0-0.4": {
+                "n": 75,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.4-0.7": {
+                "n": 137,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "0.7-0.87": {
+                "n": 38,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          },
+          "swell": {
+            "variable": "max LL fundamental in the swell (pu)",
+            "bins": [
+              "1.13-1.2",
+              "1.2-1.3",
+              "1.3-1.45"
+            ],
+            "rules": {
+              "1.13-1.2": {
+                "n": 101,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.2-1.3": {
+                "n": 126,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.3-1.45": {
+                "n": 23,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "1.13-1.2": {
+                "n": 101,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.2-1.3": {
+                "n": 126,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.3-1.45": {
+                "n": 23,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "1.13-1.2": {
+                "n": 101,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.2-1.3": {
+                "n": 126,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1.3-1.45": {
+                "n": 23,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          },
+          "phase_jump": {
+            "variable": "abs(dphi) (deg)",
+            "bins": [
+              "6-12",
+              "12-20",
+              "20-30"
+            ],
+            "rules": {
+              "6-12": {
+                "n": 65,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "12-20": {
+                "n": 78,
+                "value": 0.9743589743589743,
+                "errors_primary": 2
+              },
+              "20-30": {
+                "n": 107,
+                "value": 0.897196261682243,
+                "errors_primary": 11
+              }
+            },
+            "gbm_embedded": {
+              "6-12": {
+                "n": 65,
+                "value": 0.24615384615384617,
+                "errors_primary": 49
+              },
+              "12-20": {
+                "n": 78,
+                "value": 0.3717948717948718,
+                "errors_primary": 49
+              },
+              "20-30": {
+                "n": 107,
+                "value": 0.4672897196261682,
+                "errors_primary": 57
+              }
+            },
+            "gbm_unconstrained": {
+              "6-12": {
+                "n": 65,
+                "value": 0.6974358974358975,
+                "errors_primary": 15
+              },
+              "12-20": {
+                "n": 78,
+                "value": 0.6367521367521367,
+                "errors_primary": 21
+              },
+              "20-30": {
+                "n": 107,
+                "value": 0.6261682242990654,
+                "errors_primary": 32
+              }
+            }
+          },
+          "freq_event": {
+            "variable": "abs(ROCOF) (Hz/s)",
+            "bins": [
+              "0.5-1",
+              "1-2",
+              "2-4"
+            ],
+            "rules": {
+              "0.5-1": {
+                "n": 30,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1-2": {
+                "n": 80,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "2-4": {
+                "n": 140,
+                "value": 0.9857142857142858,
+                "errors_primary": 2
+              }
+            },
+            "gbm_embedded": {
+              "0.5-1": {
+                "n": 30,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "1-2": {
+                "n": 80,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "2-4": {
+                "n": 140,
+                "value": 0.9904761904761905,
+                "errors_primary": 2
+              }
+            },
+            "gbm_unconstrained": {
+              "0.5-1": {
+                "n": 30,
+                "value": 0.9666666666666667,
+                "errors_primary": 0
+              },
+              "1-2": {
+                "n": 80,
+                "value": 0.9791666666666666,
+                "errors_primary": 0
+              },
+              "2-4": {
+                "n": 140,
+                "value": 0.9666666666666667,
+                "errors_primary": 0
+              }
+            }
+          },
+          "oscillation": {
+            "variable": "modulation depth (%)",
+            "bins": [
+              "2-4",
+              "4-6",
+              "6-8"
+            ],
+            "rules": {
+              "2-4": {
+                "n": 189,
+                "value": 0.9894179894179894,
+                "errors_primary": 2
+              },
+              "4-6": {
+                "n": 53,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "6-8": {
+                "n": 8,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_embedded": {
+              "2-4": {
+                "n": 189,
+                "value": 0.9894179894179894,
+                "errors_primary": 2
+              },
+              "4-6": {
+                "n": 53,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "6-8": {
+                "n": 8,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            },
+            "gbm_unconstrained": {
+              "2-4": {
+                "n": 189,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "4-6": {
+                "n": 53,
+                "value": 1.0,
+                "errors_primary": 0
+              },
+              "6-8": {
+                "n": 8,
+                "value": 1.0,
+                "errors_primary": 0
+              }
+            }
+          }
+        },
+        "shift_transient": {
+          "n_with": 572,
+          "rules": {
+            "without_transient": {
+              "n": 1178,
+              "value": 0.9924534085442511,
+              "accuracy": 0.9923599320882852
+            },
+            "with_transient": {
+              "n": 572,
+              "value": 0.9863314940118874,
+              "accuracy": 0.986013986013986
+            }
+          },
+          "gbm_embedded": {
+            "without_transient": {
+              "n": 1178,
+              "value": 0.8805557748478486,
+              "accuracy": 0.8853989813242785
+            },
+            "with_transient": {
+              "n": 572,
+              "value": 0.8274739535272609,
+              "accuracy": 0.8572261072261073
+            }
+          },
+          "gbm_unconstrained": {
+            "without_transient": {
+              "n": 1178,
+              "value": 0.8697691177673669,
+              "accuracy": 0.8788907753254103
+            },
+            "with_transient": {
+              "n": 572,
+              "value": 0.8003908164045521,
+              "accuracy": 0.8275058275058275
+            }
+          }
+        }
+      },
+      "naive_pll": {
+        "threshold_hz": 1.0,
+        "by_class": {
+          "normal": {
+            "flagged": 31,
+            "n": 250,
+            "rate": 0.124
+          },
+          "sag_bal": {
+            "flagged": 250,
+            "n": 250,
+            "rate": 1.0
+          },
+          "sag_unbal": {
+            "flagged": 249,
+            "n": 250,
+            "rate": 0.996
+          },
+          "swell": {
+            "flagged": 138,
+            "n": 250,
+            "rate": 0.552
+          },
+          "phase_jump": {
+            "flagged": 250,
+            "n": 250,
+            "rate": 1.0
+          },
+          "freq_event": {
+            "flagged": 214,
+            "n": 250,
+            "rate": 0.856
+          },
+          "oscillation": {
+            "flagged": 152,
+            "n": 250,
+            "rate": 0.608
+          }
+        },
+        "by_jump_deg": {
+          "6-12": {
+            "flagged": 65,
+            "n": 65
+          },
+          "12-20": {
+            "flagged": 78,
+            "n": 78
+          },
+          "20-30": {
+            "flagged": 107,
+            "n": 107
+          }
+        }
+      },
+      "gbm_embedded_comparisons_per_record": {
+        "mean": 233.528,
+        "max": 264
+      },
+      "rules_vs_gbm_embedded_disagreements_primary": 224,
+      "gbm_embedded_walker_vs_sklearn_label_agreement": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "iid_to_shift": {
+    "rules": {
+      "change": -0.008035647117362932,
+      "ci95": [
+        -0.013186218724469938,
+        -0.003433611819008151
+      ],
+      "n_boot": 2000
+    },
+    "gbm_embedded": {
+      "change": -0.1347139826925322,
+      "ci95": [
+        -0.14844485790123876,
+        -0.12145384146133245
+      ],
+      "n_boot": 2000
+    },
+    "gbm_unconstrained": {
+      "change": -0.15163952824778393,
+      "ci95": [
+        -0.16542828507556379,
+        -0.13803091354191313
+      ],
+      "n_boot": 2000
+    }
+  },
+  "embedded_cost": {
+    "dsp_features_ops_per_record": 1517143,
+    "dsp_ram_kb": 21.17,
+    "dsp_const_kb": 6.05,
+    "rules_comparisons_per_record": "<= 12 threshold comparisons",
+    "gbm_model_bytes": 13972,
+    "gbm_comparisons_per_record_mean": {
+      "test_iid": 239.07542857142857,
+      "test_shift": 233.528
+    },
+    "gbm_comparisons_worst_case": 357,
+    "gbm_ram_bytes": 176,
+    "gbm_unconstrained_model_bytes_equivalent": 174888,
+    "python_timing_ms_per_record": {
+      "features_test_iid_ms_per_record": 3.3432,
+      "rules_ms_per_record_test_iid": 0.002,
+      "gbm_embedded_walker_ms_per_record_test_iid": 0.0111,
+      "gbm_unconstrained_ms_per_record_test_iid": 0.0143,
+      "features_test_shift_ms_per_record": 3.3943,
+      "rules_ms_per_record_test_shift": 0.0018,
+      "gbm_embedded_walker_ms_per_record_test_shift": 0.0111,
+      "gbm_unconstrained_ms_per_record_test_shift": 0.0089
+    }
+  },
+  "snr_by_bin_pooled": {
+    "bins": [
+      "25-30",
+      "30-35",
+      "35-40",
+      "40-50",
+      "50-60"
+    ],
+    "rules": {
+      "f1": [
+        0.9942784178856495,
+        0.9861993537258614,
+        1.0,
+        1.0,
+        0.9956006225703548
+      ],
+      "n": [
+        894,
+        856,
+        359,
+        709,
+        682
+      ]
+    },
+    "gbm_embedded": {
+      "f1": [
+        0.7819312998228787,
+        0.9221704380618624,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "n": [
+        894,
+        856,
+        359,
+        709,
+        682
+      ]
+    },
+    "gbm_unconstrained": {
+      "f1": [
+        0.7980286945349399,
+        0.8903057620830094,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "n": [
+        894,
+        856,
+        359,
+        709,
+        682
+      ]
+    }
+  },
+  "disagreement_examples_test_shift": [
+    {
+      "record": 34,
+      "true": "normal",
+      "rules": "normal (none)",
+      "gbm": "oscillation",
+      "p_gbm": 0.24299924075603485
+    },
+    {
+      "record": 3,
+      "true": "phase_jump",
+      "rules": "phase_jump (phase_jump)",
+      "gbm": "normal",
+      "p_gbm": 0.15111525356769562
+    },
+    {
+      "record": 50,
+      "true": "freq_event",
+      "rules": "swell (swell)",
+      "gbm": "freq_event",
+      "p_gbm": 0.7741385698318481
+    },
+    {
+      "record": 356,
+      "true": "oscillation",
+      "rules": "sag_bal (dip_balanced)",
+      "gbm": "oscillation",
+      "p_gbm": 0.9604747891426086
+    },
+    {
+      "record": 9,
+      "true": "phase_jump",
+      "rules": "phase_jump (phase_jump)",
+      "gbm": "normal",
+      "p_gbm": 0.15123461186885834
+    },
+    {
+      "record": 36,
+      "true": "normal",
+      "rules": "normal (none)",
+      "gbm": "oscillation",
+      "p_gbm": 0.22535598278045654
+    }
+  ],
+  "runtime_s": 23.2
+}

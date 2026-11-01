@@ -5,8 +5,8 @@
 - [x] M1 — event generator and datasets (B4-B6)
 - [x] M2 — conventional baseline on train/val, DSP spec, golden vectors (B7)
 - [x] M3 — gradient boosting, embedded size budget, C-ready export (B8; CNN not done, optional)
-- [ ] M4 — sealed evaluation on test_iid and test_shift (B9)
-- [ ] M5 — results report (RESULTS.md, results.json, findings and limitations)
+- [x] M4 — sealed evaluation on test_iid and test_shift (B9)
+- [x] M5 — results report (RESULTS.md, results.json, findings and limitations; done with M4)
 - [ ] M6 — portable C core + SIL equivalence (B13.1)
 - [ ] M7 — C2000 port layer, integration guide, C28x compile/size (B13.2)
 - [ ] M8 — static website with in-browser classification (B13.4)
@@ -31,3 +31,7 @@
   20 stages x 4 leaves (lr 0.1, subsample 1.0) = 13,972 B, val macro-F1 1.000 (rules 0.997, HGB reference 0.9998);
   export JSON + C tables; float32 walker == sklearn on val (max |dp| 2e-7, labels 100 %, 0 branch mismatches);
   pre-event-only control 0.124; docs/MODEL_FORMAT.md; D-040..D-046.
+- 2026-11-01 M4: freeze `6240f60` (configs/frozen_methods.yaml; evaluation code dry-run on val first), one run on
+  the sealed sets: test_iid rules 0.9983 / GBM-embedded 1.0000 / GBM-unconstrained 1.0000 (no significant
+  difference); test_shift rules 0.9903 / GBM-embedded 0.8653 +/- 0.0014 / GBM-unconstrained 0.8484 +/- 0.0066
+  (rules significantly better: -0.125, CI [-0.141, -0.110]). reports/RESULTS.md, results.json, m4 figures; D-047, D-048.

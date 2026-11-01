@@ -230,3 +230,10 @@ Evidence tags as in B3.
   exact McNemar per seed; GBM-unc vs GBM-emb uses GBM-emb seed 0 as the reference; SNR bins
   25/30/35/40/50/60 dB; severity bins in gridmon.evaluation.SEVERITY; iid -> shift change with
   independent stratified resamples. "Better" is claimed only if the 95 % CI excludes zero.
+- **D-048** — 2026-11-01 — *After the single M4 run (evaluated at the freeze commit 6240f60, verify passed):*
+  no method-defining file or model changed and no bug was found, so there is no pre-fix/post-fix pair.
+  Only reporting changed: results_report.py (the severity table lists bins below 0.99; 200-line limit)
+  and RESULTS.md re-rendered with `--render-only` plus the hand-written reports/results_findings.md.
+  Two post-hoc diagnostics on the evaluated test features are reported as such, not as methods:
+  (a) which features moved under shift for the GBM errors, (b) max-probability of GBM errors (all 215
+  test_shift errors < 0.5). A confidence-gated hybrid would be a new method needing fresh sealed data.
