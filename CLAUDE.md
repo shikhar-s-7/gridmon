@@ -29,3 +29,5 @@ website (M8). Python is the REFERENCE for a float32 C port. Simulation-only.
 - src/gridmon/dsp: rms, phasor, freq, pll, envelope, thd; features.py, baseline_rules.py, metrics.py, golden.py, plots.py
 - configs/: dataset.yaml, baseline.yaml, aa_fir.json (generated)
 - docs/: PROJECT_BRIEF, DECISIONS, PROGRESS, DSP_SPEC, FEATURES, VALIDATION, ENVIRONMENT, HANDOFF (+ handoffs/)
+
+- Git: do not add Co-Authored-By, Claude-Session or "Generated with Claude Code" lines to commits or PR descriptions.
