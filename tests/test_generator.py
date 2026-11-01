@@ -10,13 +10,13 @@ import pytest
 from gridmon import CLASSES
 from gridmon.dsp.rms import rms_one_cycle_sliding
 from gridmon.generator import dataset as ds
-from gridmon.generator.events import freq_theta, margins_ok, quiet_normal
+from gridmon.generator.events import freq_theta, fundamental, margins_ok, quiet_normal
 from gridmon.generator.nuisance import clean_pre_event
 from gridmon.generator.phasors import (A, A2, bollen_closed_form, bollen_phase_voltages, dip_sequence,
                                        rotate_special_phase, sequence_components)
 from gridmon.generator.synth import (load_aa_fir, measure, synth_analog_ll, synth_record, synth_time)
 from gridmon.io import load_manifest, load_waveforms
-from gridmon.units import FS, LSB_PU, N_CYCLE
+from gridmon.units import FS, LSB_PU, N_CYCLE, ll_fundamental_mags
 
 from conftest import ALL_SPLITS
 
@@ -175,6 +175,9 @@ def test_label_margins_analytic(cfg, fast_flag):
         nuis = cfg["splits"][s]["nuisance"]
         for rid, lab, seed, mm in zip(m["record_id"], m["label"], m["seed"], m["mm_min_ll_ev"]):
             spec = ds.make_record_spec(int(rid), lab, int(seed), cfg, nuis)
+            if spec.n_reject > cfg["max_redraws"]:  # D-039 fallback (checked in the oscillation tests)
+                assert lab == "oscillation", (s, rid, lab)
+                continue
             assert margins_ok(lab, spec.pre, spec.ev, spec.metrics, cfg["margins"]), (s, rid, lab)
             assert abs(spec.metrics["mm_min_ll_ev"] - mm) < 1e-8
 
@@ -200,6 +203,49 @@ def test_label_margins_waveform(split, fast_flag):
                 assert w.min() < 0.90, (r["record_id"], w.min())
             else:
                 assert w.max() > 1.10, (r["record_id"], w.max())
+
+
+def test_oscillation_margin_analytic(cfg, fast_flag):
+    """D-034 (R1): every oscillation record of every split keeps the analytic LL fundamental within
+    [0.92, 1.08] pu over the whole record (manifest metric and an independent 20 kHz re-evaluation)."""
+    lo, hi = cfg["margins"]["osc_ll"]
+    t = np.arange(0.0, 1.0, 1.0 / 20000.0)
+    n_fallback = 0
+    for s in ALL_SPLITS:
+        m = load_manifest(s, fast=fast_flag, allow_test_manifest=True)
+        o = m[m["label"] == "oscillation"]
+        assert len(o) > 0, s
+        fb = o["n_reject"] > cfg["max_redraws"]  # D-039: band infeasible for the pre-event conditions
+        n_fallback += int(fb.sum())
+        ok = o[~fb]
+        assert (ok["mm_min_ll"] >= lo).all() and (ok["mm_max_ll"] <= hi).all(), s
+        # fallback records still stay clear of the 0.90/1.10 dip/swell thresholds
+        assert (o["mm_min_ll"] > 0.90).all() and (o["mm_max_ll"] < 1.10).all(), s
+        nuis = cfg["splits"][s]["nuisance"]
+        for rid, seed, is_fb in zip(o["record_id"], o["seed"], fb):
+            spec = ds.make_record_spec(int(rid), "oscillation", int(seed), cfg, nuis)
+            ll = ll_fundamental_mags(*fundamental(spec.pre, spec.ev, t))
+            if is_fb:  # infeasible: even the smallest allowed oscillation leaves the band
+                best = dict(spec.ev, depth=cfg["events"]["oscillation"]["depth"][0], ang_amp=0.0, sigma=-1.0)
+                llb = ll_fundamental_mags(*fundamental(spec.pre, best, t))
+                assert llb.max() > hi or llb.min() < lo, (s, rid)
+                continue
+            # 2 kHz margin grid vs 20 kHz here: extremes may differ by < 1e-4 pu (f_m <= 25 Hz)
+            assert ll.min() >= lo - 2e-4 and ll.max() <= hi + 2e-4, (s, rid, ll.min(), ll.max())
+    if not fast_flag:
+        assert n_fallback == 0  # full splits: the band is feasible for every oscillation record
+
+
+@pytest.mark.parametrize("split", ["train", "val", "preview_iid"])
+def test_oscillation_margin_waveform(split, fast_flag):
+    """D-034 (R1): one-cycle RMS of every oscillation record stays within [0.90, 1.10] (stored waveforms;
+    iid splits only: test sets stay sealed, and the shift chain's +/-2 % gain error alone can lift a
+    1.08 pu fundamental above 1.10, which is a measurement nuisance, not a label change)."""
+    X, _ = load_waveforms(split, fast=fast_flag)
+    m = load_manifest(split, fast=fast_flag)
+    idx = m.index[m["label"] == "oscillation"].to_numpy()
+    rms = rms_one_cycle_sliding(np.asarray(X[idx], dtype=float) * LSB_PU)[..., N_CYCLE - 1:]
+    assert rms.min() > 0.90 and rms.max() < 1.10, (split, float(rms.min()), float(rms.max()))
 
 
 # ---------------------------------------------------------------------------------------------- (h)

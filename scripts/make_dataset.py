@@ -11,7 +11,7 @@ import sys
 import time
 
 from gridmon.generator.dataset import generate_split
-from gridmon.generator.synth import AA_FIR_PATH, design_aa_fir, save_aa_fir
+from gridmon.generator.synth import AA_FIR_PATH, design_aa_fir, save_aa_fir_if_changed
 from gridmon.io import data_root, load_dataset_config, reports_root, write_json
 
 
@@ -24,10 +24,11 @@ def main(argv: list[str] | None = None) -> int:
 
     cfg = load_dataset_config()
     fir = design_aa_fir(cfg["aa_fir"], fs_in=cfg["record"]["fs_synth_hz"])
-    save_aa_fir(fir, AA_FIR_PATH)
+    written = save_aa_fir_if_changed(fir, AA_FIR_PATH)  # keep committed bits if equal to 1e-12
     print(f"AA FIR: {fir['numtaps']} taps, stopband {fir['stopband_atten_db']:.1f} dB @ >= {fir['stopband_hz']:.0f} Hz, "
           f"passband ripple {fir['passband_ripple_db'][0]:+.3f}/{fir['passband_ripple_db'][1]:+.3f} dB, "
-          f"group delay {fir['group_delay_samples_in']} samples @20 kHz")
+          f"group delay {fir['group_delay_samples_in']} samples @20 kHz"
+          f" ({'written' if written else 'unchanged, committed coefficients kept'})")
 
     splits = args.splits or list(cfg["splits"])
     root = data_root(args.fast)

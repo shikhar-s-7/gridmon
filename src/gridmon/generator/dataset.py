@@ -62,11 +62,20 @@ def make_record_spec(record_id: int, label: str, seed: int, cfg: dict[str, Any],
     pre = draw_pre_event(rng_pre, cfg["nuisance"][nuisance])  # same code path for every class
     mc = cfg["margins"]
     onset = tuple(cfg["record"]["onset_s"])
+    best: tuple[float, Event, dict[str, float]] | None = None
     for attempt in range(int(cfg["max_redraws"]) + 1):
         ev = draw_event(label, rng_ev, cfg["events"], onset)  # type: ignore[arg-type]
         m = margin_metrics(pre, ev, grid_hz=mc["grid_hz"], duration=cfg["record"]["duration_s"])
         if ok_fn(label, pre, ev, m, mc):
             return RecordSpec(record_id, label, seed, pre, ev, m, attempt)
+        if label == "oscillation":
+            exc = ev_mod.osc_band_excess(m, mc)
+            if best is None or exc < best[0]:
+                best = (exc, ev, m)
+    if best is not None:
+        # D-039: the D-034 band is infeasible for this pre-event (high U_pre x high background unbalance,
+        # shift config): keep the least-violating draw (pre-event never redrawn); n_reject = max_redraws + 1.
+        return RecordSpec(record_id, label, seed, pre, best[1], best[2], attempt + 1)
     raise RuntimeError(f"record {record_id} ({label}): label margins not met after {attempt} redraws")
 
 
@@ -146,6 +155,7 @@ def generate_split(name: str, cfg: dict[str, Any], out_dir: Path, fast: bool = F
         "timeline": "group-delay compensated: sample n <-> analog time n/fs; onset ev_t0 on this timeline",
         "margin_rejection_rate": rej_rate,
         "max_abs_count": int(man["max_abs_count"].max()), "n_records_saturated": int((man["n_sat"] > 0).sum()),
+        "osc_band_fallback": int(((man["label"] == "oscillation") & (man["n_reject"] > int(cfg["max_redraws"]))).sum()),
         "runtime_s": round(runtime, 2),
     }
     write_json(out_dir / "meta.json", meta)

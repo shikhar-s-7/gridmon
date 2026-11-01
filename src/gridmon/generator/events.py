@@ -262,7 +262,12 @@ def margin_metrics(pre: PreEvent, ev: Event, grid_hz: float = 2000.0, duration: 
 
 
 def margins_ok(label: str, pre: PreEvent, ev: Event, m: dict[str, float], mc: dict[str, Any]) -> bool:
-    """Label margins of brief B5."""
+    """Label margins of brief B5 (+ D-034 oscillation band).
+
+    oscillation: depth >= 2 % and min/max over the whole record of the analytic LL fundamental
+    magnitudes (|V1 r1_k + V2 r2_k| incl. modulation, growth envelope and background unbalance; pu)
+    within [0.92, 1.08] (mm_min_ll / mm_max_ll). A rejected draw redraws the oscillation event only.
+    """
     eps = 1e-12
     if label in ("sag_bal", "sag_unbal"):
         return m["mm_min_ll_ev"] <= mc["sag_min_ll"]
@@ -277,9 +282,17 @@ def margins_ok(label: str, pre: PreEvent, ev: Event, m: dict[str, float], mc: di
         return abs(np.degrees(ev["dphi"])) >= mc["jump_min_deg"] - eps and m["mm_dv1"] <= mc["jump_max_dv1"] + eps
     if label == "freq_event":
         return abs(m["mm_df_end"]) >= mc["freq_min_df"]
-    if label == "oscillation":
-        return ev["depth"] >= mc["osc_min_depth"] - eps
+    if label == "oscillation":  # D-034: whole-record LL fundamental within [0.92, 1.08] (no dip/swell overlap)
+        lo, hi = mc["osc_ll"]
+        return (ev["depth"] >= mc["osc_min_depth"] - eps
+                and m["mm_min_ll"] >= lo and m["mm_max_ll"] <= hi)
     raise ValueError(label)
+
+
+def osc_band_excess(m: dict[str, float], mc: dict[str, Any]) -> float:
+    """D-034 band violation (pu): max(0, lo - mm_min_ll) + max(0, mm_max_ll - hi); 0 inside the band."""
+    lo, hi = mc["osc_ll"]
+    return max(0.0, lo - m["mm_min_ll"]) + max(0.0, m["mm_max_ll"] - hi)
 
 
 def event_to_record(ev: Event) -> dict[str, Any]:

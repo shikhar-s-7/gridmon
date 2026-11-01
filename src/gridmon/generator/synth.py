@@ -67,6 +67,22 @@ def save_aa_fir(fir: dict[str, Any], path: Path = AA_FIR_PATH) -> None:
     path.write_text(json.dumps(fir, indent=1), encoding="utf-8")
 
 
+def save_aa_fir_if_changed(fir: dict[str, Any], path: Path = AA_FIR_PATH, atol: float = 1e-12) -> bool:
+    """Write the design only if it differs from the stored file (same length, max |dh| > atol).
+
+    A redesign on another platform differs from the committed coefficients in the last bit (libm),
+    which would change the config hash and, rarely, an int16 count. Keeping the committed file makes
+    the coefficient bits platform-independent (docs/ENVIRONMENT.md). Returns True if written.
+    """
+    if path.exists():
+        old = json.loads(path.read_text(encoding="utf-8"))
+        a, b = np.asarray(old.get("coefficients", []), float), np.asarray(fir["coefficients"], float)
+        if a.shape == b.shape and float(np.max(np.abs(a - b))) <= atol:
+            return False
+    save_aa_fir(fir, path)
+    return True
+
+
 def load_aa_fir(path: Path = AA_FIR_PATH) -> dict[str, Any]:
     fir = json.loads(path.read_text(encoding="utf-8"))
     fir["h"] = np.asarray(fir["coefficients"], dtype=float)

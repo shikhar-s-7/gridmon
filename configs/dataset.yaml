@@ -107,4 +107,5 @@ margins:
   jump_max_dv1: 0.03
   freq_min_df: 0.25
   osc_min_depth: 0.02
+  osc_ll: [0.92, 1.08]                # D-034: oscillation LL fundamental band over the whole record
   grid_hz: 2000                       # analytic margin evaluation grid
