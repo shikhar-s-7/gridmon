@@ -126,3 +126,52 @@ Evidence tags as in B3.
   rule outputs with default thresholds; trace tolerances = max(10 x observed float32 error, floor).
 - **D-033** — 2026-11-01 — *Naive PLL diagnostic* evaluated over OBS (|f_pll - f_ref| > 1 Hz at any
   phasor-rate instant after 0.15 s), which also excludes the PLL start-up transient.
+
+## Review decisions (project lead, after session 1; PROMPT_02), 2026-11-01
+- **D-034** — 2026-11-01 — *Oscillation label margin (R1, generator).* For oscillation records the
+  analytic LL fundamental magnitudes (|V1 r1_k + V2 r2_k| incl. modulation, growth envelope and
+  background unbalance; 2 kHz analytic grid) must stay within [0.92, 1.08] pu for the whole record
+  (`margins.osc_ll`; manifest columns `mm_min_ll` / `mm_max_ll`, present since M1, are the realised
+  margin metric). A failing draw redraws ONLY the oscillation event (depth, angle amplitude, f_m,
+  sigma, and with them t0 / phi_m / phi_rel as for every other class, D-015 i) from the same
+  distributions; pre-event conditions are never redrawn. *Why:* single-label classes must be
+  mutually exclusive; an oscillation that grows into a dip/swell is a multi-event case (Stage 2).
+  Session-1 open question Q1: 124/250 val oscillation records left [0.90, 1.10] and the rules called
+  104 of them sag_bal/swell. *Decided BEFORE any test split was evaluated* (no sealed waveform had
+  been loaded, plotted or evaluated), so regenerating the sealed splits is legitimate.
+  *Effect:* oscillation rejection rate 0.73 (train) / 0.74 (val) / 0.75 (test_iid) / 0.78 (test_shift);
+  the realised parameters are conditioned on the band (train: depth median 3.3 % (2-7.2 %), sigma
+  median -0.24 /s (-1..1.8), depth x envelope at the record end 1-7.9 %, was up to 34 %).
+  *Unchanged-record check:* per-record SHA-1 of X before/after (same platform): identical for every
+  non-oscillation record of train/val/preview_iid/preview_shift (full: 4800/4800, 1500/1500, 172/172,
+  172/172; --fast likewise) and for every oscillation record accepted at its first draw (271/271,
+  77/77, 8/8, 13/13); sealed splits compared by manifest rows (all 1500 + 1500 non-oscillation rows
+  identical), not by waveforms (rule A1.4; synthesis is a deterministic function of the manifest
+  row, test_determinism). *Alternatives:* (a) keep (a standards-based monitor would also report the
+  dip/swell); (c) an oscillation check inside the dip/swell rule branch.
+- **D-035** — 2026-11-01 — *Phase jumps that transiently cross 0.90/1.10 in Urms(1/2)* (5/250 val:
+  a one-cycle window spanning the jump with U_pre near the band edge) are accepted as physical
+  behaviour of Urms(1/2) and documented as a known baseline limitation; no change. *Alternative:*
+  a minimum dip/swell duration of two refreshes (changes the IEC-style detector).
+- **D-036** — 2026-11-01 — *Frozen rules configuration for M4 = the TRAIN-tuned thresholds*, re-tuned
+  after R1 (configs/frozen_methods.yaml). After R1 the tuning keeps every default (rho_th 0.25,
+  osc_mag_pct 1.0, osc_ang_deg 1.0, osc_prom 4.0, jump_deg 5.0, df_hz 0.2; train macro-F1 0.9975;
+  dip/swell 0.90/1.10 fixed [STD]).
+- **D-037** — 2026-11-01 — *DSOGI fixed-w0 100/300 Hz ripple in f_pll accepted for Stage 1* (the rules
+  use f_dft; f_pll only enters the naive-PLL diagnostic and two ML features). A frequency-locked loop
+  is a Stage 2 option.
+- **D-038** — 2026-11-01 — *Platform-stable AA FIR file.* A redesign on Linux (this session) differs
+  from the committed Windows coefficients in the last bit of 3 taps (libm), which changes the config
+  hash. make_dataset now keeps configs/aa_fir.json when the redesign matches it to 1e-12 (rewrites
+  otherwise). The committed file now holds the Linux-designed values (the R1 data use them). The
+  int16 inputs of all 27 golden vectors were bit-identical between the Windows (session 1) and Linux
+  runs; trace values differed by <= 3e-14 (float64 libm). *Alternative:* hard-code coefficients.
+- **D-039** — 2026-11-01 — *Infeasible oscillation band (D-034 edge case).* For a few pre-event
+  draws (U_pre near 1.04 with background unbalance near 2.5 %, shift config) even the smallest
+  allowed oscillation (depth 2 %) leaves [0.92, 1.08]; no event redraw can pass. Then the
+  least-violating of the max_redraws + 1 draws is kept (pre-event unchanged, so no class-dependent
+  pre-event distribution) and flagged with n_reject = max_redraws + 1 (meta `osc_band_fallback`).
+  Occurs 0 times in the full splits (every oscillation record passes within <= 51 redraws) and once
+  in the --fast test_shift subset; such records still stay inside (0.90, 1.10) (tested).
+  *Alternatives:* redraw the pre-event (leaks class information into pre-event conditions); allow
+  depth < 2 % (violates B5); raise an error (breaks --fast).

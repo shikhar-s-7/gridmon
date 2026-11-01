@@ -1,6 +1,6 @@
 # Environment
 
-Recorded 2026-11-01 at setup.
+Recorded 2026-11-01 at setup (session 1, Windows); session 2 (Linux cloud VM) below.
 
 - OS: Windows 11 (Windows-11-10.0.26300-SP0), x86-64
 - Python: 3.12.9 (tags/v3.12.9, MSC v.1942 64 bit (AMD64)), venv in `.venv/`
@@ -45,3 +45,14 @@ tqdm==4.70.1
 tzdata==2026.6
 ```
 (`gridmon` itself is installed editable from this repo and is not listed.)
+
+## Session 2 (PROMPT_02), 2026-11-01 — Linux cloud VM
+- OS: Linux 6.18 x86-64 (4 vCPU, 15 GB RAM); Python 3.12.3 (`python3.12 -m venv .venv`).
+- `pip install -r requirements.txt` installed every pin unchanged (colorama is pure Python and
+  installs on Linux), so no pin was dropped or relaxed. numpy 2.5.4, scipy 1.18.1, scikit-learn 1.9.1,
+  pandas 3.1.0, matplotlib 3.11.2.
+- Cross-platform reproducibility: M1/M2 reproduce exactly (val macro-F1 0.933, identical confusion;
+  int16 inputs of all golden vectors bit-identical; float64 traces within 3e-14). The AA FIR redesign
+  differs from the Windows file in the last bit of 3 taps (libm); make_dataset now keeps the committed
+  file when equal to 1e-12 (D-038).
+- Runtimes (this VM): full `run_all.py` (M1-M2) ~200 s (dataset 145 s, baseline 48 s, golden 1 s).

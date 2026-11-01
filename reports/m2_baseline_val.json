@@ -16,7 +16,7 @@
     "tuned": {
       "dip_pu": 0.9,
       "swell_pu": 1.1,
-      "rho_th": 0.35,
+      "rho_th": 0.25,
       "osc_mag_pct": 1.0,
       "osc_ang_deg": 1.0,
       "osc_prom": 4.0,
@@ -28,37 +28,37 @@
       "on": "train",
       "objective": "macro-F1",
       "n_combos": 21000,
-      "train_macro_f1": 0.9412543185682624
+      "train_macro_f1": 0.9974952158309226
     }
   },
   "val": {
     "default": {
       "n": 1750,
-      "accuracy": 0.9377142857142857,
-      "macro_f1": 0.9330783424860079,
+      "accuracy": 0.9965714285714286,
+      "macro_f1": 0.9965643850631681,
       "per_class": {
         "normal": {
+          "precision": 0.9960159362549801,
+          "recall": 1.0,
+          "f1": 0.998003992015968,
+          "support": 250
+        },
+        "sag_bal": {
           "precision": 1.0,
           "recall": 1.0,
           "f1": 1.0,
           "support": 250
         },
-        "sag_bal": {
-          "precision": 0.7763975155279503,
-          "recall": 1.0,
-          "f1": 0.8741258741258742,
-          "support": 250
-        },
         "sag_unbal": {
-          "precision": 0.984251968503937,
+          "precision": 0.9881422924901185,
           "recall": 1.0,
-          "f1": 0.9920634920634921,
+          "f1": 0.9940357852882703,
           "support": 250
         },
         "swell": {
-          "precision": 0.8833922261484098,
+          "precision": 0.9920634920634921,
           "recall": 1.0,
-          "f1": 0.9380863039399624,
+          "f1": 0.9960159362549801,
           "support": 250
         },
         "phase_jump": {
@@ -75,8 +75,8 @@
         },
         "oscillation": {
           "precision": 1.0,
-          "recall": 0.584,
-          "f1": 0.7373737373737373,
+          "recall": 0.996,
+          "f1": 0.9979959919839679,
           "support": 250
         }
       },
@@ -146,20 +146,20 @@
             0
           ],
           [
-            0,
-            72,
             1,
-            31,
             0,
             0,
-            146
+            0,
+            0,
+            0,
+            249
           ]
         ],
         "rows": "true",
         "cols": "predicted"
       },
       "false_alarm_rate": 0.0,
-      "miss_rate": 0.0,
+      "miss_rate": 0.0006666666666666666,
       "critical_confusions": {
         "phase_jump->freq_event": 0,
         "freq_event->phase_jump": 0,
@@ -170,19 +170,19 @@
     },
     "tuned": {
       "n": 1750,
-      "accuracy": 0.9377142857142857,
-      "macro_f1": 0.9331421665058713,
+      "accuracy": 0.9965714285714286,
+      "macro_f1": 0.9965643850631681,
       "per_class": {
         "normal": {
-          "precision": 1.0,
+          "precision": 0.9960159362549801,
           "recall": 1.0,
-          "f1": 1.0,
+          "f1": 0.998003992015968,
           "support": 250
         },
         "sag_bal": {
-          "precision": 0.7739938080495357,
+          "precision": 1.0,
           "recall": 1.0,
-          "f1": 0.8726003490401396,
+          "f1": 1.0,
           "support": 250
         },
         "sag_unbal": {
@@ -192,9 +192,9 @@
           "support": 250
         },
         "swell": {
-          "precision": 0.8833922261484098,
+          "precision": 0.9920634920634921,
           "recall": 1.0,
-          "f1": 0.9380863039399624,
+          "f1": 0.9960159362549801,
           "support": 250
         },
         "phase_jump": {
@@ -211,8 +211,8 @@
         },
         "oscillation": {
           "precision": 1.0,
-          "recall": 0.584,
-          "f1": 0.7373737373737373,
+          "recall": 0.996,
+          "f1": 0.9979959919839679,
           "support": 250
         }
       },
@@ -282,20 +282,20 @@
             0
           ],
           [
-            0,
-            73,
-            0,
-            31,
+            1,
             0,
             0,
-            146
+            0,
+            0,
+            0,
+            249
           ]
         ],
         "rows": "true",
         "cols": "predicted"
       },
       "false_alarm_rate": 0.0,
-      "miss_rate": 0.0,
+      "miss_rate": 0.0006666666666666666,
       "critical_confusions": {
         "phase_jump->freq_event": 0,
         "freq_event->phase_jump": 0,
@@ -308,8 +308,8 @@
   "train": {
     "default": {
       "n": 5600,
-      "accuracy": 0.9444642857142858,
-      "macro_f1": 0.9412157668076825,
+      "accuracy": 0.9975,
+      "macro_f1": 0.9974952158309226,
       "per_class": {
         "normal": {
           "precision": 1.0,
@@ -318,21 +318,21 @@
           "support": 800
         },
         "sag_bal": {
-          "precision": 0.7802734375,
+          "precision": 0.99875,
           "recall": 0.99875,
-          "f1": 0.8760964912280702,
+          "f1": 0.99875,
           "support": 800
         },
         "sag_unbal": {
-          "precision": 0.9900990099009901,
+          "precision": 0.9925558312655087,
           "recall": 1.0,
-          "f1": 0.9950248756218906,
+          "f1": 0.9962640099626401,
           "support": 800
         },
         "swell": {
-          "precision": 0.9111617312072893,
+          "precision": 0.9913258983890955,
           "recall": 1.0,
-          "f1": 0.9535160905840286,
+          "f1": 0.9956440572495334,
           "support": 800
         },
         "phase_jump": {
@@ -349,8 +349,8 @@
         },
         "oscillation": {
           "precision": 1.0,
-          "recall": 0.62875,
-          "f1": 0.7720644666155027,
+          "recall": 1.0,
+          "f1": 1.0,
           "support": 800
         }
       },
@@ -421,12 +421,12 @@
           ],
           [
             0,
-            224,
-            2,
-            71,
             0,
             0,
-            503
+            0,
+            0,
+            0,
+            800
           ]
         ],
         "rows": "true",
@@ -444,8 +444,8 @@
     },
     "tuned": {
       "n": 5600,
-      "accuracy": 0.9444642857142858,
-      "macro_f1": 0.9412543185682624,
+      "accuracy": 0.9975,
+      "macro_f1": 0.9974952158309226,
       "per_class": {
         "normal": {
           "precision": 1.0,
@@ -454,21 +454,21 @@
           "support": 800
         },
         "sag_bal": {
-          "precision": 0.7789678675754625,
-          "recall": 1.0,
-          "f1": 0.8757525998905309,
+          "precision": 0.99875,
+          "recall": 0.99875,
+          "f1": 0.99875,
           "support": 800
         },
         "sag_unbal": {
-          "precision": 0.9925465838509316,
-          "recall": 0.99875,
-          "f1": 0.995638629283489,
+          "precision": 0.9925558312655087,
+          "recall": 1.0,
+          "f1": 0.9962640099626401,
           "support": 800
         },
         "swell": {
-          "precision": 0.9111617312072893,
+          "precision": 0.9913258983890955,
           "recall": 1.0,
-          "f1": 0.9535160905840286,
+          "f1": 0.9956440572495334,
           "support": 800
         },
         "phase_jump": {
@@ -485,8 +485,8 @@
         },
         "oscillation": {
           "precision": 1.0,
-          "recall": 0.62875,
-          "f1": 0.7720644666155027,
+          "recall": 1.0,
+          "f1": 1.0,
           "support": 800
         }
       },
@@ -512,8 +512,8 @@
           ],
           [
             0,
-            800,
-            0,
+            799,
+            1,
             0,
             0,
             0,
@@ -521,8 +521,8 @@
           ],
           [
             0,
-            1,
-            799,
+            0,
+            800,
             0,
             0,
             0,
@@ -557,12 +557,12 @@
           ],
           [
             0,
-            225,
-            1,
-            71,
             0,
             0,
-            503
+            0,
+            0,
+            0,
+            800
           ]
         ],
         "rows": "true",
@@ -607,9 +607,9 @@
         "p90_abs_ms": 133.18650159
       },
       "oscillation": {
-        "n": 146,
-        "median_ms": 50.59458694999999,
-        "p90_abs_ms": 68.17174869999998
+        "n": 249,
+        "median_ms": 48.3989387,
+        "p90_abs_ms": 65.37445164000003
       }
     },
     "tuned": {
@@ -639,17 +639,17 @@
         "p90_abs_ms": 133.18650159
       },
       "oscillation": {
-        "n": 146,
-        "median_ms": 50.59458694999999,
-        "p90_abs_ms": 68.17174869999998
+        "n": 249,
+        "median_ms": 48.3989387,
+        "p90_abs_ms": 65.37445164000003
       }
     }
   },
   "oscillation_dip_swell_overlap_val": {
     "n_oscillation": 250,
-    "analytic_min_ll_below_0.90": 94,
-    "analytic_max_ll_above_1.10": 94,
-    "either": 124
+    "analytic_min_ll_below_0.90": 0,
+    "analytic_max_ll_above_1.10": 0,
+    "either": 0
   },
   "diagnostics": {
     "pre_event_only_control": {
@@ -802,9 +802,9 @@
             "rate": 0.39375
           },
           "oscillation": {
-            "flagged": 347,
+            "flagged": 227,
             "n": 800,
-            "rate": 0.43375
+            "rate": 0.28375
           }
         },
         "by_jump_deg": {
@@ -858,9 +858,9 @@
             "rate": 0.416
           },
           "oscillation": {
-            "flagged": 105,
+            "flagged": 68,
             "n": 250,
-            "rate": 0.42
+            "rate": 0.272
           }
         },
         "by_jump_deg": {
@@ -924,7 +924,7 @@
         "tol": 1e-05,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 1.7109771044410138e-07,
+        "max_abs_diff": 1.65257745710079e-07,
         "n_over_tol": 0
       },
       "urms_max_2": {
@@ -980,7 +980,7 @@
         "tol": 1e-05,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 3.4549218308477236e-07,
+        "max_abs_diff": 3.3903097773624324e-07,
         "n_over_tol": 0
       },
       "v1_end_rel": {
@@ -1012,7 +1012,7 @@
         "tol": 1e-05,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 2.3126494592181496e-08,
+        "max_abs_diff": 2.3126494590229932e-08,
         "n_over_tol": 0
       },
       "rho": {
@@ -1020,7 +1020,7 @@
         "tol": 0.0005,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 8.687214618152694e-05,
+        "max_abs_diff": 8.687214606606375e-05,
         "n_over_tol": 0
       },
       "j_max_deg": {
@@ -1028,14 +1028,14 @@
         "tol": 0.001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 4.349975522099925e-05,
+        "max_abs_diff": 5.47467718448047e-05,
         "n_over_tol": 0
       },
       "j_sign": {
         "unit": "1",
         "tol": 0.0,
         "rel_tol": 0.0,
-        "n_compared": 1165,
+        "n_compared": 1160,
         "max_abs_diff": 0.0,
         "n_over_tol": 0
       },
@@ -1044,7 +1044,7 @@
         "tol": 0.0001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 3.822976360368102e-06,
+        "max_abs_diff": 3.960064717034584e-06,
         "n_over_tol": 0
       },
       "df_end": {
@@ -1052,7 +1052,7 @@
         "tol": 0.0001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 3.8801016930285065e-06,
+        "max_abs_diff": 4.011157274206624e-06,
         "n_over_tol": 0
       },
       "df_max": {
@@ -1060,7 +1060,7 @@
         "tol": 0.0001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 5.243502215535045e-06,
+        "max_abs_diff": 5.353321725465321e-06,
         "n_over_tol": 0
       },
       "rocof_max": {
@@ -1068,7 +1068,7 @@
         "tol": 0.001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 2.1435596941898893e-05,
+        "max_abs_diff": 1.4569710252487766e-05,
         "n_over_tol": 0
       },
       "t_rocof_02": {
@@ -1083,8 +1083,8 @@
         "unit": "Hz/s",
         "tol": 0.001,
         "rel_tol": 0.0,
-        "n_compared": 1740,
-        "max_abs_diff": 6.2442688006925096e-06,
+        "n_compared": 1738,
+        "max_abs_diff": 3.315053413111002e-06,
         "n_over_tol": 0
       },
       "dfpll_max": {
@@ -1100,7 +1100,7 @@
         "tol": 0.0021,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 0.0010000242237001578,
+        "max_abs_diff": 0.0010000058896839636,
         "n_over_tol": 0
       },
       "env_mag_amp_pct": {
@@ -1108,14 +1108,14 @@
         "tol": 0.001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 1.5259169823700347e-05,
+        "max_abs_diff": 1.525916982725306e-05,
         "n_over_tol": 0
       },
       "env_mag_freq": {
         "unit": "Hz",
         "tol": 0.0,
         "rel_tol": 0.0,
-        "n_compared": 1471,
+        "n_compared": 1472,
         "max_abs_diff": 0.0,
         "n_over_tol": 0
       },
@@ -1123,8 +1123,8 @@
         "unit": "1",
         "tol": 0.05,
         "rel_tol": 0.01,
-        "n_compared": 1471,
-        "max_abs_diff": 0.0149508370014928,
+        "n_compared": 1472,
+        "max_abs_diff": 0.10591092262228585,
         "n_over_tol": 0
       },
       "env_ang_amp_deg": {
@@ -1132,14 +1132,14 @@
         "tol": 0.001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 9.070259411150805e-05,
+        "max_abs_diff": 8.840781528765551e-05,
         "n_over_tol": 0
       },
       "env_ang_freq": {
         "unit": "Hz",
         "tol": 0.0,
         "rel_tol": 0.0,
-        "n_compared": 1317,
+        "n_compared": 1316,
         "max_abs_diff": 0.0,
         "n_over_tol": 0
       },
@@ -1147,8 +1147,8 @@
         "unit": "1",
         "tol": 0.05,
         "rel_tol": 0.01,
-        "n_compared": 1317,
-        "max_abs_diff": 0.10660974533755052,
+        "n_compared": 1316,
+        "max_abs_diff": 0.09530908872930155,
         "n_over_tol": 0
       },
       "env_mag_rms_pct": {
@@ -1164,7 +1164,7 @@
         "tol": 0.001,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 3.962959032728641e-05,
+        "max_abs_diff": 3.9495479876472395e-05,
         "n_over_tol": 0
       },
       "thd_first": {
@@ -1180,7 +1180,7 @@
         "tol": 1e-06,
         "rel_tol": 0.0,
         "n_compared": 1750,
-        "max_abs_diff": 2.7686966656836898e-08,
+        "max_abs_diff": 2.768696666377579e-08,
         "n_over_tol": 0
       },
       "thd_max": {
@@ -1194,14 +1194,14 @@
     }
   },
   "runtimes": {
-    "features_train_s": 14.26,
-    "features_train_ms_per_record": 2.546,
-    "features_val_s": 4.39,
-    "features_val_ms_per_record": 2.507,
-    "rules_val_ms_per_record": 0.0008,
-    "tuning_s": 4.82,
-    "control_s": 5.62,
-    "float32_check_s": 3.89,
-    "total_s": 36.3
+    "features_train_s": 20.25,
+    "features_train_ms_per_record": 3.616,
+    "features_val_s": 5.97,
+    "features_val_ms_per_record": 3.413,
+    "rules_val_ms_per_record": 0.0016,
+    "tuning_s": 6.97,
+    "control_s": 6.52,
+    "float32_check_s": 4.37,
+    "total_s": 48.3
   }
 }

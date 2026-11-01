@@ -129,8 +129,8 @@
     "file": "19_val_oscillation_0000.npz",
     "source": "val record 0",
     "true_label": "oscillation",
-    "rule_label": "swell",
-    "rule_reason": 3
+    "rule_label": "oscillation",
+    "rule_reason": 4
   },
   {
     "file": "20_val_oscillation_0003.npz",

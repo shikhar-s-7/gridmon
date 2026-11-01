@@ -10,11 +10,11 @@
       "freq_event": 800,
       "oscillation": 800
     },
-    "runtime_s": 35.93,
+    "runtime_s": 69.83,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
-      "oscillation": 0.0,
+      "oscillation": 0.7292724196277496,
       "phase_jump": 0.0,
       "sag_bal": 0.0,
       "sag_unbal": 0.0012484394506866417,
@@ -22,7 +22,7 @@
     },
     "max_abs_count": 1417,
     "n_records_saturated": 0,
-    "config_hash": "01a3e00eafc2d25d"
+    "config_hash": "c5de516f0be89437"
   },
   "val": {
     "n_records": 1750,
@@ -35,11 +35,11 @@
       "freq_event": 250,
       "oscillation": 250
     },
-    "runtime_s": 11.24,
+    "runtime_s": 21.26,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
-      "oscillation": 0.0,
+      "oscillation": 0.7430626927029804,
       "phase_jump": 0.0,
       "sag_bal": 0.00398406374501992,
       "sag_unbal": 0.0,
@@ -47,7 +47,7 @@
     },
     "max_abs_count": 1420,
     "n_records_saturated": 0,
-    "config_hash": "01a3e00eafc2d25d"
+    "config_hash": "c5de516f0be89437"
   },
   "test_iid": {
     "n_records": 1750,
@@ -60,11 +60,11 @@
       "freq_event": 250,
       "oscillation": 250
     },
-    "runtime_s": 11.18,
+    "runtime_s": 20.24,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
-      "oscillation": 0.0,
+      "oscillation": 0.7492477432296891,
       "phase_jump": 0.0,
       "sag_bal": 0.0,
       "sag_unbal": 0.007936507936507936,
@@ -72,7 +72,7 @@
     },
     "max_abs_count": 1415,
     "n_records_saturated": 0,
-    "config_hash": "01a3e00eafc2d25d"
+    "config_hash": "c5de516f0be89437"
   },
   "test_shift": {
     "n_records": 1750,
@@ -85,11 +85,11 @@
       "freq_event": 250,
       "oscillation": 250
     },
-    "runtime_s": 11.61,
+    "runtime_s": 23.38,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
-      "oscillation": 0.0,
+      "oscillation": 0.7820401046207498,
       "phase_jump": 0.0,
       "sag_bal": 0.0,
       "sag_unbal": 0.0,
@@ -97,7 +97,7 @@
     },
     "max_abs_count": 1879,
     "n_records_saturated": 0,
-    "config_hash": "01a3e00eafc2d25d"
+    "config_hash": "c5de516f0be89437"
   },
   "preview_iid": {
     "n_records": 200,
@@ -110,11 +110,11 @@
       "freq_event": 28,
       "oscillation": 28
     },
-    "runtime_s": 1.24,
+    "runtime_s": 2.78,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
-      "oscillation": 0.0,
+      "oscillation": 0.7985611510791367,
       "phase_jump": 0.0,
       "sag_bal": 0.0,
       "sag_unbal": 0.0,
@@ -122,7 +122,7 @@
     },
     "max_abs_count": 1387,
     "n_records_saturated": 0,
-    "config_hash": "01a3e00eafc2d25d"
+    "config_hash": "c5de516f0be89437"
   },
   "preview_shift": {
     "n_records": 200,
@@ -135,11 +135,11 @@
       "freq_event": 28,
       "oscillation": 28
     },
-    "runtime_s": 1.26,
+    "runtime_s": 2.05,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
-      "oscillation": 0.0,
+      "oscillation": 0.711340206185567,
       "phase_jump": 0.0,
       "sag_bal": 0.0,
       "sag_unbal": 0.0,
@@ -147,7 +147,7 @@
     },
     "max_abs_count": 1686,
     "n_records_saturated": 0,
-    "config_hash": "01a3e00eafc2d25d"
+    "config_hash": "c5de516f0be89437"
   },
-  "total_runtime_s": 72.9
+  "total_runtime_s": 139.7
 }

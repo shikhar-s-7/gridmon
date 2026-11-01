@@ -2,8 +2,9 @@
 
 ## 1. Status
 - Completed: setup, **M1** (generator + datasets), **M2** (baseline on train/val, DSP spec, golden vectors).
-- Commits: M1 `ae6a09a`, M2 `703f398` (this handoff is the next commit). Data meta.json records
-  generator commit `ae6a09a+dirty` (generator code unchanged since M1; generation is deterministic).
+- Commits (hashes updated in session 2; the history was rewritten before the first push): M1 `b6a7ed7`,
+  M2 `f3b97ba`, this handoff `6e87145`. Session-1 data meta.json recorded a pre-rewrite hash with
+  `+dirty` (generator code unchanged since M1; generation is deterministic).
 - Runtimes (Windows 11 laptop CPU, Python 3.12.9): `run_all.py --fast` 24.3 s; full `run_all.py` 116.1 s
   (dataset 76.9 s, baseline 36.3 s, golden 0.7 s); `pytest` 18 s.
 - No v0.1 work existed, so no migration (D-021).

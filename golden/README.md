@@ -26,7 +26,7 @@ Total size 2.05 MB. Rule outputs use the DEFAULT thresholds of configs/baseline.
 | 16_val_freq_event_0004.npz | val record 4 — freq_event | freq_event (7) |
 | 17_val_freq_event_0005.npz | val record 5 — freq_event | freq_event (7) |
 | 18_val_freq_event_0006.npz | val record 6 — freq_event | freq_event (7) |
-| 19_val_oscillation_0000.npz | val record 0 — oscillation | swell (3) |
+| 19_val_oscillation_0000.npz | val record 0 — oscillation | oscillation (4) |
 | 20_val_oscillation_0003.npz | val record 3 — oscillation | oscillation (4) |
 | 21_val_oscillation_0007.npz | val record 7 — oscillation | oscillation (4) |
 | 22_u1_clean_nominal.npz | unit signal (noise-free, nuisances off, quantised) — clean nominal 50 Hz, 1.0 pu | normal (0) |
@@ -50,18 +50,18 @@ difference), set to max(10 x the float32-numpy error observed on these files, a 
 | `urms` | [3, 99] | f8 | pu | Urms(1/2), value k over samples [50k, 50k+99] | 1.0e-05 | 1.71e-07 |
 | `v1` | [1000] | c16 | pu | positive-sequence phasor at n = 5m+4 (NaN for m < 19) | 1.0e-05 | 1.87e-07 |
 | `v2` | [1000] | c16 | pu | negative-sequence phasor (NaN for m < 19) | 1.0e-05 | 1.39e-07 |
-| `f_dft` | [1000] | f8 | Hz | DFT frequency after one-cycle MA (NaN for m < 58) | 1.0e-04 | 2.93e-06 |
-| `rocof` | [1000] | f8 | Hz/s | LS slope over 100 phasor samples, unmasked (NaN for m < 157) | 1.0e-03 | 2.11e-05 |
-| `J` | [1000] | f8 | rad | jump metric (NaN for m < 59); compare wrapped | 1.0e-04 | 1.26e-06 |
+| `f_dft` | [1000] | f8 | Hz | DFT frequency after one-cycle MA (NaN for m < 58) | 1.0e-04 | 2.44e-06 |
+| `rocof` | [1000] | f8 | Hz/s | LS slope over 100 phasor samples, unmasked (NaN for m < 157) | 1.0e-03 | 1.28e-05 |
+| `J` | [1000] | f8 | rad | jump metric (NaN for m < 59); compare wrapped | 1.0e-04 | 1.02e-06 |
 | `f_pll` | [1000] | f8 | Hz | DSOGI-PLL frequency at n = 5m+4 (all m) | 3.0e-03 | 1.84e-04 |
 | `fmask` | [1000] | bool | - | f_dft samples excluded around a detected jump (exact unless j_max_deg is within 1e-3 deg of the 3 deg detection level) | exact |  |
 | `rmask` | [1000] | bool | - | ROCOF samples excluded (window touches fmask) | exact |  |
 | `e_mag` | [100] | f8 | 1 | abs(V1) block means / v1_ref (NaN for p < 2) | 1.0e-05 | 2.92e-07 |
 | `e_ang` | [100] | f8 | rad | de-rotated unwrapped angle block means (NaN for p < 2) | 1.8e-04 | 1.80e-05 |
-| `r_mag` | [100] | f8 | 1 | e_mag minus centred running median | 1.0e-05 | 3.78e-07 |
-| `r_ang` | [100] | f8 | rad | e_ang minus centred running median | 1.0e-04 | 1.66e-06 |
+| `r_mag` | [100] | f8 | 1 | e_mag minus centred running median | 1.0e-05 | 3.17e-07 |
+| `r_ang` | [100] | f8 | rad | e_ang minus centred running median | 1.0e-04 | 1.65e-06 |
 | `S_mag` | [5, 28] | f8 | % | envelope spectra of 100*r_mag, windows q x f = 3..30 Hz | 1.0e-03 | 9.67e-06 |
-| `S_ang` | [5, 28] | f8 | deg | envelope spectra of degrees(r_ang) | 1.0e-03 | 6.96e-05 |
+| `S_ang` | [5, 28] | f8 | deg | envelope spectra of degrees(r_ang) | 1.0e-03 | 6.39e-05 |
 | `thd` | [10] | f8 | 1 | THD per 500-sample window (mean over channels) | 1.0e-06 | 2.01e-08 |
 | `features` | [37] | f8 | mixed | feature vector in feature_names order (docs/FEATURES.md) | per feature: docs/FEATURES.md |  |
 | `aux` | [8] | f8 | s / 1 | auxiliary outputs in aux_names order (onset times, spectral gaps) | - |  |
