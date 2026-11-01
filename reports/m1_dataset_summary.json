@@ -10,7 +10,7 @@
       "freq_event": 800,
       "oscillation": 800
     },
-    "runtime_s": 36.13,
+    "runtime_s": 35.93,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
@@ -35,7 +35,7 @@
       "freq_event": 250,
       "oscillation": 250
     },
-    "runtime_s": 14.5,
+    "runtime_s": 11.24,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
@@ -60,7 +60,7 @@
       "freq_event": 250,
       "oscillation": 250
     },
-    "runtime_s": 17.71,
+    "runtime_s": 11.18,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
@@ -85,7 +85,7 @@
       "freq_event": 250,
       "oscillation": 250
     },
-    "runtime_s": 14.88,
+    "runtime_s": 11.61,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
@@ -110,7 +110,7 @@
       "freq_event": 28,
       "oscillation": 28
     },
-    "runtime_s": 1.89,
+    "runtime_s": 1.24,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
@@ -135,7 +135,7 @@
       "freq_event": 28,
       "oscillation": 28
     },
-    "runtime_s": 1.58,
+    "runtime_s": 1.26,
     "margin_rejection_rate": {
       "freq_event": 0.0,
       "normal": 0.0,
@@ -149,5 +149,5 @@
     "n_records_saturated": 0,
     "config_hash": "01a3e00eafc2d25d"
   },
-  "total_runtime_s": 87.0
+  "total_runtime_s": 72.9
 }

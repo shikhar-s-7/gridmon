@@ -1,0 +1,109 @@
+{
+  "record": {
+    "n_samples": 5000,
+    "channels": 3,
+    "fs_hz": 5000,
+    "int16_record_bytes": 30000
+  },
+  "blocks": {
+    "scale_to_pu": {
+      "mac": 0,
+      "ops": 15000,
+      "tf": 0,
+      "ram": 0,
+      "const": 0,
+      "note": "int16 -> float, x LSB (done on the fly by each consumer)"
+    },
+    "urms_half": {
+      "mac": 29700,
+      "ops": 1188,
+      "tf": 297,
+      "ram": 64,
+      "const": 0,
+      "note": "direct 100-sample sums per window; per-channel min/max, threshold counters"
+    },
+    "dft_phasors": {
+      "mac": 588600,
+      "ops": 5886,
+      "tf": 0,
+      "ram": 24,
+      "const": 800,
+      "note": "non-recursive one-cycle DFT at 1 kHz, 100-entry twiddle table"
+    },
+    "sequence_mag_angle": {
+      "mac": 15696,
+      "ops": 9810,
+      "tf": 2943,
+      "ram": 11772,
+      "const": 0,
+      "note": "V1, V2; store |V1|, angV1, |V2|/|V1| (3 x 981 floats); V2 kept only for REF and at running argmin"
+    },
+    "f_dft_J": {
+      "mac": 19801,
+      "ops": 5886,
+      "tf": 0,
+      "ram": 3924,
+      "const": 0,
+      "note": "lag-20 angle difference, 20-tap moving average (direct), J from the angle buffer; f_dft buffer kept for the jump-masked second pass"
+    },
+    "rocof": {
+      "mac": 84300,
+      "ops": 1962,
+      "tf": 0,
+      "ram": 8,
+      "const": 400,
+      "note": "100-tap least-squares slope kernel (D-016), second pass after the jump mask"
+    },
+    "dsogi_pll": {
+      "mac": 160000,
+      "ops": 40000,
+      "tf": 20000,
+      "ram": 48,
+      "const": 0,
+      "note": "4 DF2T biquads, pos.-seq., sin/cos/sqrt/div per sample; f_pll features accumulated on the fly after REF"
+    },
+    "envelope": {
+      "mac": 29962,
+      "ops": 22400,
+      "tf": 280,
+      "ram": 2804,
+      "const": 1000,
+      "note": "block means, 21-sample running median (insertion sort), 5 Hann windows x 28 bins"
+    },
+    "thd": {
+      "mac": 450000,
+      "ops": 1350,
+      "tf": 60,
+      "ram": 160,
+      "const": 4000,
+      "note": "direct DFT at bins 5h, h = 1..15, 500-entry twiddle table"
+    },
+    "features_and_rules": {
+      "mac": 0,
+      "ops": 11972,
+      "tf": 50,
+      "ram": 2876,
+      "const": 0,
+      "note": "reductions; median buffers for REF (|V1|, u2, f_dft, Re/Im V2)"
+    }
+  },
+  "totals": {
+    "mac": 1378059,
+    "ops": 115454,
+    "tf": 23630,
+    "ram": 21680,
+    "const": 6200,
+    "total_ops": 1517143,
+    "ram_kb": 21.17,
+    "const_kb": 6.05
+  },
+  "c2000_notes": [
+    "C28x has 16-bit chars: sizeof(float) = 2 words; byte figures here are 8-bit bytes.",
+    "Use float only (EABI double is 64-bit; F2837x has no FPU64): build with -Wdouble-promotion.",
+    "TMU (F2837xD/F28004x/F28P65x) accelerates sin/cos/atan2/sqrt/div; without it ~5000 x 4 + ~3000 libm calls per record.",
+    "Estimated 1.5 M ops x ~2-4 cycles -> ~3-6 M cycles (~15-30 ms at 200 MHz) per record in background context.",
+    "Running median (21 samples, 196 times) uses an insertion sort on a 21-float scratch buffer: bounded, no malloc.",
+    "Second pass over the phasor-rate buffers (jump mask before ROCOF/df features) needs the 4 KB f_dft buffer."
+  ],
+  "flags": []
+}

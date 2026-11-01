@@ -76,3 +76,53 @@ Evidence tags as in B3.
 - **D-020** — 2026-11-01 — *Preview splits*: 200 records each with round-robin labels
   (29 or 28 per class), used only for the iid-vs-shift nuisance figure.
 - **D-021** — 2026-11-01 — No v0.1 work existed in this folder: no migration was needed.
+
+## M2 (baseline) decisions
+- **D-022** — 2026-11-01 — *SOGI discretisation and PLL start-up.* Tustin with prewarping at 50 Hz
+  (w = (2/Ts) tan(w0 Ts/2)) so the discrete SOGI resonates exactly at 50 Hz; DF-II-transposed
+  biquads. PLL angle initialised to atan2(v_beta[0], v_alpha[0]); all other states 0. Clean-input
+  lock in 68 ms (< 150 ms). *Alternatives:* plain Tustin (0.03 deg phase error at 50 Hz), theta = 0
+  (slower, start-dependent lock).
+- **D-023** — 2026-11-01 — *Bollen ratio frame.* V2 is de-rotated by the reference frequency
+  (exp(-j 2 pi (f_ref - 50) t)) before taking V2_ref (component-wise median over REF) and the
+  difference at m* = argmin |V1| over OBS. *Why:* the DFT phasors rotate at (f - 50) Hz; without
+  de-rotation the background V2 would bias rho by up to ~0.2 in the shift set (f_pre up to 50.5 Hz).
+- **D-024** — 2026-11-01 — *Envelope details.* e_mag is normalised by v1_ref and reported in %;
+  e_ang in deg. Spectral windows start at the first valid envelope sample (p = 2 + 10q, q = 0..4),
+  so the last 80 ms are not covered; this avoids the truncated running-median edge at the record
+  end, where a monotone trend (frequency ramp) leaves a residual of up to ~5 samples x slope.
+  *Alternative:* end-aligned windows (cover the end, but false oscillation peaks on freq events).
+- **D-025** — 2026-11-01 — *j_sign* = sign of J at the first OBS sample with |J| >= 0.5 max|J| (the
+  first lobe carries the jump sign); the sign at argmax |J| is arbitrary because a step gives
+  +dphi and -dphi lobes of almost equal size.
+- **D-026** — 2026-11-01 — *Feature windows and frequency masking.* REF = n <= 749, OBS = n >= 750,
+  END = last 100 phasor samples. f_pll features use OBS only (excludes PLL start-up); they are not
+  jump-masked (they document the PLL transient, B7.4). The frequency mask uses a fixed 3 deg
+  detection level (independent of the tunable 5 deg rule threshold; between the 2 deg normal
+  hard-negative maximum and the 6 deg jump minimum), +/- 40 phasor samples around argmax |J|;
+  ROCOF values whose 100-sample window touches the mask are excluded; if END is fully masked,
+  f_end falls back to the unmasked mean.
+- **D-027** — 2026-11-01 — *float32 tolerance semantics.* Continuous features: absolute tolerances
+  (FEATURES.md), ~10-100x the observed float32 error. Argmax-type features are compared only when
+  well defined: env_*_freq/prom when the top-2 spectral cells differ by >= 0.1 % and the peak is
+  >= 0.01 % / 0.01 deg (float32 rounding of a tens-of-rad unwrapped angle limits the angle envelope
+  to ~1e-4 deg); prominences also get a 1 % relative term; j_sign when j_max_deg >= 1. The same
+  semantics apply to the C SIL check (M6).
+- **D-028** — 2026-11-01 — *Feature set:* the B7.2 minimum plus v1_end_rel, u2_end, rocof_end,
+  env_mag_rms_pct, env_ang_rms_deg (37 features). Onset times and spectral gaps are auxiliary
+  outputs, never ML features.
+- **D-029** — 2026-11-01 — *Rule details.* Dip/swell use "any Urms(1/2) value beyond the threshold";
+  the IEC hysteresis end condition affects duration only and is not needed for the label. The
+  jump rule's "|V1| change" = max(|v1_min_rel - 1|, |v1_max_rel - 1|) over OBS. Onset estimate =
+  first detection time of the firing detector (indicative; frequency events are detected ~70 ms late).
+- **D-030** — 2026-11-01 — *Threshold tuning:* exhaustive grid (21,000 combinations, configs/baseline.yaml)
+  maximising TRAIN macro-F1; ties broken towards the defaults (smallest sum |log(th/default)|) to
+  avoid drifting to grid edges on plateaus. Dip/swell thresholds fixed at 0.90/1.10 [STD].
+- **D-031** — 2026-11-01 — *Pre-event-only control:* the same feature function on the first 750
+  samples with OBS = REF (ROCOF and envelope spectra become NaN); sklearn
+  HistGradientBoostingClassifier with default hyper-parameters, random_state 0; all-NaN columns dropped.
+- **D-032** — 2026-11-01 — *Golden vectors:* the first 3 val records per class in val order + 6
+  noise-free unit signals (theta0 = 0.4 rad; sags and jump at t0 = 0.3013 s; ramp from 0.2 s);
+  rule outputs with default thresholds; trace tolerances = max(10 x observed float32 error, floor).
+- **D-033** — 2026-11-01 — *Naive PLL diagnostic* evaluated over OBS (|f_pll - f_ref| > 1 Hz at any
+  phasor-rate instant after 0.15 s), which also excludes the PLL start-up transient.

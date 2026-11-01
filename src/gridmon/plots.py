@@ -161,4 +161,102 @@ def m1_figures(fast: bool = False) -> list[Path]:
     return [m1_examples_per_class(fast), m1_param_distributions(fast), m1_shift_preview(fast)]
 
 
-__all__ = ["m1_figures", "pd"]
+# ----------------------------------------------------------------------------------------------
+# M2
+# ----------------------------------------------------------------------------------------------
+
+def m2_signal_chain_examples(examples: list[dict], fast: bool = False) -> Path:
+    """examples: dicts with keys title, t0, v [3, n], urms [3, K], v1, v2, f_dft, f_pll, J (phasor rate), rule."""
+    _style()
+    from .dsp.rms import urms_end_samples
+    from .dsp.phasor import phasor_sample_index
+    fig, axes = plt.subplots(5, len(examples), figsize=(4.0 * len(examples), 11), sharex=True)
+    for c, ex in enumerate(examples):
+        t = np.arange(ex["v"].shape[-1]) / FS
+        tk = (urms_end_samples(ex["urms"].shape[-1]) - 49) / FS
+        tm = phasor_sample_index(len(ex["v1"])) / FS
+        ax = axes[:, c]
+        for k, name in enumerate(("v_ab", "v_bc", "v_ca")):
+            ax[0].plot(t, ex["v"][k], color=CH_COLORS[k], lw=0.4, label=name)
+            ax[1].plot(tk, ex["urms"][k], color=CH_COLORS[k], lw=0.9, label=name)
+        ax[1].axhline(0.9, color=INK2, ls=":", lw=0.6)
+        ax[2].plot(tm, np.abs(ex["v1"]), color=C1, label="|V1|")
+        ax[2].plot(tm, np.abs(ex["v2"]), color=C2, label="|V2|")
+        ax[3].plot(tm, ex["f_dft"], color=C1, label="f_dft")
+        ax[3].plot(tm, ex["f_pll"], color=C2, lw=0.7, label="f_pll (DSOGI)")
+        ax[4].plot(tm, np.degrees(ex["J"]), color=C1, label="J")
+        ax[4].axhline(5, color=INK2, ls=":", lw=0.6)
+        ax[4].axhline(-5, color=INK2, ls=":", lw=0.6)
+        for a in ax:
+            a.axvline(ex["t0"], color=INK, ls="--", lw=0.7)
+        ax[0].set_title(f"{ex['title']}\nrule: {ex['rule']}", loc="left")
+        ax[3].set_ylim(np.nanmin(ex["f_dft"][150:]) - 0.6, np.nanmax(ex["f_dft"][150:]) + 0.6)
+        if c == 0:
+            for a, lab in zip(ax, ("v (pu peak)", "Urms(1/2) (pu)", "|V| (pu)", "f (Hz)", "J (deg)")):
+                a.set_ylabel(lab)
+            ax[0].legend(loc="lower left", ncol=3, fontsize=6)
+            for a in ax[2:]:
+                a.legend(loc="upper right", fontsize=6)
+        ax[-1].set_xlabel("time (s)")
+    fig.suptitle("M2: signal chain on val records (dashed = true onset, shown for reference only)",
+                 x=0.01, ha="left", fontsize=10, fontweight="bold")
+    fig.tight_layout()
+    out = _fig_dir(fast) / "m2_signal_chain_examples.png"
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    return out
+
+
+def m2_confusion(rep_default: dict, rep_tuned: dict, fast: bool = False) -> Path:
+    _style()
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.6))
+    for ax, rep, name in zip(axes, (rep_default, rep_tuned), ("default thresholds", "train-tuned thresholds")):
+        C = np.asarray(rep["confusion"]["matrix"], dtype=float)
+        cls = rep["confusion"]["classes"]
+        Cn = C / np.maximum(C.sum(1, keepdims=True), 1)
+        ax.imshow(Cn, cmap="Blues", vmin=0, vmax=1)
+        ax.grid(False)
+        for i in range(C.shape[0]):
+            for j in range(C.shape[1]):
+                if C[i, j] > 0:
+                    ax.text(j, i, f"{int(C[i, j])}", ha="center", va="center", fontsize=7,
+                            color="white" if Cn[i, j] > 0.55 else INK)
+        ax.set_xticks(range(len(cls)), cls, rotation=35, ha="right")
+        ax.set_yticks(range(len(cls)), cls)
+        ax.set_xlabel("predicted")
+        ax.set_ylabel("true")
+        ax.set_title(f"{name}: macro-F1 {rep['macro_f1']:.3f}, false alarms {100 * rep['false_alarm_rate']:.1f} %, "
+                     f"misses {100 * rep['miss_rate']:.1f} %", loc="left", fontsize=8)
+    fig.suptitle("M2: rule baseline on VAL (counts; colour = row-normalised recall)", x=0.01, ha="left",
+                 fontsize=10, fontweight="bold")
+    fig.tight_layout()
+    out = _fig_dir(fast) / "m2_baseline_val_confusion.png"
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    return out
+
+
+def m2_naive_pll(by_class: dict[str, dict], by_jump: dict[str, dict], threshold_hz: float, fast: bool = False) -> Path:
+    _style()
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+    for ax, d, title in ((axes[0], by_class, "by class"), (axes[1], by_jump, "phase_jump by |dphi| (deg)")):
+        names = list(d)
+        rates = [100 * d[k]["rate"] for k in names]
+        bars = ax.bar(range(len(names)), rates, color=C1, width=0.6)
+        for b, k in zip(bars, names):
+            ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 1, f"{d[k]['flagged']}/{d[k]['n']}",
+                    ha="center", fontsize=7, color=INK2)
+        ax.set_xticks(range(len(names)), names, rotation=20)
+        ax.set_ylim(0, 110)
+        ax.set_ylabel("flagged as frequency event (%)")
+        ax.set_title(title, loc="left")
+    fig.suptitle(f"M2: naive PLL rule (|f_pll - f_ref| > {threshold_hz:g} Hz at any instant) on VAL: "
+                 f"none of these records is a frequency event", x=0.01, ha="left", fontsize=10, fontweight="bold")
+    fig.tight_layout()
+    out = _fig_dir(fast) / "m2_naive_pll_false_alarms.png"
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    return out
+
+
+__all__ = ["m1_figures", "m2_signal_chain_examples", "m2_confusion", "m2_naive_pll", "pd"]

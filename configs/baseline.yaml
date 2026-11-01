@@ -1,0 +1,38 @@
+# Conventional baseline (PROJECT_BRIEF B7). Feature-extraction parameters are fixed (not tuned);
+# rule thresholds have defaults from the brief and a TRAIN-only tuning grid.
+features:
+  ref_end_sample: 749          # reference window: phasor samples with n <= 749 (first 0.15 s)
+  obs_start_sample: 750        # observation window: n >= 750
+  end_window_phasors: 100      # "last 0.1 s" = last 100 phasor samples
+  jump_detect_deg: 3.0         # |J| above this marks a detected jump for the frequency mask
+  jump_mask_half: 40           # +/- 2 cycles (phasor samples) around argmax |J|
+  v1_floor: 0.05               # |V1| floor (pu) in |V2|/|V1|
+  rho_den_floor: 0.01
+  rocof_flag_hz_s: 0.2
+  fpll_flag_hz: 0.5
+  freq_onset_hz: 0.1           # onset estimate for frequency events (aux output only)
+  chunk_records: 250
+
+rules:
+  dip_pu: 0.90                 # IEC 61000-4-30 [STD] (not tuned)
+  swell_pu: 1.10               # [STD] (not tuned)
+  rho_th: 0.25
+  osc_mag_pct: 1.0
+  osc_ang_deg: 1.0
+  osc_prom: 4.0
+  jump_deg: 5.0
+  jump_max_dv1: 0.10
+  df_hz: 0.2
+
+tuning_grid:                   # macro-F1 on TRAIN only
+  rho_th: [0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.50]
+  osc_mag_pct: [0.5, 0.75, 1.0, 1.5, 2.0]
+  osc_ang_deg: [0.5, 0.75, 1.0, 1.5, 2.0, 3.0]
+  osc_prom: [3.0, 4.0, 5.0, 6.0, 8.0]
+  jump_deg: [3.0, 4.0, 5.0, 6.0, 8.0]
+  df_hz: [0.10, 0.15, 0.20, 0.25]
+
+diagnostics:
+  naive_pll_hz: 1.0
+  jump_bins_deg: [6, 12, 20, 30]
+  control_seed: 0

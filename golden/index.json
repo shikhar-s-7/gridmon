@@ -1,0 +1,191 @@
+[
+  {
+    "file": "01_val_normal_0001.npz",
+    "source": "val record 1",
+    "true_label": "normal",
+    "rule_label": "normal",
+    "rule_reason": 0
+  },
+  {
+    "file": "02_val_normal_0009.npz",
+    "source": "val record 9",
+    "true_label": "normal",
+    "rule_label": "normal",
+    "rule_reason": 0
+  },
+  {
+    "file": "03_val_normal_0014.npz",
+    "source": "val record 14",
+    "true_label": "normal",
+    "rule_label": "normal",
+    "rule_reason": 0
+  },
+  {
+    "file": "04_val_sag_bal_0011.npz",
+    "source": "val record 11",
+    "true_label": "sag_bal",
+    "rule_label": "sag_bal",
+    "rule_reason": 1
+  },
+  {
+    "file": "05_val_sag_bal_0021.npz",
+    "source": "val record 21",
+    "true_label": "sag_bal",
+    "rule_label": "sag_bal",
+    "rule_reason": 1
+  },
+  {
+    "file": "06_val_sag_bal_0029.npz",
+    "source": "val record 29",
+    "true_label": "sag_bal",
+    "rule_label": "sag_bal",
+    "rule_reason": 1
+  },
+  {
+    "file": "07_val_sag_unbal_0012.npz",
+    "source": "val record 12",
+    "true_label": "sag_unbal",
+    "rule_label": "sag_unbal",
+    "rule_reason": 2
+  },
+  {
+    "file": "08_val_sag_unbal_0018.npz",
+    "source": "val record 18",
+    "true_label": "sag_unbal",
+    "rule_label": "sag_unbal",
+    "rule_reason": 2
+  },
+  {
+    "file": "09_val_sag_unbal_0019.npz",
+    "source": "val record 19",
+    "true_label": "sag_unbal",
+    "rule_label": "sag_unbal",
+    "rule_reason": 2
+  },
+  {
+    "file": "10_val_swell_0002.npz",
+    "source": "val record 2",
+    "true_label": "swell",
+    "rule_label": "swell",
+    "rule_reason": 3
+  },
+  {
+    "file": "11_val_swell_0008.npz",
+    "source": "val record 8",
+    "true_label": "swell",
+    "rule_label": "swell",
+    "rule_reason": 3
+  },
+  {
+    "file": "12_val_swell_0010.npz",
+    "source": "val record 10",
+    "true_label": "swell",
+    "rule_label": "swell",
+    "rule_reason": 3
+  },
+  {
+    "file": "13_val_phase_jump_0020.npz",
+    "source": "val record 20",
+    "true_label": "phase_jump",
+    "rule_label": "phase_jump",
+    "rule_reason": 6
+  },
+  {
+    "file": "14_val_phase_jump_0022.npz",
+    "source": "val record 22",
+    "true_label": "phase_jump",
+    "rule_label": "phase_jump",
+    "rule_reason": 6
+  },
+  {
+    "file": "15_val_phase_jump_0033.npz",
+    "source": "val record 33",
+    "true_label": "phase_jump",
+    "rule_label": "phase_jump",
+    "rule_reason": 6
+  },
+  {
+    "file": "16_val_freq_event_0004.npz",
+    "source": "val record 4",
+    "true_label": "freq_event",
+    "rule_label": "freq_event",
+    "rule_reason": 7
+  },
+  {
+    "file": "17_val_freq_event_0005.npz",
+    "source": "val record 5",
+    "true_label": "freq_event",
+    "rule_label": "freq_event",
+    "rule_reason": 7
+  },
+  {
+    "file": "18_val_freq_event_0006.npz",
+    "source": "val record 6",
+    "true_label": "freq_event",
+    "rule_label": "freq_event",
+    "rule_reason": 7
+  },
+  {
+    "file": "19_val_oscillation_0000.npz",
+    "source": "val record 0",
+    "true_label": "oscillation",
+    "rule_label": "swell",
+    "rule_reason": 3
+  },
+  {
+    "file": "20_val_oscillation_0003.npz",
+    "source": "val record 3",
+    "true_label": "oscillation",
+    "rule_label": "oscillation",
+    "rule_reason": 4
+  },
+  {
+    "file": "21_val_oscillation_0007.npz",
+    "source": "val record 7",
+    "true_label": "oscillation",
+    "rule_label": "oscillation",
+    "rule_reason": 4
+  },
+  {
+    "file": "22_u1_clean_nominal.npz",
+    "source": "unit signal (noise-free, nuisances off, quantised)",
+    "description": "clean nominal 50 Hz, 1.0 pu",
+    "rule_label": "normal",
+    "rule_reason": 0
+  },
+  {
+    "file": "23_u2_sag_bal_050.npz",
+    "source": "unit signal (noise-free, nuisances off, quantised)",
+    "description": "balanced (type A) dip to 0.5 pu, t0 = 0.3013 s, 0.3 s, abrupt recovery",
+    "rule_label": "sag_bal",
+    "rule_reason": 1
+  },
+  {
+    "file": "24_u3_sag_typeC_050.npz",
+    "source": "unit signal (noise-free, nuisances off, quantised)",
+    "description": "type C dip V = 0.5 (phase a special), t0 = 0.3013 s, 0.3 s",
+    "rule_label": "sag_unbal",
+    "rule_reason": 2
+  },
+  {
+    "file": "25_u4_jump_20deg.npz",
+    "source": "unit signal (noise-free, nuisances off, quantised)",
+    "description": "+20 deg positive-sequence phase jump at t0 = 0.3013 s",
+    "rule_label": "phase_jump",
+    "rule_reason": 6
+  },
+  {
+    "file": "26_u5_ramp_1hz_s.npz",
+    "source": "unit signal (noise-free, nuisances off, quantised)",
+    "description": "frequency ramp +1 Hz/s from t0 = 0.2 s to the record end",
+    "rule_label": "freq_event",
+    "rule_reason": 7
+  },
+  {
+    "file": "27_u6_mod_10hz.npz",
+    "source": "unit signal (noise-free, nuisances off, quantised)",
+    "description": "10 Hz modulation: V1 magnitude depth 5 %, angle 2 deg, sigma 0, from t0 = 0.3 s",
+    "rule_label": "oscillation",
+    "rule_reason": 4
+  }
+]

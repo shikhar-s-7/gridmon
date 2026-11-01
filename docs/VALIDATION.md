@@ -5,7 +5,7 @@ protection or control. Status as of 2026-11-01.
 
 | level | what | evidence | status |
 |---|---|---|---|
-| L0 | Python reference implementation (generator + DSP + rules), unit tests, golden vectors | [SIM] | in progress: M1 generator done; M2 baseline see PROGRESS.md |
+| L0 | Python reference implementation (generator + DSP + rules), unit tests, golden vectors | [SIM] | M1 + M2 done 2026-11-01: generator and DSP/feature/rule tests pass; DSP_SPEC.md, FEATURES.md; 27 golden vectors with float32 tolerances; float32 numpy re-run keeps all val rule labels |
 | L1 | SIL: portable C99 float32 core on PC vs golden vectors and full val/test splits | [SIM] | not started (M6) |
 | L2 | C28x compile with TI C2000-CGT (cl2000, FPU32/TMU), code/data size from the map file | — | not started (M7) |
 | L3 | PIL on LAUNCHXL-F28379D: stored or UART-streamed records, cycle counts, bit-match vs L1 | [EXP] | Stage 2 (needs hardware) |
