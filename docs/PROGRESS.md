@@ -7,7 +7,7 @@
 - [x] M3 — gradient boosting, embedded size budget, C-ready export (B8; CNN not done, optional)
 - [x] M4 — sealed evaluation on test_iid and test_shift (B9)
 - [x] M5 — results report (RESULTS.md, results.json, findings and limitations; done with M4)
-- [ ] M6 — portable C core + SIL equivalence (B13.1)
+- [x] M6 — portable C core + SIL equivalence (B13.1)
 - [ ] M7 — C2000 port layer, integration guide, C28x compile/size (B13.2)
 - [ ] M8 — static website with in-browser classification (B13.4)
 
@@ -38,3 +38,10 @@
 - 2026-11-01 Wrap-up (session 2): 81 tests pass (new: oscillation margin, GBM export equivalence, frozen-config
   hashes, evaluate_test refusal, statistics); run_all --fast 88 s through all five stages; docs updated; new
   HANDOFF (session-1 handoff archived in docs/handoffs/). Next: Prompt 03 (C core, SIL).
+- 2026-11-01 Session 3 (PROMPT_03), Linux cloud VM: venv re-created, all splits regenerated (123 s). D-049..D-054 logged.
+- 2026-11-01 M6: portable C99 float32 core c/ (gridmon-core 0.6.0; one file per DSP_SPEC block + features, rules, GBM
+  walker, API), constants generated as float32 hex literals (scripts/gen_c_tables.py, D-054), host build/ctypes SIL
+  (scripts/build_c.py, src/gridmon/c_sil.py, scripts/run_sil.py -> reports/m6_sil.json): golden 27/27; rule labels
+  100 % on val/test_iid/test_shift (1750 each) and 560 train records; GBM bit-exact on the same C features, 100 %
+  end to end; features within tolerance except 2 rho values (float32 argmin tie, D-060); ASan/UBSan clean; static
+  C28x checks, ILP32 and 16-bit-int compiles pass; sizeof(gm_ctx_t) 15,816 B; ~1.3 ms/record on the host. D-055..D-061.

@@ -76,3 +76,7 @@ candidates, peak above float32 envelope rounding); on other records any value is
 - Pre-event-only control (B7.4): the same function on the first 750 samples with OBS = REF; features
   needing more data (ROCOF, envelope spectra) are NaN there.
 - Measured float32-vs-float64 differences on val: reports/m2_baseline_val.json (`float32_val`).
+- C core (M6, docs/C_CORE.md): same definitions and tolerances. Known float32 difference: `rho` uses the
+  FIRST argmin of |V1| over OBS; when two OBS samples have the same float32 |V1| (flat |V1|, no dip) the C
+  index can differ from float64 and rho moves by the V2 noise (D-060). Invalid values are flagged
+  (feature_valid) exactly where this reference yields NaN (rocof_end, D-051).

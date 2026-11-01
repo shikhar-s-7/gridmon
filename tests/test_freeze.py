@@ -99,12 +99,13 @@ def test_evaluate_test_refuses_when_method_files_differ(monkeypatch):
 
 
 def test_only_evaluate_test_unseals():
-    """No module or script except scripts/evaluate_test.py passes allow_test (other than False)."""
+    """No module or script except scripts/evaluate_test.py (M4) and the M6 SIL scripts/run_sil.py (equivalence
+    only, CLAUDE.md rule 4) passes allow_test (other than False)."""
     pat = re.compile(r"allow_test\s*=\s*([A-Za-z_]+)")
     offenders = []
     for p in list((ROOT / "src").rglob("*.py")) + list((ROOT / "scripts").glob("*.py")):
         rel = p.relative_to(ROOT).as_posix()
-        if rel in ("src/gridmon/io.py", "scripts/evaluate_test.py"):
+        if rel in ("src/gridmon/io.py", "scripts/evaluate_test.py", "scripts/run_sil.py"):
             continue
         for v in pat.findall(p.read_text(encoding="utf-8")):
             if v not in ("False", "allow_test"):

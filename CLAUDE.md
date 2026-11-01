@@ -3,7 +3,7 @@
 Grid-event monitor for BESS PCS voltage records: synthetic generator (M1), conventional DSP
 baseline + rules (M2), GBM with 64 KB C export (M3), sealed evaluation (M4, done: reports/RESULTS.md),
 next C99 core (M6), C2000 port (M7), website (M8). Python is the REFERENCE for a float32 C port. Simulation-only.
-Status (2026-11-01, session 2): M1-M5 done; methods FROZEN (configs/frozen_methods.yaml, commit 6240f60).
+Status (2026-11-01, session 3): M1-M6 done (M6: C core + SIL, docs/C_CORE.md); methods FROZEN (configs/frozen_methods.yaml, commit 6240f60).
 
 ## Commands (Windows paths; use .venv/bin/python on macOS/Linux)
 - setup: `py -3.12 -m venv .venv`; `.venv/Scripts/python -m pip install -r requirements.txt`; `... -m pip install -e .`
@@ -12,13 +12,16 @@ Status (2026-11-01, session 2): M1-M5 done; methods FROZEN (configs/frozen_metho
 - stages: `scripts/make_dataset.py [--fast] [--splits ...]`, `scripts/run_baseline.py [--fast]`, `scripts/make_golden.py`,
   `scripts/run_gbm.py [--fast]` (full mode keeps frozen models unless --force), `scripts/freeze_methods.py`,
   `scripts/evaluate_test.py [--fast] [--dry-run] [--render-only]` (only script with allow_test; refuses unless frozen.verify passes)
-- Linux cloud VM: `python3.12 -m venv .venv` then `.venv/bin/python ...` (all pins install unchanged)
+- C core (M6): `scripts/gen_c_tables.py [--check]` (D-054 tables), `scripts/build_c.py [--force]` (build/: SIL lib, gm_cli,
+  gm_cli_asan; cc/gcc/clang or `python -m ziglang cc`), `scripts/run_sil.py [--fast]` (golden + splits -> reports/m6_sil.json;
+  the only other allow_test caller: equivalence only, no labels)
+- Linux cloud VM: `python3.12 -m venv .venv` then `.venv/bin/python ...` (all pins install unchanged); optional `pip install ziglang` (-m32/msp430 checks)
 
 ## Rules (PROMPT A1)
 1. Spec = docs/PROJECT_BRIEF.md. Every deviation/interpretation -> docs/DECISIONS.md (ID, date, what, why, alternatives).
 2. Units: instantaneous pu of nominal LL peak; RMS pu = sqrt(2*mean(v^2)); radians in code, degrees in reports.
 3. Reproducible: numpy Generators from SeedSequence only; no global RNG; config hash + version in meta.json.
-4. Sealed test sets: loader raises unless allow_test=True; only scripts/evaluate_test.py (M4) and the M6 SIL may pass it (tested). M4 has been run once; test_shift is no longer blind, so any new method (e.g. a hybrid or augmented GBM) needs NEW sealed splits (new seeds). Tests may read sealed manifests.
+4. Sealed test sets: loader raises unless allow_test=True; only scripts/evaluate_test.py (M4) and the M6 SIL (scripts/run_sil.py) may pass it (tested). M4 has been run once; test_shift is no longer blind, so any new method (e.g. a hybrid or augmented GBM) needs NEW sealed splits (new seeds). Tests may read sealed manifests.
 4b. Frozen methods: changing a method file (dsp/*, features, rules, units, ml_gbm, export_gbm, configs/baseline.yaml, configs/ml.yaml, c/generated/*) or a model breaks the freeze; report frozen results first, label post-fix results.
 5. No leakage: features/rules/models see only the waveform array, never manifest fields.
 6. Vectorise over records; recursions (PLL) loop over time with records as arrays; chunk ~250-500 records; every script has --fast.
@@ -36,7 +39,9 @@ Status (2026-11-01, session 2): M1-M5 done; methods FROZEN (configs/frozen_metho
   plots_ml, frozen (freeze verify), evaluation, stats (bootstrap, McNemar), results_report
 - configs/: dataset.yaml, baseline.yaml, ml.yaml, frozen_methods.yaml, aa_fir.json (generated; kept if equal, D-038)
 - models/: gbm_embedded.json (C model, seed 0) + seed1/2 JSON, sklearn pickles; c/generated/gm_model_gbm.{c,h}
-- docs/: PROJECT_BRIEF, DECISIONS (D-001..D-048), PROGRESS, DSP_SPEC, FEATURES, MODEL_FORMAT, VALIDATION, ENVIRONMENT,
+- c/: include/gridmon.h (API), src/gm_*.c (core), tables/ (GENERATED), generated/ (frozen GBM tables), host/ (CLI, ctypes helpers);
+  src/gridmon c_build, c_sil (ctypes), c_portability (static checks)
+- docs/: PROJECT_BRIEF, DECISIONS (D-001..D-061), C_CORE, PROGRESS, DSP_SPEC, FEATURES, MODEL_FORMAT, VALIDATION, ENVIRONMENT,
   HANDOFF (+ handoffs/); reports/RESULTS.md + results.json (+ results_findings.md, hand-written)
 
 - Git: do not add Co-Authored-By, Claude-Session or "Generated with Claude Code" lines to commits or PR descriptions.

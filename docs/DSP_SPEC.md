@@ -97,6 +97,8 @@ Stored: f_pll at n = 5m+4 (m = 0..999). Clean-input lock (|f - 50| <= 0.01 Hz) i
 ## 7. Envelope and its spectra
 References from REF (section 9): v1_ref = median |V1|, f_ref = median f_dft.
 Unwrapped angle from m = 19: `angU(19) = ang(19)`, `angU(m) = angU(m-1) + wrap(ang(m) - ang(m-1))`.
+(C core: evaluated as angU(m) = ang(m) - 2 pi N(m) with the integer wrap count N(m); identical in exact
+arithmetic, no float32 accumulation — D-056.)
 De-rotated angle: `angD(m) = angU(m) - 2 pi (f_ref - 50) t_m`, t_m = n_m/5000.
 Envelope p = 2..99 (10-sample blocks; one block = one 100 Hz period, cancels unbalance ripple):
 `e_mag(p) = (1/10) sum_{m=10p}^{10p+9} |V1(m)| / v1_ref`, `e_ang(p) = (1/10) sum angD(m)` (rad).
@@ -154,3 +156,5 @@ dominate.
   reductions; C uses straight loops. Both stay within the golden tolerances.
 - C28x: 16-bit char (sizes in 16-bit words); compile float-only (-Wdouble-promotion); TMU
   accelerates sin/cos/atan2/sqrt/div where present.
+- C implementation (M6): docs/C_CORE.md; constants generated as float32 hex literals (D-054); comparison
+  thresholds with directed rounding (D-058); no method change.

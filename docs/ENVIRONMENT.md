@@ -59,3 +59,13 @@ tzdata==2026.6
   261 s on 4 processes), M4 `evaluate_test.py` 26 s; `run_all.py --fast` 88 s (all five stages); `pytest` 46 s
   (81 tests). A full `run_all.py` after the freeze skips GBM retraining and re-runs the frozen evaluation.
 - gcc 13 (system) compiles the generated C tables (`-std=c99 -pedantic -Wdouble-promotion -Wfloat-conversion`).
+
+## Session 3 (PROMPT_03: M6/M7), 2026-11-01 — Linux cloud VM
+- Python 3.12.3 venv, every pin of requirements.txt installed unchanged; data regenerated with
+  `make_dataset.py` (full 123 s, --fast 12 s; AA FIR file unchanged, D-038).
+- C toolchain: gcc 13.3.0 (Ubuntu 24.04, `cc`), clang also present; `scripts/build_c.py` uses `cc`.
+  The gcc install has no 32-bit libc headers (`-m32` fails on <math.h>), so the -m32 and 16-bit-int
+  portability compiles use ziglang 0.17.0 (`python -m pip install ziglang`; optional tool, not pinned in
+  requirements.txt; D-061). On Windows without a C compiler, build_c.py installs ziglang automatically.
+- Git author for this session: repo-local `git config user.name shikhar-s-7` /
+  `user.email 174290755+shikhar-s-7@users.noreply.github.com` (D-053).

@@ -1,0 +1,1794 @@
+{
+  "version": "gridmon-core 0.6.0 (model gbm_embedded seed0 sha256 e25501759a5f84fe; tables 17f72797b3f4fbba; gbm on)",
+  "fast": false,
+  "build": {
+    "compiler": "/usr/bin/cc",
+    "compiler_version": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "flags": "-std=c99 -Wall -Wextra -Wpedantic -Wconversion -Wdouble-promotion -Wfloat-conversion -Wvla -Werror -ffp-contract=off -O2",
+    "sil": "build/libgridmon_sil.so",
+    "cli": "build/gm_cli",
+    "asan": "build/gm_cli_asan"
+  },
+  "build_checks": {
+    "gbm_off": "ok",
+    "no_traces_nan0": "ok",
+    "traces_nan1": "ok"
+  },
+  "golden": {
+    "n_files": 27,
+    "n_pass": 27,
+    "trace_max_abs_diff": {
+      "urms": 7.578453111722894e-07,
+      "v1": 3.4619648028441207e-07,
+      "v2": 3.048006831011337e-07,
+      "f_dft": 2.1709547439741073e-06,
+      "rocof": 2.0169241436107654e-05,
+      "J": 1.258767846401554e-06,
+      "f_pll": 0.00018117766971670335,
+      "e_mag": 3.805201101991784e-07,
+      "e_ang": 1.8047519573238802e-06,
+      "r_mag": 3.2827475049401755e-07,
+      "r_ang": 6.997076504866584e-07,
+      "S_mag": 1.3046763968870001e-05,
+      "S_ang": 1.6822374114894983e-05,
+      "thd": 2.6288039783460993e-08
+    },
+    "trace_tolerance": {
+      "urms": 1e-05,
+      "v1": 1e-05,
+      "v2": 1e-05,
+      "f_dft": 0.0001,
+      "rocof": 0.001,
+      "J": 0.0001,
+      "f_pll": 0.003,
+      "e_mag": 1e-05,
+      "e_ang": 0.00018,
+      "r_mag": 1e-05,
+      "r_ang": 0.0001,
+      "S_mag": 0.001,
+      "S_ang": 0.001,
+      "thd": 1e-06
+    },
+    "feature_max_abs_diff_gated": {
+      "urms_min_1": 5.274901351270955e-07,
+      "urms_min_2": 5.220543813910794e-07,
+      "urms_min_3": 4.2928068322289903e-07,
+      "urms_max_1": 6.632714861787292e-07,
+      "urms_max_2": 4.591743223425482e-07,
+      "urms_max_3": 4.359189987868106e-07,
+      "t_below_090": 2.26497650079871e-08,
+      "t_above_110": 2.145767213912464e-08,
+      "v1_ref": 2.1382581194551165e-07,
+      "v1_min_rel": 2.9162178150077267e-07,
+      "v1_max_rel": 3.3549514499853217e-07,
+      "v1_end_rel": 4.6231646799732573e-07,
+      "u2_ref": 2.208574422669224e-07,
+      "u2_max": 1.4965074696116076e-07,
+      "u2_end": 4.504027105072591e-08,
+      "rho": 1.4750125688509086e-05,
+      "j_max_deg": 2.8749446131098866e-05,
+      "j_sign": 0.0,
+      "f_ref": 2.0590564844269466e-06,
+      "df_end": 3.2924862262972976e-07,
+      "df_max": 1.659153831212734e-06,
+      "rocof_max": 1.3749789232520016e-05,
+      "t_rocof_02": 5.3882598827215133e-08,
+      "rocof_end": 3.3155712211296873e-06,
+      "dfpll_max": 9.872997727455868e-05,
+      "t_fpll_05": 3.194808956274997e-08,
+      "env_mag_amp_pct": 4.584061396676123e-06,
+      "env_mag_freq": 0.0,
+      "env_mag_prom": 0.015346069562141906,
+      "env_ang_amp_deg": 9.781831401311017e-06,
+      "env_ang_freq": 0.0,
+      "env_ang_prom": 0.007043711301818689,
+      "env_mag_rms_pct": 2.360446324760866e-06,
+      "env_ang_rms_deg": 4.820459085883022e-06,
+      "thd_first": 6.463533168323682e-09,
+      "thd_last": 7.807643800364014e-09,
+      "thd_max": 1.001433409114627e-08
+    },
+    "files": [
+      {
+        "file": "01_val_normal_0001.npz",
+        "ok": true,
+        "rule_label": "normal",
+        "rule_reason": 0,
+        "failed": []
+      },
+      {
+        "file": "02_val_normal_0009.npz",
+        "ok": true,
+        "rule_label": "normal",
+        "rule_reason": 0,
+        "failed": []
+      },
+      {
+        "file": "03_val_normal_0014.npz",
+        "ok": true,
+        "rule_label": "normal",
+        "rule_reason": 0,
+        "failed": []
+      },
+      {
+        "file": "04_val_sag_bal_0011.npz",
+        "ok": true,
+        "rule_label": "sag_bal",
+        "rule_reason": 1,
+        "failed": []
+      },
+      {
+        "file": "05_val_sag_bal_0021.npz",
+        "ok": true,
+        "rule_label": "sag_bal",
+        "rule_reason": 1,
+        "failed": []
+      },
+      {
+        "file": "06_val_sag_bal_0029.npz",
+        "ok": true,
+        "rule_label": "sag_bal",
+        "rule_reason": 1,
+        "failed": []
+      },
+      {
+        "file": "07_val_sag_unbal_0012.npz",
+        "ok": true,
+        "rule_label": "sag_unbal",
+        "rule_reason": 2,
+        "failed": []
+      },
+      {
+        "file": "08_val_sag_unbal_0018.npz",
+        "ok": true,
+        "rule_label": "sag_unbal",
+        "rule_reason": 2,
+        "failed": []
+      },
+      {
+        "file": "09_val_sag_unbal_0019.npz",
+        "ok": true,
+        "rule_label": "sag_unbal",
+        "rule_reason": 2,
+        "failed": []
+      },
+      {
+        "file": "10_val_swell_0002.npz",
+        "ok": true,
+        "rule_label": "swell",
+        "rule_reason": 3,
+        "failed": []
+      },
+      {
+        "file": "11_val_swell_0008.npz",
+        "ok": true,
+        "rule_label": "swell",
+        "rule_reason": 3,
+        "failed": []
+      },
+      {
+        "file": "12_val_swell_0010.npz",
+        "ok": true,
+        "rule_label": "swell",
+        "rule_reason": 3,
+        "failed": []
+      },
+      {
+        "file": "13_val_phase_jump_0020.npz",
+        "ok": true,
+        "rule_label": "phase_jump",
+        "rule_reason": 6,
+        "failed": []
+      },
+      {
+        "file": "14_val_phase_jump_0022.npz",
+        "ok": true,
+        "rule_label": "phase_jump",
+        "rule_reason": 6,
+        "failed": []
+      },
+      {
+        "file": "15_val_phase_jump_0033.npz",
+        "ok": true,
+        "rule_label": "phase_jump",
+        "rule_reason": 6,
+        "failed": []
+      },
+      {
+        "file": "16_val_freq_event_0004.npz",
+        "ok": true,
+        "rule_label": "freq_event",
+        "rule_reason": 7,
+        "failed": []
+      },
+      {
+        "file": "17_val_freq_event_0005.npz",
+        "ok": true,
+        "rule_label": "freq_event",
+        "rule_reason": 7,
+        "failed": []
+      },
+      {
+        "file": "18_val_freq_event_0006.npz",
+        "ok": true,
+        "rule_label": "freq_event",
+        "rule_reason": 7,
+        "failed": []
+      },
+      {
+        "file": "19_val_oscillation_0000.npz",
+        "ok": true,
+        "rule_label": "oscillation",
+        "rule_reason": 4,
+        "failed": []
+      },
+      {
+        "file": "20_val_oscillation_0003.npz",
+        "ok": true,
+        "rule_label": "oscillation",
+        "rule_reason": 4,
+        "failed": []
+      },
+      {
+        "file": "21_val_oscillation_0007.npz",
+        "ok": true,
+        "rule_label": "oscillation",
+        "rule_reason": 4,
+        "failed": []
+      },
+      {
+        "file": "22_u1_clean_nominal.npz",
+        "ok": true,
+        "rule_label": "normal",
+        "rule_reason": 0,
+        "failed": []
+      },
+      {
+        "file": "23_u2_sag_bal_050.npz",
+        "ok": true,
+        "rule_label": "sag_bal",
+        "rule_reason": 1,
+        "failed": []
+      },
+      {
+        "file": "24_u3_sag_typeC_050.npz",
+        "ok": true,
+        "rule_label": "sag_unbal",
+        "rule_reason": 2,
+        "failed": []
+      },
+      {
+        "file": "25_u4_jump_20deg.npz",
+        "ok": true,
+        "rule_label": "phase_jump",
+        "rule_reason": 6,
+        "failed": []
+      },
+      {
+        "file": "26_u5_ramp_1hz_s.npz",
+        "ok": true,
+        "rule_label": "freq_event",
+        "rule_reason": 7,
+        "failed": []
+      },
+      {
+        "file": "27_u6_mod_10hz.npz",
+        "ok": true,
+        "rule_label": "oscillation",
+        "rule_reason": 4,
+        "failed": []
+      }
+    ]
+  },
+  "sanitizer": {
+    "status": "pass",
+    "tool": "gm_cli_asan (-fsanitize=address,undefined, no recover)",
+    "records": 27,
+    "exit_code": 0,
+    "stderr": "",
+    "labels_equal_golden": true
+  },
+  "portability": {
+    "static_checks": {
+      "double": true,
+      "char_data": true,
+      "plain_int": true,
+      "forbidden_call": true,
+      "forbidden_header": true,
+      "static_mutable": true,
+      "global_mutable": true,
+      "float_literal_without_f": true,
+      "type_punning": true,
+      "sizeof": true,
+      "recursion": true
+    },
+    "static_violations": {},
+    "cross_compile": {
+      "m32": {
+        "status": "pass",
+        "toolchain": "zig cc -target x86-linux-musl (ILP32)",
+        "note": "host -m32 unavailable: compilation terminated.",
+        "detail": "ok"
+      },
+      "int16": {
+        "status": "pass",
+        "toolchain": "ziglang cc -target msp430-freestanding-none (16-bit int, freestanding, stub math.h)",
+        "detail": "ok"
+      }
+    }
+  },
+  "splits": {
+    "val": {
+      "n_records": 1750,
+      "subset": "all",
+      "status_not_ok": 0,
+      "features": {
+        "n_features_within_tolerance_on_all_records": 37,
+        "n_features": 37,
+        "n_values_outside_tolerance": 0,
+        "outside_by_feature": {},
+        "outside_values": [],
+        "worst_feature_rel_to_tol": {
+          "feature": "t_fpll_05",
+          "max_abs_diff": 0.0010000063776969825,
+          "tol": 0.0021,
+          "ratio": 0.47619351318903935
+        },
+        "nan_pattern_mismatch": {},
+        "n_python_nonfinite": {
+          "rocof_end": 12
+        },
+        "per_feature": {
+          "urms_min_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.300791723339415e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.256813265797078e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.337025554830177e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.740099931512589e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.576347235665025e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.332847297674249e-07,
+            "n_over_tol": 0
+          },
+          "t_below_090": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.814697269177714e-08,
+            "n_over_tol": 0
+          },
+          "t_above_110": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.814697269177714e-08,
+            "n_over_tol": 0
+          },
+          "v1_ref": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.0414523677357863e-07,
+            "n_over_tol": 0
+          },
+          "v1_min_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.9648039651396516e-07,
+            "n_over_tol": 0
+          },
+          "v1_max_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.102015121494219e-07,
+            "n_over_tol": 0
+          },
+          "v1_end_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.188767746051482e-07,
+            "n_over_tol": 0
+          },
+          "u2_ref": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.737800923842057e-07,
+            "n_over_tol": 0
+          },
+          "u2_max": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.3320201837651044e-07,
+            "n_over_tol": 0
+          },
+          "u2_end": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.1733849360604e-08,
+            "n_over_tol": 0
+          },
+          "rho": {
+            "unit": "1",
+            "tol": 0.0005,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.00010942787835954704,
+            "n_over_tol": 0
+          },
+          "j_max_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.1348745042645305e-05,
+            "n_over_tol": 0
+          },
+          "j_sign": {
+            "unit": "1",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1160,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "f_ref": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.734309674679025e-06,
+            "n_over_tol": 0
+          },
+          "df_end": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.3702655403593361e-06,
+            "n_over_tol": 0
+          },
+          "df_max": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.86580977867834e-06,
+            "n_over_tol": 0
+          },
+          "rocof_max": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.308555879082519e-05,
+            "n_over_tol": 0
+          },
+          "t_rocof_02": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.0010000041127204845,
+            "n_over_tol": 0
+          },
+          "rocof_end": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1738,
+            "max_abs_diff": 7.3945390645976244e-06,
+            "n_over_tol": 0
+          },
+          "dfpll_max": {
+            "unit": "Hz",
+            "tol": 0.003,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.00033667566637518576,
+            "n_over_tol": 0
+          },
+          "t_fpll_05": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.0010000063776969825,
+            "n_over_tol": 0
+          },
+          "env_mag_amp_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.7348450750631628e-05,
+            "n_over_tol": 0
+          },
+          "env_mag_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1472,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_mag_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 1472,
+            "max_abs_diff": 0.05470309104958915,
+            "n_over_tol": 0
+          },
+          "env_ang_amp_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.33200607173481e-05,
+            "n_over_tol": 0
+          },
+          "env_ang_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1316,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_ang_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 1316,
+            "max_abs_diff": 0.0278377277863342,
+            "n_over_tol": 0
+          },
+          "env_mag_rms_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 8.801821248738406e-06,
+            "n_over_tol": 0
+          },
+          "env_ang_rms_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.0374906046772825e-05,
+            "n_over_tol": 0
+          },
+          "thd_first": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.1934599752905228e-08,
+            "n_over_tol": 0
+          },
+          "thd_last": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.3331912998858506e-08,
+            "n_over_tol": 0
+          },
+          "thd_max": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 9.266482237091367e-08,
+            "n_over_tol": 0
+          }
+        }
+      },
+      "rules": {
+        "label_agree": 1750,
+        "label_agreement": 1.0,
+        "reason_agree": 1750,
+        "disagreements": []
+      },
+      "gbm_a_same_c_features": {
+        "label_equal": 1750,
+        "bit_exact_labels": true,
+        "max_abs_proba_diff": 1.1920928955078125e-07,
+        "max_abs_raw_diff": 0.0
+      },
+      "gbm_b_end_to_end": {
+        "label_agree": 1750,
+        "label_agreement": 1.0,
+        "disagreements": []
+      },
+      "time": {
+        "c_us_per_record": 1732.1987325711752,
+        "python_ms_per_record": 4.075166102857111
+      }
+    },
+    "test_iid": {
+      "n_records": 1750,
+      "subset": "all",
+      "status_not_ok": 0,
+      "features": {
+        "n_features_within_tolerance_on_all_records": 36,
+        "n_features": 37,
+        "n_values_outside_tolerance": 2,
+        "outside_by_feature": {
+          "rho": 2
+        },
+        "outside_values": [
+          {
+            "record": 452,
+            "feature": "rho",
+            "python": 0.05373065825327558,
+            "c": 0.046235427260398865,
+            "abs_diff": 0.007495230992876717,
+            "tol": 0.0005,
+            "python_rule_label": "swell",
+            "cause": "argmin |V1| tie in float32: m* python 825, C 822; float32 |V1| equal (1.0224526), float64 differs by 3.3e-08; |V2(m*_py) - V2(m*_C)| = 7.0e-04 pu"
+          },
+          {
+            "record": 535,
+            "feature": "rho",
+            "python": 0.02683490806227137,
+            "c": 0.029562896117568016,
+            "abs_diff": 0.0027279880552966464,
+            "tol": 0.0005,
+            "python_rule_label": "normal",
+            "cause": "argmin |V1| tie in float32: m* python 585, C 584; float32 |V1| equal (0.94794166), float64 differs by 8.6e-08; |V2(m*_py) - V2(m*_C)| = 2.3e-04 pu"
+          }
+        ],
+        "worst_feature_rel_to_tol": {
+          "feature": "rho",
+          "max_abs_diff": 0.007495230992876717,
+          "tol": 0.0005,
+          "ratio": 14.990461985753434
+        },
+        "nan_pattern_mismatch": {},
+        "n_python_nonfinite": {
+          "rocof_end": 4
+        },
+        "per_feature": {
+          "urms_min_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.408415855168158e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.339628770251181e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.842545718337533e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.763655744368435e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.922572017842299e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.089767474737329e-07,
+            "n_over_tol": 0
+          },
+          "t_below_090": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.384185793236071e-08,
+            "n_over_tol": 0
+          },
+          "t_above_110": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.814697269177714e-08,
+            "n_over_tol": 0
+          },
+          "v1_ref": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.002494937121014e-07,
+            "n_over_tol": 0
+          },
+          "v1_min_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 4.761414298393163e-07,
+            "n_over_tol": 0
+          },
+          "v1_max_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 4.4133569510051984e-07,
+            "n_over_tol": 0
+          },
+          "v1_end_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.869615128968221e-07,
+            "n_over_tol": 0
+          },
+          "u2_ref": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.3780650518689852e-07,
+            "n_over_tol": 0
+          },
+          "u2_max": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.0026648756287244e-07,
+            "n_over_tol": 0
+          },
+          "u2_end": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.360809926778815e-08,
+            "n_over_tol": 0
+          },
+          "rho": {
+            "unit": "1",
+            "tol": 0.0005,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.007495230992876717,
+            "n_over_tol": 2
+          },
+          "j_max_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.962180165752784e-05,
+            "n_over_tol": 0
+          },
+          "j_sign": {
+            "unit": "1",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1169,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "f_ref": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.335220926852344e-06,
+            "n_over_tol": 0
+          },
+          "df_end": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.2358353113500753e-06,
+            "n_over_tol": 0
+          },
+          "df_max": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.6942342188363e-06,
+            "n_over_tol": 0
+          },
+          "rocof_max": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.5127871197128115e-05,
+            "n_over_tol": 0
+          },
+          "t_rocof_02": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.0009999992996454245,
+            "n_over_tol": 0
+          },
+          "rocof_end": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1746,
+            "max_abs_diff": 6.6827978312256064e-06,
+            "n_over_tol": 0
+          },
+          "dfpll_max": {
+            "unit": "Hz",
+            "tol": 0.003,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.00023876217898077812,
+            "n_over_tol": 0
+          },
+          "t_fpll_05": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.0010000255107879275,
+            "n_over_tol": 0
+          },
+          "env_mag_amp_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.7894087775971457e-05,
+            "n_over_tol": 0
+          },
+          "env_mag_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1459,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_mag_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 1459,
+            "max_abs_diff": 0.029666552899470844,
+            "n_over_tol": 0
+          },
+          "env_ang_amp_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.2323819786951304e-05,
+            "n_over_tol": 0
+          },
+          "env_ang_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1366,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_ang_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 1366,
+            "max_abs_diff": 0.011789837123288294,
+            "n_over_tol": 0
+          },
+          "env_mag_rms_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 7.524595131869205e-06,
+            "n_over_tol": 0
+          },
+          "env_ang_rms_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 8.310096456326521e-06,
+            "n_over_tol": 0
+          },
+          "thd_first": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.412807450890119e-08,
+            "n_over_tol": 0
+          },
+          "thd_last": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.8744098679440713e-08,
+            "n_over_tol": 0
+          },
+          "thd_max": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.541902059365441e-07,
+            "n_over_tol": 0
+          }
+        }
+      },
+      "rules": {
+        "label_agree": 1750,
+        "label_agreement": 1.0,
+        "reason_agree": 1750,
+        "disagreements": []
+      },
+      "gbm_a_same_c_features": {
+        "label_equal": 1750,
+        "bit_exact_labels": true,
+        "max_abs_proba_diff": 5.960464477539063e-08,
+        "max_abs_raw_diff": 0.0
+      },
+      "gbm_b_end_to_end": {
+        "label_agree": 1750,
+        "label_agreement": 1.0,
+        "disagreements": []
+      },
+      "time": {
+        "c_us_per_record": 1252.3660942855972,
+        "python_ms_per_record": 3.0589930325713794
+      }
+    },
+    "test_shift": {
+      "n_records": 1750,
+      "subset": "all",
+      "status_not_ok": 0,
+      "features": {
+        "n_features_within_tolerance_on_all_records": 37,
+        "n_features": 37,
+        "n_values_outside_tolerance": 0,
+        "outside_by_feature": {},
+        "outside_values": [],
+        "worst_feature_rel_to_tol": {
+          "feature": "t_fpll_05",
+          "max_abs_diff": 0.0010000281333923389,
+          "tol": 0.0021,
+          "ratio": 0.47620387304397094
+        },
+        "nan_pattern_mismatch": {},
+        "n_python_nonfinite": {
+          "rocof_end": 23
+        },
+        "per_feature": {
+          "urms_min_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.67913966076361e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.565325456036163e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.43650466866552e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.204592599701186e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.212145837736216e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 6.458001202691577e-07,
+            "n_over_tol": 0
+          },
+          "t_below_090": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.5762786843029915e-08,
+            "n_over_tol": 0
+          },
+          "t_above_110": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.814697269177714e-08,
+            "n_over_tol": 0
+          },
+          "v1_ref": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.3686508427166473e-07,
+            "n_over_tol": 0
+          },
+          "v1_min_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 4.863950557876251e-07,
+            "n_over_tol": 0
+          },
+          "v1_max_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.283597670491247e-07,
+            "n_over_tol": 0
+          },
+          "v1_end_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.846221333705159e-07,
+            "n_over_tol": 0
+          },
+          "u2_ref": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 3.0801941374759834e-07,
+            "n_over_tol": 0
+          },
+          "u2_max": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.4808497227357673e-07,
+            "n_over_tol": 0
+          },
+          "u2_end": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.969087938512141e-08,
+            "n_over_tol": 0
+          },
+          "rho": {
+            "unit": "1",
+            "tol": 0.0005,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 7.0197413484685e-05,
+            "n_over_tol": 0
+          },
+          "j_max_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 5.417649530525814e-05,
+            "n_over_tol": 0
+          },
+          "j_sign": {
+            "unit": "1",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1481,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "f_ref": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.766925476294091e-06,
+            "n_over_tol": 0
+          },
+          "df_end": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.2177105347885298e-06,
+            "n_over_tol": 0
+          },
+          "df_max": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.091260796532879e-06,
+            "n_over_tol": 0
+          },
+          "rocof_max": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.848588107478122e-05,
+            "n_over_tol": 0
+          },
+          "t_rocof_02": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.0010000228881835715,
+            "n_over_tol": 0
+          },
+          "rocof_end": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1727,
+            "max_abs_diff": 7.966068739762022e-06,
+            "n_over_tol": 0
+          },
+          "dfpll_max": {
+            "unit": "Hz",
+            "tol": 0.003,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.00019091209863120184,
+            "n_over_tol": 0
+          },
+          "t_fpll_05": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 0.0010000281333923389,
+            "n_over_tol": 0
+          },
+          "env_mag_amp_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.1387562028962748e-05,
+            "n_over_tol": 0
+          },
+          "env_mag_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1717,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_mag_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 1717,
+            "max_abs_diff": 0.003420809611625941,
+            "n_over_tol": 0
+          },
+          "env_ang_amp_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.044407717152752e-05,
+            "n_over_tol": 0
+          },
+          "env_ang_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 1706,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_ang_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 1706,
+            "max_abs_diff": 0.0070876685250453875,
+            "n_over_tol": 0
+          },
+          "env_mag_rms_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 8.728810025893097e-06,
+            "n_over_tol": 0
+          },
+          "env_ang_rms_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 8.444367683324572e-06,
+            "n_over_tol": 0
+          },
+          "thd_first": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.4089314909204731e-08,
+            "n_over_tol": 0
+          },
+          "thd_last": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 2.371404601159144e-08,
+            "n_over_tol": 0
+          },
+          "thd_max": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 1750,
+            "max_abs_diff": 1.4134051806724557e-07,
+            "n_over_tol": 0
+          }
+        }
+      },
+      "rules": {
+        "label_agree": 1750,
+        "label_agreement": 1.0,
+        "reason_agree": 1750,
+        "disagreements": []
+      },
+      "gbm_a_same_c_features": {
+        "label_equal": 1750,
+        "bit_exact_labels": true,
+        "max_abs_proba_diff": 5.960464477539063e-08,
+        "max_abs_raw_diff": 0.0
+      },
+      "gbm_b_end_to_end": {
+        "label_agree": 1750,
+        "label_agreement": 1.0,
+        "disagreements": []
+      },
+      "time": {
+        "c_us_per_record": 1192.9118234285331,
+        "python_ms_per_record": 3.4687948074286914
+      }
+    },
+    "train": {
+      "n_records": 560,
+      "subset": "every 10th record",
+      "status_not_ok": 0,
+      "features": {
+        "n_features_within_tolerance_on_all_records": 37,
+        "n_features": 37,
+        "n_values_outside_tolerance": 0,
+        "outside_by_feature": {},
+        "outside_values": [],
+        "worst_feature_rel_to_tol": {
+          "feature": "t_fpll_05",
+          "max_abs_diff": 0.0010000114440917862,
+          "tol": 0.0021,
+          "ratio": 0.47619592575799347
+        },
+        "nan_pattern_mismatch": {},
+        "n_python_nonfinite": {
+          "rocof_end": 2
+        },
+        "per_feature": {
+          "urms_min_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 5.395881026437621e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 4.918657237062973e-07,
+            "n_over_tol": 0
+          },
+          "urms_min_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 5.239470418638703e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_1": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 5.77761666287202e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_2": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 5.495596931970326e-07,
+            "n_over_tol": 0
+          },
+          "urms_max_3": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 5.354987229200248e-07,
+            "n_over_tol": 0
+          },
+          "t_below_090": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 2.384185793236071e-08,
+            "n_over_tol": 0
+          },
+          "t_above_110": {
+            "unit": "s",
+            "tol": 0.0101,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 2.8610229518832853e-08,
+            "n_over_tol": 0
+          },
+          "v1_ref": {
+            "unit": "pu",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 2.655151896124863e-07,
+            "n_over_tol": 0
+          },
+          "v1_min_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 3.975415171497687e-07,
+            "n_over_tol": 0
+          },
+          "v1_max_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 4.245180555972894e-07,
+            "n_over_tol": 0
+          },
+          "v1_end_rel": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 5.411873065241934e-07,
+            "n_over_tol": 0
+          },
+          "u2_ref": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 2.3372771849536345e-07,
+            "n_over_tol": 0
+          },
+          "u2_max": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 2.293534917818807e-07,
+            "n_over_tol": 0
+          },
+          "u2_end": {
+            "unit": "1",
+            "tol": 1e-05,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 6.534803195443195e-08,
+            "n_over_tol": 0
+          },
+          "rho": {
+            "unit": "1",
+            "tol": 0.0005,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 5.147079159995016e-05,
+            "n_over_tol": 0
+          },
+          "j_max_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 7.193625475743204e-05,
+            "n_over_tol": 0
+          },
+          "j_sign": {
+            "unit": "1",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 366,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "f_ref": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 2.339429947539884e-06,
+            "n_over_tol": 0
+          },
+          "df_end": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 1.1153863673021847e-06,
+            "n_over_tol": 0
+          },
+          "df_max": {
+            "unit": "Hz",
+            "tol": 0.0001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 1.4618198633797874e-06,
+            "n_over_tol": 0
+          },
+          "rocof_max": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 1.7699711558627484e-05,
+            "n_over_tol": 0
+          },
+          "t_rocof_02": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 0.0009999594688415714,
+            "n_over_tol": 0
+          },
+          "rocof_end": {
+            "unit": "Hz/s",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 558,
+            "max_abs_diff": 5.36157827884208e-06,
+            "n_over_tol": 0
+          },
+          "dfpll_max": {
+            "unit": "Hz",
+            "tol": 0.003,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 0.0002149464753458119,
+            "n_over_tol": 0
+          },
+          "t_fpll_05": {
+            "unit": "s",
+            "tol": 0.0021,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 0.0010000114440917862,
+            "n_over_tol": 0
+          },
+          "env_mag_amp_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 1.8990683417374754e-05,
+            "n_over_tol": 0
+          },
+          "env_mag_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 481,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_mag_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 481,
+            "max_abs_diff": 0.02724254493011813,
+            "n_over_tol": 0
+          },
+          "env_ang_amp_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 1.8944615609473026e-05,
+            "n_over_tol": 0
+          },
+          "env_ang_freq": {
+            "unit": "Hz",
+            "tol": 0.0,
+            "rel_tol": 0.0,
+            "n_compared": 438,
+            "max_abs_diff": 0.0,
+            "n_over_tol": 0
+          },
+          "env_ang_prom": {
+            "unit": "1",
+            "tol": 0.05,
+            "rel_tol": 0.01,
+            "n_compared": 438,
+            "max_abs_diff": 0.019688688257616604,
+            "n_over_tol": 0
+          },
+          "env_mag_rms_pct": {
+            "unit": "%",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 7.337468304502437e-06,
+            "n_over_tol": 0
+          },
+          "env_ang_rms_deg": {
+            "unit": "deg",
+            "tol": 0.001,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 8.547693070959372e-06,
+            "n_over_tol": 0
+          },
+          "thd_first": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 9.508679017777855e-09,
+            "n_over_tol": 0
+          },
+          "thd_last": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 2.4390127879164725e-08,
+            "n_over_tol": 0
+          },
+          "thd_max": {
+            "unit": "1",
+            "tol": 1e-06,
+            "rel_tol": 0.0,
+            "n_compared": 560,
+            "max_abs_diff": 4.503473649553058e-08,
+            "n_over_tol": 0
+          }
+        }
+      },
+      "rules": {
+        "label_agree": 560,
+        "label_agreement": 1.0,
+        "reason_agree": 560,
+        "disagreements": []
+      },
+      "gbm_a_same_c_features": {
+        "label_equal": 560,
+        "bit_exact_labels": true,
+        "max_abs_proba_diff": 7.450580596923828e-09,
+        "max_abs_raw_diff": 0.0
+      },
+      "gbm_b_end_to_end": {
+        "label_agree": 560,
+        "label_agreement": 1.0,
+        "disagreements": []
+      },
+      "time": {
+        "c_us_per_record": 1479.691687498936,
+        "python_ms_per_record": 3.871276667856754
+      }
+    }
+  },
+  "memory": {
+    "sizeof_gm_ctx_t_bytes": 15816,
+    "gm_ctx_words16": 7908,
+    "ctx_budget_bytes": 32768,
+    "ctx_within_budget": true,
+    "ctx_note": "record buffer (3 x 5000 int16 = 30,000 B) is the caller's; gm_result_t is 348 B",
+    "dsp_tables_bytes": 5400,
+    "dsp_tables": {
+      "gm_tw100_re": 400,
+      "gm_tw100_im": 400,
+      "gm_tw500_re": 2000,
+      "gm_tw500_im": 2000,
+      "gm_rocof_c": 400,
+      "gm_hann50": 200
+    },
+    "gbm_model_bytes": 13972,
+    "const_total_bytes": 19372,
+    "host_objects_O2": {
+      "gm_api.c": {
+        "text": 1496,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_envelope.c": {
+        "text": 2336,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_features.c": {
+        "text": 2053,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_freq.c": {
+        "text": 2411,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_gbm.c": {
+        "text": 623,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_phasor.c": {
+        "text": 1253,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_pll.c": {
+        "text": 1524,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_rms.c": {
+        "text": 983,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_rules.c": {
+        "text": 733,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_thd.c": {
+        "text": 931,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_tables.c": {
+        "text": 5520,
+        "data": 0,
+        "bss": 0
+      },
+      "gm_model_gbm.c": {
+        "text": 14016,
+        "data": 0,
+        "bss": 0
+      }
+    },
+    "host_text_total": 33879,
+    "host_object_compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "n_core_sources": 12
+  },
+  "c_us_per_record_mean": 1414.2920844460605,
+  "runtime_s": 36.6
+}
