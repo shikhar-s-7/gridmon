@@ -1,0 +1,134 @@
+# M4 freeze (PROMPT_02 A1.4): everything that defines the methods. Written by scripts/freeze_methods.py from TRAIN/VAL results only; verified by gridmon.frozen.verify before any test split is loaded.
+description: 'M4 freeze (PROMPT_02 A1.4): everything that defines the methods. Written by scripts/freeze_methods.py
+  from TRAIN/VAL results only; verified by gridmon.frozen.verify before any test split is loaded.'
+feature_code_commit: e11cc1d3328e5b59d43e408dc56f47d18805695d
+rules:
+  thresholds:
+    dip_pu: 0.9
+    swell_pu: 1.1
+    rho_th: 0.25
+    osc_mag_pct: 1.0
+    osc_ang_deg: 1.0
+    osc_prom: 4.0
+    jump_deg: 5.0
+    jump_max_dv1: 0.1
+    df_hz: 0.2
+  source: reports/m2_baseline_val.json thresholds.tuned (TRAIN-tuned, D-036)
+  train_macro_f1: 0.9974952158309226
+  val_macro_f1: 0.9965643850631681
+gbm_embedded:
+  estimator: sklearn.ensemble.GradientBoostingClassifier
+  config:
+    n_estimators: 20
+    max_leaf_nodes: 4
+    learning_rate: 0.1
+    subsample: 1.0
+  fixed:
+    max_depth: null
+    min_samples_leaf: 1
+    loss: log_loss
+  seeds:
+  - 0
+  - 1
+  - 2
+  primary_seed: 0
+  evaluation: float32 reference walker (gridmon.export_gbm.Float32Walker) on the exported JSON
+  input_nan_fill: 0.0
+  val_macro_f1_mean: 1.0
+  models:
+  - seed: 0
+    path: models/gbm_embedded.json
+    sha256: e25501759a5f84fe90af605a709559d17ad06164f0d06379ee080a107233d95a
+    size_bytes: 13972
+    n_trees: 140
+    sum_max_depth: 357
+  - seed: 1
+    path: models/gbm_embedded_seed1.json
+    sha256: 491c83b8e918ce7e00f712688df8b51d7400c8920e547f4b0e994d599f04a154
+    size_bytes: 13972
+    n_trees: 140
+    sum_max_depth: 357
+  - seed: 2
+    path: models/gbm_embedded_seed2.json
+    sha256: 097210a8757c127fe4a00b586b5883103e9a1d61e5a2b1d9ce2167ce93a0edd2
+    size_bytes: 13972
+    n_trees: 140
+    sum_max_depth: 357
+  sklearn_pickles:
+  - seed: 0
+    path: models/gbm_embedded_seed0.joblib
+    sha256: 53be135dbcdac9aeb45bf08c2d27f3462be60083ded12a2de03f504c7a02f5c6
+  - seed: 1
+    path: models/gbm_embedded_seed1.joblib
+    sha256: cd6daa1adffebc91e3eb9994bbfab75d54bc3ab89c241bd45a9943c84e858ede
+  - seed: 2
+    path: models/gbm_embedded_seed2.joblib
+    sha256: 39ca2cbc79f16e73cbdbd0b8f0589a90fcc600ac34065497985ecfaf4e0a133f
+gbm_unconstrained:
+  estimator: sklearn.ensemble.HistGradientBoostingClassifier
+  config:
+    max_leaf_nodes: 15
+    learning_rate: 0.1
+  fixed:
+    max_iter: 1000
+    early_stopping: true
+    validation_fraction: 0.15
+    n_iter_no_change: 10
+    scoring: loss
+  seeds:
+  - 0
+  - 1
+  - 2
+  val_macro_f1_mean: 0.999809523047616
+  bytes_equivalent: 174888
+  models:
+  - seed: 0
+    path: models/gbm_unconstrained_seed0.joblib
+    sha256: 71decca15afde16a5a84fd0c20948d8ec34f4d8d98d741498ba9bbaaaf5b1cf3
+  - seed: 1
+    path: models/gbm_unconstrained_seed1.joblib
+    sha256: c567f83fe31da764860b936168910685dc0f583890f42500af8474cf786c2a48
+  - seed: 2
+    path: models/gbm_unconstrained_seed2.joblib
+    sha256: 1a923e521efceeb344a34d2800fa3325b40e77d973c88dcf29782a043efb116f
+evaluation_plan:
+  splits:
+  - test_iid
+  - test_shift
+  primary_metric: macro_f1
+  bootstrap_resamples: 2000
+  bootstrap_stratified_by_class: true
+  bootstrap_seed: 20261104
+  mcnemar: exact binomial, two-sided, per seed
+  snr_bins_db:
+  - 25
+  - 30
+  - 35
+  - 40
+  - 50
+  - 60
+  jump_bins_deg:
+  - 6
+  - 12
+  - 20
+  - 30
+  naive_pll_hz: 1.0
+  severity_bins: gridmon.evaluation.SEVERITY
+method_files:
+  c/generated/gm_model_gbm.c: 5bad357fa2260f9cc0910d0237186885f3bf88aefb35cc0165ce34d2439792a3
+  c/generated/gm_model_gbm.h: cc24c993717a82cd8710d0ad4acaa48f580b41712250f0195d22792695a0c6bc
+  configs/baseline.yaml: 7c12df4296253605c87f2b15733e0b2a53ba679908b93fdf46a8d8cc556c725c
+  configs/ml.yaml: 9440eafd954b0acd27e640dc8818a0200da5ebcffd6409072be6679e355fb58e
+  src/gridmon/baseline_rules.py: 2081669ea513865c5e07f964e3905b7b0e5ba95cbff9457868e249861ec69098
+  src/gridmon/dsp/__init__.py: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  src/gridmon/dsp/envelope.py: 14bdc2f50b47b5be4c7d0e452968a9d811fa3ffd4e1aaab03cefa588810ac23a
+  src/gridmon/dsp/freq.py: b114be283302858f4367eee19a60a561d5ece5803f5d3e5d29b3977b845dcad9
+  src/gridmon/dsp/phasor.py: 54fbddfadb2ebe00310ee67b020215daea5b09b65aad25f82abe4362ef269d34
+  src/gridmon/dsp/pll.py: a38d7a8966677aec0c577d073296e2e44f494305a2e598361e0602e2730085f4
+  src/gridmon/dsp/rms.py: 8d363ab7010ccd8281b3f071950863aee05b5ba18b38a1ca99f4032e33ec79f2
+  src/gridmon/dsp/thd.py: f9bb330d0e9eb89ec798f4a7b8ee44f4f32d39c7a30138f5a5297bdc4923d9d7
+  src/gridmon/export_gbm.py: 490f74d711c7f6ced10c2f655000f7c57ff80cac6506fd5cc3365708ed69994a
+  src/gridmon/features.py: e7a12579f912562009ff9b04c62db60596b61efdb7e6dfebdaca1dcaf1a2ad83
+  src/gridmon/ml_gbm.py: 8d08d573ae2981161f2a80d3a5edfa8842266695bda767f2fcf0f7b1b1f8080e
+  src/gridmon/units.py: fd3a294da2ae64f34766a23921e66ea1585bc12a262b25fd76e99f058ab87225
+sklearn_version: 1.9.1

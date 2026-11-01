@@ -17,8 +17,10 @@ METHOD_COLORS = {"rules": C1, "gbm_embedded": C2, "gbm_unconstrained": C3}
 METHOD_NAMES = {"rules": "rules", "gbm_embedded": "GBM-embedded", "gbm_unconstrained": "GBM-unconstrained"}
 
 
-def _save(fig, name: str, fast: bool) -> Path:
-    out = _fig_dir(fast) / name
+def _save(fig, name: str, fast: bool, out_dir: Path | None = None) -> Path:
+    if out_dir is not None:
+        out_dir.mkdir(parents=True, exist_ok=True)
+    out = (out_dir or _fig_dir(fast)) / name
     fig.savefig(out, dpi=130)
     plt.close(fig)
     return out
@@ -131,7 +133,7 @@ def m3_val_confusion(rep_rules: dict, rep_gbm: dict, fast: bool = False) -> Path
 # M4
 # ----------------------------------------------------------------------------------------------
 
-def m4_confusions(reps: dict[str, dict[str, dict]], fast: bool = False) -> Path:
+def m4_confusions(reps: dict[str, dict[str, dict]], fast: bool = False, out_dir: Path | None = None) -> Path:
     """2 x 3: rows test_iid / test_shift, cols rules / GBM-embedded / GBM-unconstrained."""
     _style()
     fig, axes = plt.subplots(2, 3, figsize=(17, 10.5))
@@ -141,32 +143,34 @@ def m4_confusions(reps: dict[str, dict[str, dict]], fast: bool = False) -> Path:
     fig.suptitle("M4: sealed test sets (ML: primary seed 0; counts; colour = row-normalised recall)", x=0.01,
                  ha="left", fontsize=10, fontweight="bold")
     fig.tight_layout()
-    return _save(fig, "m4_confusions.png", fast)
+    return _save(fig, "m4_confusions.png", fast, out_dir)
 
 
-def m4_f1_by_snr(bins: list[str], data: dict[str, dict[str, list]], fast: bool = False) -> Path:
+def m4_f1_by_snr(bins: list[str], data: dict[str, dict[str, list]], fast: bool = False, out_dir: Path | None = None) -> Path:
     """Macro-F1 per SNR bin and method (test_iid and test_shift pooled by bin), with record counts."""
     _style()
     fig, ax = plt.subplots(figsize=(9, 4.5))
     w = 0.26
     x = np.arange(len(bins))
+    vals = [v for d in data.values() for v in d["f1"] if v is not None]
+    lo = max(0.0, min(vals) - 0.02) if vals else 0.0
     for k, m in enumerate(("rules", "gbm_embedded", "gbm_unconstrained")):
         d = data[m]
-        ax.bar(x + (k - 1) * w, d["f1"], width=w - 0.02, color=METHOD_COLORS[m], label=METHOD_NAMES[m])
+        f = [np.nan if v is None else v for v in d["f1"]]
+        ax.bar(x + (k - 1) * w, np.array(f) - lo, bottom=lo, width=w - 0.02, color=METHOD_COLORS[m], label=METHOD_NAMES[m])
     for xi, n in zip(x, data["rules"]["n"]):
-        ax.text(xi, 0.0, f"n={n}", ha="center", va="bottom", fontsize=7, color="white")
-    lo = min(min(v["f1"]) for v in data.values())
-    ax.set_ylim(max(0.0, lo - 0.05), 1.0)
+        ax.text(xi, lo, f"n={n}", ha="center", va="bottom", fontsize=7, color=INK2)
+    ax.set_ylim(lo, 1.0 + 0.3 * (1.0 - lo))
     ax.set_xticks(x, bins)
     ax.set_xlabel("SNR bin (dB; < 35 dB only occurs in test_shift)")
-    ax.set_ylabel("macro-F1")
-    ax.legend(loc="lower right", fontsize=7)
+    ax.set_ylabel("macro-F1 (axis starts above 0)")
+    ax.legend(loc="upper left", fontsize=7, ncol=3)
     ax.set_title("M4: macro-F1 by SNR (test_iid + test_shift records pooled per bin)", loc="left")
     fig.tight_layout()
-    return _save(fig, "m4_f1_by_snr.png", fast)
+    return _save(fig, "m4_f1_by_snr.png", fast, out_dir)
 
 
-def m4_shift_degradation(vals: dict[str, dict[str, Any]], fast: bool = False) -> Path:
+def m4_shift_degradation(vals: dict[str, dict[str, Any]], fast: bool = False, out_dir: Path | None = None) -> Path:
     """Macro-F1 on test_iid vs test_shift per method (ML: mean +/- sd over seeds)."""
     _style()
     fig, ax = plt.subplots(figsize=(7.5, 4.5))
@@ -174,18 +178,18 @@ def m4_shift_degradation(vals: dict[str, dict[str, Any]], fast: bool = False) ->
         v = vals[m]
         ax.errorbar([0, 1], [v["iid"], v["shift"]], yerr=[v.get("iid_sd", 0.0), v.get("shift_sd", 0.0)],
                     color=METHOD_COLORS[m], marker="o", ms=7, lw=2, capsize=3, label=METHOD_NAMES[m])
-        ax.text(1.04, v["shift"], f"{v['shift']:.3f} ({v['shift'] - v['iid']:+.3f})", fontsize=7, color=INK2,
+        ax.text(1.04, v["shift"], f"{v['shift']:.4f} ({v['shift'] - v['iid']:+.4f})", fontsize=7, color=INK2,
                 va="center")
     ax.set_xticks([0, 1], ["test_iid", "test_shift"])
     ax.set_xlim(-0.2, 1.45)
     ax.set_ylabel("macro-F1")
-    ax.legend(loc="lower left", fontsize=7)
+    ax.legend(loc="best", fontsize=7)
     ax.set_title("M4: iid -> shift degradation (labels: shift F1 and change)", loc="left")
     fig.tight_layout()
-    return _save(fig, "m4_shift_degradation.png", fast)
+    return _save(fig, "m4_shift_degradation.png", fast, out_dir)
 
 
-def m4_disagreements(examples: list[dict[str, Any]], fast: bool = False) -> Path:
+def m4_disagreements(examples: list[dict[str, Any]], fast: bool = False, out_dir: Path | None = None) -> Path:
     """Up to 6 test_shift records where rules and GBM-embedded disagree: waveform, Urms(1/2), |V1|, J."""
     _style()
     n = len(examples)
@@ -220,8 +224,8 @@ def m4_disagreements(examples: list[dict[str, Any]], fast: bool = False) -> Path
                 ax.set_xlabel("t (s)")
     fig.suptitle("M4: test_shift records where rules and GBM-embedded disagree (dotted line: true onset; "
                  "channels ab/bc/ca)", x=0.01, ha="left", fontsize=10, fontweight="bold")
-    fig.tight_layout()
-    return _save(fig, "m4_disagreements.png", fast)
+    fig.tight_layout(rect=(0, 0, 1, 1 - 0.5 / (2.3 * n + 0.6)))
+    return _save(fig, "m4_disagreements.png", fast, out_dir)
 
 
 __all__ = ["m3_size_vs_f1", "m3_feature_importance", "m3_val_confusion", "m4_confusions", "m4_f1_by_snr",

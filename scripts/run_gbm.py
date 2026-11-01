@@ -48,8 +48,13 @@ def model_paths(fast: bool, seeds: list[int]) -> list:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--fast", action="store_true")
+    ap.add_argument("--force", action="store_true", help="retrain even if the methods are frozen (breaks the M4 freeze)")
     args = ap.parse_args(argv)
     fast = args.fast
+    if not fast and not args.force and (ROOT / "configs" / "frozen_methods.yaml").exists():
+        print("methods are frozen (configs/frozen_methods.yaml, M4): not retraining, frozen models kept "
+              "(use --force to retrain; evaluate_test.py will then refuse until a new freeze)")
+        return 0
     mcfg, bcfg = load_ml_config(), load_baseline_config()
     seeds = list(mcfg["seeds"])
     root, rep_dir, mod_dir = data_root(fast), reports_root(fast), models_root(fast)

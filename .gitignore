@@ -9,3 +9,4 @@ build/
 dist/
 models/fast/
 c/generated/fast/
+reports/dryrun/

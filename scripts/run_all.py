@@ -1,4 +1,5 @@
-"""Run every implemented stage in order: M1 dataset -> M2 baseline -> M2 golden vectors -> M3 GBM.
+"""Run every implemented stage in order: M1 dataset -> M2 baseline -> M2 golden vectors -> M3 GBM -> M4 sealed evaluation
+(frozen methods only; full-mode run_gbm keeps the frozen models).
 
 Usage: python scripts/run_all.py [--fast]
 """
@@ -12,7 +13,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-STAGES = ["make_dataset", "run_baseline", "make_golden", "run_gbm"]
+STAGES = ["make_dataset", "run_baseline", "make_golden", "run_gbm", "evaluate_test"]
 
 
 def _load(name: str):

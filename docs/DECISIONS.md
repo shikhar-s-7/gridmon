@@ -211,3 +211,22 @@ Evidence tags as in B3.
   GBM-embedded configuration (3 seeds) on features of the first 750 samples (OBS = REF, D-031) with the
   D-040 mapping (all-NaN columns become constant). Permutation importance: sklearn
   permutation_importance on VAL, seed-0 model, macro-F1 scoring, 10 repeats, random_state 0.
+
+## M4 (sealed evaluation) decisions
+- **D-047** — 2026-11-01 — *Freeze mechanics and pre-registered evaluation plan.* configs/frozen_methods.yaml
+  (scripts/freeze_methods.py, from the committed M2/M3 reports only) records the rule thresholds, the
+  GBM configurations and seeds, the SHA-256 of the 6 model files and of the 16 method-defining files
+  (dsp/*, features, rules, units, ml_gbm, export_gbm, configs/baseline.yaml, configs/ml.yaml, the C
+  tables), the feature-code commit and the evaluation plan. scripts/evaluate_test.py (the only caller
+  with allow_test, tested) exits with code 3 before loading any test data unless gridmon.frozen.verify
+  passes: hashes match, no unlisted method file, and no difference from the M4-freeze commit (git).
+  The evaluation code itself was dry-run on VAL before the freeze (no test data). After the single
+  run, RESULTS.md is re-rendered from results.json (`--render-only`, loads no data) to add findings.
+  Full-mode run_gbm keeps frozen models (no retraining without --force).
+  *Evaluation conventions (fixed before the run):* GBM-embedded is evaluated through the float32
+  walker on the exported JSON (the deployable model; walker-vs-sklearn agreement is reported); ML =
+  mean +/- sd over seeds 0/1/2; confusion matrices and figures use seed 0; paired bootstrap of the
+  seed-mean macro-F1 difference (2,000 class-stratified resamples, seed 20261104) with per-seed CIs;
+  exact McNemar per seed; GBM-unc vs GBM-emb uses GBM-emb seed 0 as the reference; SNR bins
+  25/30/35/40/50/60 dB; severity bins in gridmon.evaluation.SEVERITY; iid -> shift change with
+  independent stratified resamples. "Better" is claimed only if the 95 % CI excludes zero.
