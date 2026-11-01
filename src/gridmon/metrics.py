@@ -10,7 +10,8 @@ import numpy as np
 from . import CLASSES
 
 CRITICAL: list[tuple[str, str]] = [("phase_jump", "freq_event"), ("freq_event", "phase_jump"),
-                                   ("sag_bal", "normal"), ("sag_unbal", "normal")]
+                                   ("sag_bal", "normal"), ("sag_unbal", "normal"),
+                                   ("sag_bal", "sag_unbal"), ("sag_unbal", "sag_bal")]
 
 
 def confusion(y_true_idx: np.ndarray, y_pred_idx: np.ndarray, k: int) -> np.ndarray:
@@ -43,6 +44,8 @@ def report(y_true: np.ndarray, y_pred: np.ndarray, classes: tuple[str, ...] = CL
     n_event = C.sum() - n_norm
     crit = {f"{a}->{b}": int(C[classes.index(a), classes.index(b)]) for a, b in CRITICAL}
     crit["sag_*->normal"] = crit["sag_bal->normal"] + crit["sag_unbal->normal"]
+    crit["phase_jump<->freq_event"] = crit["phase_jump->freq_event"] + crit["freq_event->phase_jump"]
+    crit["sag_bal<->sag_unbal"] = crit["sag_bal->sag_unbal"] + crit["sag_unbal->sag_bal"]
     return {
         "n": int(C.sum()), "accuracy": float(np.trace(C) / C.sum()), "macro_f1": float(f.mean()),
         "per_class": {c: {"precision": float(p[i]), "recall": float(r[i]), "f1": float(f[i]), "support": int(C[i].sum())}

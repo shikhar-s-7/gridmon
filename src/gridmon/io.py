@@ -30,6 +30,20 @@ def reports_root(fast: bool = False) -> Path:
     return ROOT / "reports" / ("fast" if fast else "")
 
 
+def models_root(fast: bool = False) -> Path:
+    """models/ (committed exported models) or models/fast/ (git-ignored)."""
+    return ROOT / "models" / ("fast" if fast else "")
+
+
+def c_generated_root(fast: bool = False) -> Path:
+    """c/generated/ (committed C tables) or c/generated/fast/ (git-ignored)."""
+    return ROOT / "c" / "generated" / ("fast" if fast else "")
+
+
+def load_ml_config() -> dict[str, Any]:
+    return load_yaml(ROOT / "configs" / "ml.yaml")
+
+
 def load_yaml(path: Path | str) -> dict[str, Any]:
     with open(path, "r", encoding="utf-8") as fh:
         return yaml.safe_load(fh)

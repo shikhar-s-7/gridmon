@@ -1,4 +1,4 @@
-"""Run every implemented stage in order: M1 dataset -> M2 baseline -> M2 golden vectors.
+"""Run every implemented stage in order: M1 dataset -> M2 baseline -> M2 golden vectors -> M3 GBM.
 
 Usage: python scripts/run_all.py [--fast]
 """
@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-STAGES = ["make_dataset", "run_baseline", "make_golden"]
+STAGES = ["make_dataset", "run_baseline", "make_golden", "run_gbm"]
 
 
 def _load(name: str):

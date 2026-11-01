@@ -1,0 +1,25 @@
+# M3 gradient boosting (brief B8; PROMPT_02 M3). Features: the 37 M2 features (gridmon.features.FEATURE_NAMES),
+# float64 from data/<split>/features.csv, cast to float32 inside the models (sklearn trees and the C walker).
+# Training on TRAIN, selection on VAL. Class order = gridmon.CLASSES (labels encoded 0..6).
+seeds: [0, 1, 2]                 # sklearn random_state of the three repeats
+budget_bytes: 65536              # exported model size limit (docs/MODEL_FORMAT.md): 64 KB
+tie_tol: 0.002                   # mean val macro-F1 within this of the best feasible -> smaller model wins
+n_jobs: 4
+
+embedded:                        # sklearn GradientBoostingClassifier (public tree_ structure)
+  grid:
+    n_estimators: [20, 30, 40, 60, 100]   # evaluated as stages of one 100-stage fit (identical models)
+    max_leaf_nodes: [4, 8, 16]
+    learning_rate: [0.1, 0.2]
+    subsample: [0.8, 1.0]
+  fixed: {max_depth: null, min_samples_leaf: 1, loss: log_loss}
+
+unconstrained:                   # sklearn HistGradientBoostingClassifier (reference only: cost of the budget)
+  grid:
+    max_leaf_nodes: [15, 31]
+    learning_rate: [0.05, 0.1]
+  fixed: {max_iter: 1000, early_stopping: true, validation_fraction: 0.15, n_iter_no_change: 10,
+          scoring: loss}
+
+permutation_importance: {n_repeats: 10, seed: 0, scoring: f1_macro}
+selftest_rows: 8                 # val rows (features + sklearn proba) stored in the model JSON for the C SIL

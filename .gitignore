@@ -7,3 +7,5 @@ __pycache__/
 reports/fast/
 build/
 dist/
+models/fast/
+c/generated/fast/
