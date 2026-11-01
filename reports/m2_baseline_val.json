@@ -165,7 +165,11 @@
         "freq_event->phase_jump": 0,
         "sag_bal->normal": 0,
         "sag_unbal->normal": 0,
-        "sag_*->normal": 0
+        "sag_bal->sag_unbal": 0,
+        "sag_unbal->sag_bal": 0,
+        "sag_*->normal": 0,
+        "phase_jump<->freq_event": 0,
+        "sag_bal<->sag_unbal": 0
       }
     },
     "tuned": {
@@ -301,7 +305,11 @@
         "freq_event->phase_jump": 0,
         "sag_bal->normal": 0,
         "sag_unbal->normal": 0,
-        "sag_*->normal": 0
+        "sag_bal->sag_unbal": 0,
+        "sag_unbal->sag_bal": 0,
+        "sag_*->normal": 0,
+        "phase_jump<->freq_event": 0,
+        "sag_bal<->sag_unbal": 0
       }
     }
   },
@@ -439,7 +447,11 @@
         "freq_event->phase_jump": 0,
         "sag_bal->normal": 0,
         "sag_unbal->normal": 0,
-        "sag_*->normal": 0
+        "sag_bal->sag_unbal": 1,
+        "sag_unbal->sag_bal": 0,
+        "sag_*->normal": 0,
+        "phase_jump<->freq_event": 0,
+        "sag_bal<->sag_unbal": 1
       }
     },
     "tuned": {
@@ -575,7 +587,11 @@
         "freq_event->phase_jump": 0,
         "sag_bal->normal": 0,
         "sag_unbal->normal": 0,
-        "sag_*->normal": 0
+        "sag_bal->sag_unbal": 1,
+        "sag_unbal->sag_bal": 0,
+        "sag_*->normal": 0,
+        "phase_jump<->freq_event": 0,
+        "sag_bal<->sag_unbal": 1
       }
     }
   },
@@ -1194,14 +1210,14 @@
     }
   },
   "runtimes": {
-    "features_train_s": 20.25,
-    "features_train_ms_per_record": 3.616,
-    "features_val_s": 5.97,
-    "features_val_ms_per_record": 3.413,
-    "rules_val_ms_per_record": 0.0016,
-    "tuning_s": 6.97,
-    "control_s": 6.52,
-    "float32_check_s": 4.37,
-    "total_s": 48.3
+    "features_train_s": 17.63,
+    "features_train_ms_per_record": 3.149,
+    "features_val_s": 5.82,
+    "features_val_ms_per_record": 3.328,
+    "rules_val_ms_per_record": 0.0007,
+    "tuning_s": 6.66,
+    "control_s": 5.44,
+    "float32_check_s": 3.76,
+    "total_s": 43.0
   }
 }

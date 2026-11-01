@@ -175,3 +175,39 @@ Evidence tags as in B3.
   in the --fast test_shift subset; such records still stay inside (0.90, 1.10) (tested).
   *Alternatives:* redraw the pre-event (leaks class information into pre-event conditions); allow
   depth < 2 % (violates B5); raise an error (breaks --fast).
+
+## M3 (gradient boosting) decisions
+- **D-040** — 2026-11-01 — *ML input mapping of non-finite features:* x = isfinite(f) ? f : 0.0 for every
+  model (GBM-embedded, GBM-unconstrained, C walker; `input_nan_fill` in the model JSON). Only
+  `rocof_end` is ever NaN in full records (jump mask covering the whole END window: 32/5600 train,
+  12/1750 val). The feature code is unchanged (PROMPT_02: "features unchanged"). *Alternatives:* a
+  fallback in the feature definition (like df_end; changes M2 code, spec and golden vectors); native
+  NaN handling (HGB only; complicates the C walker).
+- **D-041** — 2026-11-01 — *GBM-embedded grid via stages.* For each (max_leaf_nodes, learning_rate,
+  subsample, seed) one 100-stage fit is made and n_estimators 20/30/40/60 are its first n stages:
+  sklearn draws the per-stage subsample and tree randomness from one stream in stage order, so the
+  truncated model IS the model trained with n_estimators = n (bit-identical decision function,
+  tested). 36 fits instead of 180. Fixed: max_depth = None (trees bounded by max_leaf_nodes only),
+  min_samples_leaf 1, log-loss. Seeds = sklearn random_state 0, 1, 2.
+- **D-042** — 2026-11-01 — *Export format details (docs/MODEL_FORMAT.md).* Besides 14 B/node and 4 B/class
+  init scores the walker needs the tree roots: uint16 tree_root[T] (2 B/tree) is counted in the size.
+  Leaves use the same 14-byte stride (fixed-stride arrays, no per-node type tag); internal nodes
+  store value 0. Class order = gridmon.CLASSES; label = first argmax of the float32 raw scores.
+- **D-043** — 2026-11-01 — *Selection details.* A configuration is feasible if the exported size of
+  EVERY seed is <= 65,536 B (max over seeds); among feasible ones the highest mean val macro-F1 wins;
+  configurations within 0.002 of it are ties, resolved by the smallest max size, then higher F1,
+  fewer stages, fewer leaves. Result: val is saturated (33 feasible configurations within 0.002 of
+  1.000), so the rule picks the smallest: 20 stages x 4 leaves, lr 0.1, subsample 1.0, 13,972 B.
+- **D-044** — 2026-11-01 — *GBM-unconstrained reference:* HistGradientBoostingClassifier, max_iter 1000,
+  early stopping on the log-loss of an internal 15 % split of TRAIN (n_iter_no_change 10), grid
+  max_leaf_nodes {15, 31} x learning_rate {0.05, 0.1}; highest mean val macro-F1, ties -> smaller
+  (all four tie at 0.9998 -> 15 leaves, lr 0.1). Its size in the same 14 B/node format is counted
+  from sklearn's private `_predictors` (accounting only; not exported).
+- **D-045** — 2026-11-01 — *Committed model artefacts (models/):* the three GBM-embedded JSON models
+  (seed 0 = models/gbm_embedded.json = the C model), their sklearn pickles (cross-check of the walker
+  on the test sets) and the three GBM-unconstrained pickles (~1 MB in total; needed by M4 because the
+  frozen methods are evaluated from files, not retrained). Pickles are tied to scikit-learn 1.9.1.
+- **D-046** — 2026-11-01 — *M3 controls and importance:* the pre-event-only control refits the SELECTED
+  GBM-embedded configuration (3 seeds) on features of the first 750 samples (OBS = REF, D-031) with the
+  D-040 mapping (all-NaN columns become constant). Permutation importance: sklearn
+  permutation_importance on VAL, seed-0 model, macro-F1 scoring, 10 repeats, random_state 0.

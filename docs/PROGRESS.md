@@ -4,7 +4,7 @@
 - [x] Setup: venv, pinned requirements, src layout, docs skeleton, git
 - [x] M1 — event generator and datasets (B4-B6)
 - [x] M2 — conventional baseline on train/val, DSP spec, golden vectors (B7)
-- [ ] M3 — gradient boosting (+ optional CNN), embedded size budget (B8)
+- [x] M3 — gradient boosting, embedded size budget, C-ready export (B8; CNN not done, optional)
 - [ ] M4 — sealed evaluation on test_iid and test_shift (B9)
 - [ ] M5 — results report (RESULTS.md, results.json, findings and limitations)
 - [ ] M6 — portable C core + SIL equivalence (B13.1)
@@ -27,3 +27,7 @@
   record; rejection 0.73-0.78), D-039 infeasible-band fallback (fast subset only), platform-stable FIR file
   (D-038). Non-oscillation records bit-identical before/after. All splits regenerated (145 s); M2 re-run:
   rules val macro-F1 0.997 (default = tuned; oscillation 249/250), pre-event control 0.140, golden regenerated.
+- 2026-11-01 M3 (`fd105b4` code): GBM-embedded grid (60 configs x 3 seeds, 36 fits via stages, 261 s), selected
+  20 stages x 4 leaves (lr 0.1, subsample 1.0) = 13,972 B, val macro-F1 1.000 (rules 0.997, HGB reference 0.9998);
+  export JSON + C tables; float32 walker == sklearn on val (max |dp| 2e-7, labels 100 %, 0 branch mismatches);
+  pre-event-only control 0.124; docs/MODEL_FORMAT.md; D-040..D-046.
