@@ -27,11 +27,14 @@
   record; rejection 0.73-0.78), D-039 infeasible-band fallback (fast subset only), platform-stable FIR file
   (D-038). Non-oscillation records bit-identical before/after. All splits regenerated (145 s); M2 re-run:
   rules val macro-F1 0.997 (default = tuned; oscillation 249/250), pre-event control 0.140, golden regenerated.
-- 2026-11-01 M3 (`fd105b4` code): GBM-embedded grid (60 configs x 3 seeds, 36 fits via stages, 261 s), selected
+- 2026-11-01 M3 (`fd105b4` code, `e11cc1d` results): GBM-embedded grid (60 configs x 3 seeds, 36 fits via stages, 261 s), selected
   20 stages x 4 leaves (lr 0.1, subsample 1.0) = 13,972 B, val macro-F1 1.000 (rules 0.997, HGB reference 0.9998);
   export JSON + C tables; float32 walker == sklearn on val (max |dp| 2e-7, labels 100 %, 0 branch mismatches);
   pre-event-only control 0.124; docs/MODEL_FORMAT.md; D-040..D-046.
-- 2026-11-01 M4: freeze `6240f60` (configs/frozen_methods.yaml; evaluation code dry-run on val first), one run on
+- 2026-11-01 M4 (`da44023`): freeze `6240f60` (configs/frozen_methods.yaml; evaluation code dry-run on val first), one run on
   the sealed sets: test_iid rules 0.9983 / GBM-embedded 1.0000 / GBM-unconstrained 1.0000 (no significant
   difference); test_shift rules 0.9903 / GBM-embedded 0.8653 +/- 0.0014 / GBM-unconstrained 0.8484 +/- 0.0066
   (rules significantly better: -0.125, CI [-0.141, -0.110]). reports/RESULTS.md, results.json, m4 figures; D-047, D-048.
+- 2026-11-01 Wrap-up (session 2): 81 tests pass (new: oscillation margin, GBM export equivalence, frozen-config
+  hashes, evaluate_test refusal, statistics); run_all --fast 88 s through all five stages; docs updated; new
+  HANDOFF (session-1 handoff archived in docs/handoffs/). Next: Prompt 03 (C core, SIL).

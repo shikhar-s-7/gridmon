@@ -55,4 +55,7 @@ tzdata==2026.6
   int16 inputs of all golden vectors bit-identical; float64 traces within 3e-14). The AA FIR redesign
   differs from the Windows file in the last bit of 3 taps (libm); make_dataset now keeps the committed
   file when equal to 1e-12 (D-038).
-- Runtimes (this VM): full `run_all.py` (M1-M2) ~200 s (dataset 145 s, baseline 48 s, golden 1 s).
+- Runtimes (this VM, 4 vCPU): dataset 145 s, baseline 43-48 s, golden 1 s, M3 `run_gbm.py` 290 s (embedded grid
+  261 s on 4 processes), M4 `evaluate_test.py` 26 s; `run_all.py --fast` 88 s (all five stages); `pytest` 46 s
+  (81 tests). A full `run_all.py` after the freeze skips GBM retraining and re-runs the frozen evaluation.
+- gcc 13 (system) compiles the generated C tables (`-std=c99 -pedantic -Wdouble-promotion -Wfloat-conversion`).
