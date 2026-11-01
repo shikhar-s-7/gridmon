@@ -3,7 +3,8 @@
 Grid-event monitor for BESS PCS voltage records: synthetic generator (M1), conventional DSP
 baseline + rules (M2), GBM with 64 KB C export (M3), sealed evaluation (M4, done: reports/RESULTS.md),
 next C99 core (M6), C2000 port (M7), website (M8). Python is the REFERENCE for a float32 C port. Simulation-only.
-Status (2026-11-01, session 3): M1-M6 done (M6: C core + SIL, docs/C_CORE.md); methods FROZEN (configs/frozen_methods.yaml, commit 6240f60).
+Status (2026-11-01, session 3): M1-M7 done (M6 C core + SIL, docs/C_CORE.md; M7 port layer + host stream sim; L2 cl2000
+compile is a script for a local run, docs/C2000_BUILD.md); next M8 website. Methods FROZEN (configs/frozen_methods.yaml, commit 6240f60).
 
 ## Commands (Windows paths; use .venv/bin/python on macOS/Linux)
 - setup: `py -3.12 -m venv .venv`; `.venv/Scripts/python -m pip install -r requirements.txt`; `... -m pip install -e .`
@@ -15,6 +16,9 @@ Status (2026-11-01, session 3): M1-M6 done (M6: C core + SIL, docs/C_CORE.md); m
 - C core (M6): `scripts/gen_c_tables.py [--check]` (D-054 tables), `scripts/build_c.py [--force]` (build/: SIL lib, gm_cli,
   gm_cli_asan; cc/gcc/clang or `python -m ziglang cc`), `scripts/run_sil.py [--fast]` (golden + splits -> reports/m6_sil.json;
   the only other allow_test caller: equivalence only, no labels)
+- C2000 port (M7): `scripts/run_port_stream.py [--fast]` (120 s 50 kHz stream through firmware/c2000/gm_port.c ->
+  reports/m7_port_stream.json + figure), `scripts/c2000_compile_check.py --cgt-root <TI CGT>` (L2, local; `--dry-run`),
+  `scripts/make_pil_records.py [--check]` (LaunchPad PIL template records)
 - Linux cloud VM: `python3.12 -m venv .venv` then `.venv/bin/python ...` (all pins install unchanged); optional `pip install ziglang` (-m32/msp430 checks)
 
 ## Rules (PROMPT A1)
@@ -41,7 +45,10 @@ Status (2026-11-01, session 3): M1-M6 done (M6: C core + SIL, docs/C_CORE.md); m
 - models/: gbm_embedded.json (C model, seed 0) + seed1/2 JSON, sklearn pickles; c/generated/gm_model_gbm.{c,h}
 - c/: include/gridmon.h (API), src/gm_*.c (core), tables/ (GENERATED), generated/ (frozen GBM tables), host/ (CLI, ctypes helpers);
   src/gridmon c_build, c_sil (ctypes), c_portability (static checks)
-- docs/: PROJECT_BRIEF, DECISIONS (D-001..D-061), C_CORE, PROGRESS, DSP_SPEC, FEATURES, MODEL_FORMAT, VALIDATION, ENVIRONMENT,
+- firmware/c2000/: gm_port.{h,c} (portable port layer: trim, LN->LL, polyphase FIR, ring, trigger, capture, telemetry),
+  gm_port_fir.{h,c} (GENERATED taps 20/40/50/100 kHz), gm_port_c2000.c (thin adapter), host/ (sim driver), pil_launchpad/ (UNTESTED);
+  src/gridmon port_sim (ctypes), port_stream (evaluation, figure), generator/stream.py (continuous-stream option)
+- docs/: PROJECT_BRIEF, DECISIONS (D-001..D-068), C_CORE, C2000_INTEGRATION, C2000_BUILD, PROGRESS, DSP_SPEC, FEATURES, MODEL_FORMAT, VALIDATION, ENVIRONMENT,
   HANDOFF (+ handoffs/); reports/RESULTS.md + results.json (+ results_findings.md, hand-written)
 
 - Git: do not add Co-Authored-By, Claude-Session or "Generated with Claude Code" lines to commits or PR descriptions.

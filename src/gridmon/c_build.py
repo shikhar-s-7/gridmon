@@ -27,7 +27,9 @@ C_DIR = ROOT / "c"
 BUILD_DIR = ROOT / "build"
 CORE_SOURCES = sorted((C_DIR / "src").glob("*.c")) + [C_DIR / "tables" / "gm_tables.c",
                                                       C_DIR / "generated" / "gm_model_gbm.c"]
-INCLUDES = ["-I" + str(C_DIR / d) for d in ("include", "tables", "generated", "src", "host")]
+PORT_DIR = ROOT / "firmware" / "c2000"
+PORT_SOURCES = [PORT_DIR / "gm_port.c", PORT_DIR / "gm_port_fir.c", PORT_DIR / "gm_port_c2000.c"]
+INCLUDES = ["-I" + str(C_DIR / d) for d in ("include", "tables", "generated", "src", "host")] + ["-I" + str(PORT_DIR)]
 WARN_FLAGS = ["-std=c99", "-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wdouble-promotion",
               "-Wfloat-conversion", "-Wvla", "-Werror", "-ffp-contract=off"]
 OPT_FLAGS = ["-O2"]
@@ -81,7 +83,8 @@ def _stamp(cmd: list[str], sources: list[Path]) -> str:
 
 
 def _headers() -> list[Path]:
-    return sorted(p for d in ("include", "tables", "generated", "src", "host") for p in (C_DIR / d).glob("*.h"))
+    return sorted([p for d in ("include", "tables", "generated", "src", "host") for p in (C_DIR / d).glob("*.h")]
+                  + list(PORT_DIR.glob("*.h")))
 
 
 def _run(cmd: list[str], out: Path, sources: list[Path], force: bool) -> Path:
@@ -119,6 +122,16 @@ def build_cli(cc: list[str] | None = None, force: bool = False, sanitize: bool =
     return _run(cmd, out, srcs, force)
 
 
+def build_port_sim(cc: list[str] | None = None, force: bool = False) -> Path:
+    """Shared library: core + port layer + firmware/c2000/host/gm_port_sim.c (M7 host simulation)."""
+    cc = cc or find_compiler()
+    out = BUILD_DIR / shared_lib_name("gridmon_port")
+    srcs = CORE_SOURCES + PORT_SOURCES + [PORT_DIR / "host" / "gm_port_sim.c"]
+    pic = [] if sys.platform.startswith("win") else ["-fPIC"]
+    cmd = cc + WARN_FLAGS + OPT_FLAGS + pic + ["-shared"] + INCLUDES + [str(s) for s in srcs] + ["-o", str(out), "-lm"]
+    return _run(cmd, out, srcs, force)
+
+
 CHECK_VARIANTS: dict[str, list[str]] = {
     "gbm_off": ["-DGM_ENABLE_GBM=0"],
     "no_traces_nan0": ["-DGM_REPORT_NAN=0"],
@@ -134,7 +147,7 @@ def build_checks(cc: list[str] | None = None, extra_flags: list[str] | None = No
     tmp.mkdir(parents=True, exist_ok=True)
     for name, defs in CHECK_VARIANTS.items():
         msgs = []
-        for s in CORE_SOURCES:
+        for s in CORE_SOURCES + PORT_SOURCES:
             cmd = cc + WARN_FLAGS + OPT_FLAGS + (extra_flags or []) + defs + INCLUDES + \
                 ["-c", str(s), "-o", str(tmp / (s.stem + ".o"))]
             r = subprocess.run(cmd, capture_output=True, text=True)
@@ -167,6 +180,7 @@ def build_all(force: bool = False, sanitize: bool = True) -> dict[str, str]:
     info = {"compiler": " ".join(cc), "compiler_version": compiler_version(cc), "flags": " ".join(WARN_FLAGS + OPT_FLAGS)}
     info["sil"] = str(build_sil(cc, force).relative_to(ROOT))
     info["cli"] = str(build_cli(cc, force).relative_to(ROOT))
+    info["port_sim"] = str(build_port_sim(cc, force).relative_to(ROOT))
     if sanitize:
         try:
             info["asan"] = str(build_cli(cc, force, sanitize=True).relative_to(ROOT))

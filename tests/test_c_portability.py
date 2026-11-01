@@ -68,3 +68,30 @@ def test_cross_compile_16bit_int(cross):
     if r["status"] == "skipped":
         pytest.skip(r.get("note", "no 16-bit-int toolchain"))
     assert r["status"] == "pass", r
+
+
+def _script(name: str):
+    import importlib.util
+
+    from gridmon.io import ROOT
+    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
+
+
+def test_c2000_compile_check_dry_run(capsys):
+    """L2 script (run locally with TI cl2000): every core/port source in both GBM configurations, C28x flags."""
+    mod = _script("c2000_compile_check")
+    assert mod.main(["--dry-run"]) == 0
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert len(lines) == 2 * len(mod.SOURCES)
+    for flag in ("-v28", "--float_support=fpu32", "--tmu_support=tmu0", "--abi=eabi", "--float_operations_allowed=32"):
+        assert all(flag in ln for ln in lines)
+    names = {s.name for s in mod.SOURCES}
+    assert {"gm_api.c", "gm_port.c", "gm_port_fir.c", "gm_model_gbm.c", "gm_tables.c"} <= names
+
+
+def test_pil_records_current():
+    _cc_or_skip()
+    assert _script("make_pil_records").main(["--check"]) == 0

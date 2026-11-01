@@ -8,7 +8,7 @@
 - [x] M4 — sealed evaluation on test_iid and test_shift (B9)
 - [x] M5 — results report (RESULTS.md, results.json, findings and limitations; done with M4)
 - [x] M6 — portable C core + SIL equivalence (B13.1)
-- [ ] M7 — C2000 port layer, integration guide, C28x compile/size (B13.2)
+- [x] M7 — C2000 port layer, integration guide, C28x compile/size (B13.2) — compile/size step is a script for a local run (D-067)
 - [ ] M8 — static website with in-browser classification (B13.4)
 
 ## Log
@@ -45,3 +45,10 @@
   100 % on val/test_iid/test_shift (1750 each) and 560 train records; GBM bit-exact on the same C features, 100 %
   end to end; features within tolerance except 2 rho values (float32 argmin tie, D-060); ASan/UBSan clean; static
   C28x checks, ILP32 and 16-bit-int compiles pass; sizeof(gm_ctx_t) 15,816 B; ~1.3 ms/record on the host. D-055..D-061.
+- 2026-11-01 M7: port layer firmware/c2000 (calibration trim D-052, LN->LL, polyphase FIR taps for 20/40/50/100 kHz generated
+  per D-054, 45 MACs per ISR sample, SPSC ring 1.6 s, trigger Urms/J/frequency/envelope, onset back-extrapolation,
+  record placement at 0.28 s, telemetry), continuous-stream generator option (record generator bit-identical), host
+  simulation (scripts/run_port_stream.py): 120 s at 50 kHz, 12/12 events captured, onset 0.225-0.288 s in the record,
+  rules and GBM 12/12, 0 false triggers, 0 overruns; LN input identical outcome. C28x compile check script +
+  docs/C2000_BUILD.md (ti.com download not possible in the cloud session), LaunchPad PIL template (UNTESTED),
+  docs/C2000_INTEGRATION.md. D-062..D-068.

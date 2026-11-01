@@ -1,0 +1,642 @@
+{
+  "main_LL_calibrated": {
+    "seed": 7007,
+    "duration_s": 120.0,
+    "f_in_hz": 50000,
+    "input": "LL",
+    "calibrated": true,
+    "background_every_s": 0.001,
+    "proc_delay_s": 0.05,
+    "stream": {
+      "snr_db": 44.069059830179995,
+      "u_pre": 1.007251771551101,
+      "f_pre": 49.928973290304036,
+      "gain": [
+        0.003986784391993798,
+        -0.00443667557009778,
+        0.0010078243730605781
+      ],
+      "offset": [
+        -0.004845184464593543,
+        -0.0010379042995507124,
+        -0.003912734671735593
+      ],
+      "gap_s": 6.654227202707412,
+      "n_gap_hard_negative_episodes": 14
+    },
+    "summary": {
+      "events": 12,
+      "events_triggered": 12,
+      "normal_events": 2,
+      "normal_events_triggered": 0,
+      "rule_label_correct": 12,
+      "gbm_agrees_with_truth": 12,
+      "false_triggers_outside_events": 0,
+      "secondary_captures": 3,
+      "onset_in_record_s_min": 0.2254,
+      "onset_in_record_s_max": 0.2882,
+      "onset_in_record_s_mean": 0.2763916666666667,
+      "latency_s_by_cause": {
+        "urms": [
+          0.0059,
+          0.0051,
+          0.0136,
+          0.0146,
+          0.0097
+        ],
+        "jump": [
+          0.0062,
+          0.0039,
+          0.0078,
+          0.0659
+        ],
+        "freq": [
+          0.215,
+          0.1812
+        ],
+        "env": [
+          0.1136
+        ]
+      },
+      "overruns": 0,
+      "resyncs": 0,
+      "clipped": 0,
+      "captures": 15,
+      "triggers": 15
+    },
+    "per_event": [
+      {
+        "label": "sag_bal",
+        "onset_s": 3.3041,
+        "window_end_s": 5.1296,
+        "params": {
+          "label": "sag_bal",
+          "t0": 0.30405884965505614,
+          "V": 0.7007672777544369,
+          "psi": -0.2830493068716785,
+          "dur": 0.13232561239757076,
+          "rec_abrupt": false,
+          "rec_level": 0.9101093068019623,
+          "rec_tau": 0.23473986558998677,
+          "sag_type": "A",
+          "special": "a"
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "jump"
+        ],
+        "latency_s": 0.0062,
+        "onset_in_record_s": 0.285,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "sag_bal",
+        "rule_reason": "dip_balanced",
+        "rule_correct": true,
+        "gbm_label": "sag_bal",
+        "gbm_max_proba": 0.961,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "oscillation",
+        "onset_s": 11.9876,
+        "window_end_s": 12.9338,
+        "params": {
+          "label": "oscillation",
+          "t0": 0.2038393055983919,
+          "depth": 0.05523343649556685,
+          "ang_amp": 0.04282700589021785,
+          "f_m": 6.872539877549624,
+          "sigma": -0.102339497241562,
+          "phi_m": 2.3614059490412553,
+          "phi_rel": 0.5158261080124171,
+          "ramp": 0.05
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "env"
+        ],
+        "latency_s": 0.1136,
+        "onset_in_record_s": 0.2626,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "oscillation",
+        "rule_reason": "osc_magnitude",
+        "rule_correct": true,
+        "gbm_label": "oscillation",
+        "gbm_max_proba": 0.95,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "freq_event",
+        "onset_s": 19.9803,
+        "window_end_s": 23.6025,
+        "params": {
+          "label": "freq_event",
+          "t0": 0.3922650483398374,
+          "rocof": -1.7446481784875303,
+          "df_target": 0.46152629380233134,
+          "dv1": 0.0036976073199211593
+        },
+        "triggered": true,
+        "n_secondary_captures": 1,
+        "cause": [
+          "freq"
+        ],
+        "latency_s": 0.215,
+        "onset_in_record_s": 0.2769,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "freq_event",
+        "rule_reason": "freq_offset",
+        "rule_correct": true,
+        "gbm_label": "freq_event",
+        "gbm_max_proba": 0.941,
+        "gbm_agrees_with_truth": true,
+        "secondary": [
+          {
+            "t_s": 22.605,
+            "cause": [
+              "freq"
+            ],
+            "rule_label": "normal",
+            "gbm_label": "normal"
+          }
+        ]
+      },
+      {
+        "label": "normal",
+        "onset_s": 30.6303,
+        "window_end_s": 31.2567,
+        "params": {
+          "label": "normal",
+          "hn_step_on": true,
+          "hn_step": 0.006961579993739709,
+          "hn_step_t": 0.3736451713246346,
+          "hn_ang_on": false,
+          "hn_ang": 0.03291315039733869,
+          "hn_ang_t": 0.28588891850013326,
+          "hn_harm_on": false,
+          "hn_harm_h": 5,
+          "hn_harm_add": 0.006733939287671941,
+          "hn_harm_t": 0.30450758989931936,
+          "hn_ramp_on": false,
+          "hn_ramp": -0.013292676909479374,
+          "hn_ramp_t": 0.61717630142051,
+          "hn_ramp_dur": 0.4473627281548128
+        },
+        "triggered": false,
+        "n_secondary_captures": 0
+      },
+      {
+        "label": "sag_unbal",
+        "onset_s": 38.1563,
+        "window_end_s": 39.0656,
+        "params": {
+          "label": "sag_unbal",
+          "t0": 0.24541533545369149,
+          "V": 0.6828467222150478,
+          "psi": -0.30073607814650977,
+          "dur": 0.25201350027587666,
+          "rec_abrupt": false,
+          "rec_level": 0.979405176736284,
+          "rec_tau": 0.08675752438819549,
+          "sag_type": "F",
+          "special": "a"
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "urms",
+          "jump"
+        ],
+        "latency_s": 0.0059,
+        "onset_in_record_s": 0.2873,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "sag_unbal",
+        "rule_reason": "dip_unbalanced",
+        "rule_correct": true,
+        "gbm_label": "sag_unbal",
+        "gbm_max_proba": 0.961,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "normal",
+        "onset_s": 46.0199,
+        "window_end_s": 46.7199,
+        "params": {
+          "label": "normal",
+          "hn_step_on": false,
+          "hn_step": -0.015260355717411151,
+          "hn_step_t": 0.47238204734848555,
+          "hn_ang_on": false,
+          "hn_ang": -0.03016544147655035,
+          "hn_ang_t": 0.853856294516367,
+          "hn_harm_on": false,
+          "hn_harm_h": 7,
+          "hn_harm_add": 0.014809266071829086,
+          "hn_harm_t": 0.8825309783023438,
+          "hn_ramp_on": false,
+          "hn_ramp": -0.014602892535964845,
+          "hn_ramp_t": 0.6838018032101425,
+          "hn_ramp_dur": 0.4160721959563275
+        },
+        "triggered": false,
+        "n_secondary_captures": 0
+      },
+      {
+        "label": "sag_unbal",
+        "onset_s": 53.6672,
+        "window_end_s": 56.1488,
+        "params": {
+          "label": "sag_unbal",
+          "t0": 0.29307963980803964,
+          "V": 0.2123347238824659,
+          "psi": -0.1499552100295871,
+          "dur": 0.4072706580712798,
+          "rec_abrupt": false,
+          "rec_level": 0.9114032456166645,
+          "rec_tau": 0.2891932707703958,
+          "sag_type": "D",
+          "special": "b"
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "urms",
+          "jump"
+        ],
+        "latency_s": 0.0051,
+        "onset_in_record_s": 0.2882,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "sag_unbal",
+        "rule_reason": "dip_unbalanced",
+        "rule_correct": true,
+        "gbm_label": "sag_unbal",
+        "gbm_max_proba": 0.961,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "swell",
+        "onset_s": 63.1487,
+        "window_end_s": 63.5422,
+        "params": {
+          "label": "swell",
+          "t0": 0.3456516492811261,
+          "S": 1.2433530955775878,
+          "ang": 0.027980981196753282,
+          "v2x": 0.00534393402642816,
+          "v2x_ang": 4.82207674077083,
+          "dur": 0.34357138735238096
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "urms"
+        ],
+        "latency_s": 0.0136,
+        "onset_in_record_s": 0.2797,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "swell",
+        "rule_reason": "swell",
+        "rule_correct": true,
+        "gbm_label": "swell",
+        "gbm_max_proba": 0.96,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "sag_bal",
+        "onset_s": 70.4476,
+        "window_end_s": 71.8463,
+        "params": {
+          "label": "sag_bal",
+          "t0": 0.251165343923469,
+          "V": 0.8080192556367034,
+          "psi": -0.0857433827799768,
+          "dur": 0.273113160127051,
+          "rec_abrupt": false,
+          "rec_level": 0.9159152979209774,
+          "rec_tau": 0.153647369857132,
+          "sag_type": "A",
+          "special": "a"
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "urms",
+          "jump"
+        ],
+        "latency_s": 0.0146,
+        "onset_in_record_s": 0.2786,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "sag_bal",
+        "rule_reason": "dip_balanced",
+        "rule_correct": true,
+        "gbm_label": "sag_bal",
+        "gbm_max_proba": 0.961,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "phase_jump",
+        "onset_s": 78.8744,
+        "window_end_s": 78.9244,
+        "params": {
+          "label": "phase_jump",
+          "t0": 0.3738492220777702,
+          "dphi": -0.46762789955259443,
+          "dv1": -0.009437222119241834
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "jump"
+        ],
+        "latency_s": 0.0039,
+        "onset_in_record_s": 0.2873,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "phase_jump",
+        "rule_reason": "phase_jump",
+        "rule_correct": true,
+        "gbm_label": "phase_jump",
+        "gbm_max_proba": 0.958,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "phase_jump",
+        "onset_s": 85.8574,
+        "window_end_s": 85.9074,
+        "params": {
+          "label": "phase_jump",
+          "t0": 0.2788534210977224,
+          "dphi": 0.18178307502959443,
+          "dv1": 0.015745460074269177
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "jump"
+        ],
+        "latency_s": 0.0078,
+        "onset_in_record_s": 0.2834,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "phase_jump",
+        "rule_reason": "phase_jump",
+        "rule_correct": true,
+        "gbm_label": "phase_jump",
+        "gbm_max_proba": 0.96,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "oscillation",
+        "onset_s": 92.9014,
+        "window_end_s": 93.7117,
+        "params": {
+          "label": "oscillation",
+          "t0": 0.33971652040872347,
+          "depth": 0.044193718530691886,
+          "ang_amp": 0.03752132973853212,
+          "f_m": 23.06617365122287,
+          "sigma": 0.1653647017464508,
+          "phi_m": 2.5509129621416733,
+          "phi_rel": 2.624339504815934,
+          "ramp": 0.05
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "jump"
+        ],
+        "latency_s": 0.0659,
+        "onset_in_record_s": 0.2254,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "oscillation",
+        "rule_reason": "osc_magnitude",
+        "rule_correct": true,
+        "gbm_label": "oscillation",
+        "gbm_max_proba": 0.96,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "swell",
+        "onset_s": 100.7525,
+        "window_end_s": 100.959,
+        "params": {
+          "label": "swell",
+          "t0": 0.3866401959672885,
+          "S": 1.2070651716843144,
+          "ang": 0.007282689445480367,
+          "v2x": 0.0024830924672988807,
+          "v2x_ang": 6.036120702638861,
+          "dur": 0.1564900865651347
+        },
+        "triggered": true,
+        "n_secondary_captures": 0,
+        "cause": [
+          "urms"
+        ],
+        "latency_s": 0.0097,
+        "onset_in_record_s": 0.2835,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "swell",
+        "rule_reason": "swell",
+        "rule_correct": true,
+        "gbm_label": "swell",
+        "gbm_max_proba": 0.96,
+        "gbm_agrees_with_truth": true,
+        "secondary": []
+      },
+      {
+        "label": "freq_event",
+        "onset_s": 107.9021,
+        "window_end_s": 113.3458,
+        "params": {
+          "label": "freq_event",
+          "t0": 0.28881066004550304,
+          "rocof": -2.9139056814982665,
+          "df_target": 0.8223020262317491,
+          "dv1": -0.006299093371920452
+        },
+        "triggered": true,
+        "n_secondary_captures": 2,
+        "cause": [
+          "freq"
+        ],
+        "latency_s": 0.1812,
+        "onset_in_record_s": 0.2788,
+        "onset_est_in_record_s": 0.28,
+        "rule_label": "freq_event",
+        "rule_reason": "freq_offset",
+        "rule_correct": true,
+        "gbm_label": "freq_event",
+        "gbm_max_proba": 0.96,
+        "gbm_agrees_with_truth": true,
+        "secondary": [
+          {
+            "t_s": 110.517,
+            "cause": [
+              "freq"
+            ],
+            "rule_label": "normal",
+            "gbm_label": "normal"
+          },
+          {
+            "t_s": 112.516,
+            "cause": [
+              "freq"
+            ],
+            "rule_label": "normal",
+            "gbm_label": "normal"
+          }
+        ]
+      }
+    ],
+    "false_triggers": [],
+    "port_struct_bytes": 50352,
+    "port_struct_words16": 25176,
+    "runtime_s": 4.4
+  },
+  "LN_input": {
+    "summary": {
+      "events": 12,
+      "events_triggered": 12,
+      "normal_events": 2,
+      "normal_events_triggered": 0,
+      "rule_label_correct": 12,
+      "gbm_agrees_with_truth": 12,
+      "false_triggers_outside_events": 0,
+      "secondary_captures": 3,
+      "onset_in_record_s_min": 0.2254,
+      "onset_in_record_s_max": 0.2882,
+      "onset_in_record_s_mean": 0.276375,
+      "latency_s_by_cause": {
+        "urms": [
+          0.0059,
+          0.0051,
+          0.0136,
+          0.0146,
+          0.0097
+        ],
+        "jump": [
+          0.0062,
+          0.0039,
+          0.0078,
+          0.0659
+        ],
+        "freq": [
+          0.215,
+          0.1812
+        ],
+        "env": [
+          0.1136
+        ]
+      },
+      "overruns": 0,
+      "resyncs": 0,
+      "clipped": 0,
+      "captures": 15,
+      "triggers": 15
+    },
+    "same_outcome_as_LL": 14,
+    "n": 14
+  },
+  "isr_cost": [
+    {
+      "f_in_hz": 20000,
+      "D": 4,
+      "K": 13,
+      "pad": 3,
+      "L": 49,
+      "fir_macs_per_input_sample": 39,
+      "calibration_mults": 3,
+      "ln_to_ll_mults": 3,
+      "total_macs_per_input_sample": 45,
+      "useful_macs_avg": 36.75,
+      "macs_per_s": 900000,
+      "gain_50hz_float32_taps": 1.000000013798538,
+      "gain_1khz_db": 0.024313065304092732,
+      "stopband_atten_db": 53.87719724101196
+    },
+    {
+      "f_in_hz": 40000,
+      "D": 8,
+      "K": 13,
+      "pad": 5,
+      "L": 99,
+      "fir_macs_per_input_sample": 39,
+      "calibration_mults": 3,
+      "ln_to_ll_mults": 3,
+      "total_macs_per_input_sample": 45,
+      "useful_macs_avg": 37.12,
+      "macs_per_s": 1800000,
+      "gain_50hz_float32_taps": 0.9999999794708897,
+      "gain_1khz_db": 0.029336406588096175,
+      "stopband_atten_db": 53.927600602195824
+    },
+    {
+      "f_in_hz": 50000,
+      "D": 10,
+      "K": 13,
+      "pad": 7,
+      "L": 123,
+      "fir_macs_per_input_sample": 39,
+      "calibration_mults": 3,
+      "ln_to_ll_mults": 3,
+      "total_macs_per_input_sample": 45,
+      "useful_macs_avg": 36.9,
+      "macs_per_s": 2250000,
+      "gain_50hz_float32_taps": 1.0000000038826715,
+      "gain_1khz_db": 0.028944773585123325,
+      "stopband_atten_db": 53.65696827824643
+    },
+    {
+      "f_in_hz": 100000,
+      "D": 20,
+      "K": 13,
+      "pad": 15,
+      "L": 245,
+      "fir_macs_per_input_sample": 39,
+      "calibration_mults": 3,
+      "ln_to_ll_mults": 3,
+      "total_macs_per_input_sample": 45,
+      "useful_macs_avg": 36.75,
+      "macs_per_s": 4500000,
+      "gain_50hz_float32_taps": 1.00000000632264,
+      "gain_1khz_db": 0.02942339827297769,
+      "stopband_atten_db": 53.413435014115755
+    }
+  ],
+  "decimator_check": [
+    {
+      "f_in_hz": 20000,
+      "n_outputs": 2488,
+      "max_abs_diff_lsb": 0.5032326968412235,
+      "mean_abs_diff_lsb": 0.25015110301198396
+    },
+    {
+      "f_in_hz": 40000,
+      "n_outputs": 2488,
+      "max_abs_diff_lsb": 0.5029887481559854,
+      "mean_abs_diff_lsb": 0.24641472596688568
+    },
+    {
+      "f_in_hz": 50000,
+      "n_outputs": 2488,
+      "max_abs_diff_lsb": 0.5055207359000633,
+      "mean_abs_diff_lsb": 0.2477054202896984
+    },
+    {
+      "f_in_hz": 100000,
+      "n_outputs": 2488,
+      "max_abs_diff_lsb": 0.5107737992893817,
+      "mean_abs_diff_lsb": 0.25149850068325164
+    }
+  ],
+  "runtime_s": 11.8
+}

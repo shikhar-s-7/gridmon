@@ -18,7 +18,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .c_build import BUILD_DIR, C_DIR, CORE_SOURCES, INCLUDES, WARN_FLAGS, find_compiler
+from .c_build import BUILD_DIR, C_DIR, CORE_SOURCES, INCLUDES, PORT_DIR, PORT_SOURCES, WARN_FLAGS, find_compiler
 
 PORTABLE_DIRS = ("src", "include", "tables")
 FORBIDDEN_CALLS = ("malloc", "calloc", "realloc", "free", "printf", "fprintf", "sprintf", "snprintf", "puts",
@@ -28,7 +28,8 @@ FORBIDDEN_HEADERS = ("stdio.h", "stdlib.h", "string.h", "time.h", "assert.h", "f
 
 
 def portable_files() -> list[Path]:
-    return sorted(p for d in PORTABLE_DIRS for p in (C_DIR / d).glob("*.[ch]"))
+    """Portable core (c/src, c/include, c/tables) and the portable port layer (firmware/c2000/*.c|h; not host/)."""
+    return sorted([p for d in PORTABLE_DIRS for p in (C_DIR / d).glob("*.[ch]")] + list(PORT_DIR.glob("*.[ch]")))
 
 
 def strip_c(text: str) -> str:
@@ -119,7 +120,8 @@ def static_checks(files: list[Path] | None = None) -> dict[str, list[str]]:
                     v["float_literal_without_f"].append(f"{where} {m.group(0)}")
             if re.search(r"\bunion\b", line) or re.search(r"\(\s*(?:const\s+)?u?int(?:8|16|32|64)_t\s*\*\s*\)\s*&", line):
                 v["type_punning"].append(where)
-            if "sizeof" in line and not (rel.endswith("gm_api.c") and "sizeof(gm_ctx_t)" in line):
+            if "sizeof" in line and not ((rel.endswith("gm_api.c") and "sizeof(gm_ctx_t)" in line)
+                                         or (rel.endswith("gm_port.c") and "sizeof(gm_port_t)" in line)):
                 v["sizeof"].append(where)
             m = re.search(r"\bstatic\b(?!\s+(const|inline)\b)", line)
             if m and "(" not in line[m.end():]:
@@ -186,7 +188,7 @@ float floorf(float); float expf(float); float fabsf(float);
 def _compile_all(cmd_prefix: list[str], extra: list[str]) -> tuple[bool, str]:
     tmp = BUILD_DIR / "xcheck"
     tmp.mkdir(parents=True, exist_ok=True)
-    for s in CORE_SOURCES:
+    for s in CORE_SOURCES + PORT_SOURCES:
         for defs in ([], ["-DGM_ENABLE_GBM=0"]):
             cmd = cmd_prefix + WARN_FLAGS + ["-O2"] + extra + defs + INCLUDES + ["-c", str(s), "-o", str(tmp / (s.stem + ".o"))]
             r = subprocess.run(cmd, capture_output=True, text=True)
