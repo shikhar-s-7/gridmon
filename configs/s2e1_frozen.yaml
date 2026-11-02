@@ -1,0 +1,296 @@
+# S2E1 freeze (PROMPT_05): written by scripts/s2e1_freeze.py; verified by gridmon.s2e1.verify.
+description: 'S2E1 freeze (PROMPT_05 A1.3): everything that defines the S2E1 arms. Written by scripts/s2e1_freeze.py from
+  train_wide/val_wide results only; verified by gridmon.s2e1.verify (with the Stage 1 freeze) before test2_shift / test2_novel
+  are loaded.'
+prereg_commit: 3fd3286cf420fd99971456b06f4c64a3d940e5c4
+train_code_commit: ac850d82bd64ab978dfb42c3f0828147755f9ccf
+stage1_freeze:
+  path: configs/frozen_methods.yaml
+  freeze_commit: b3afdecb30c0b3b14447646abce09e127018ff6c
+  verified_at_s2e1_freeze: true
+data:
+  train_wide:
+    split_seed: 1101
+    nuisance_config: wide
+    n_records: 5600
+    config_hash: b657bedc9d5859b7
+    git_commit: 3fd3286cf420fd99971456b06f4c64a3d940e5c4
+    sealed: false
+  val_wide:
+    split_seed: 2202
+    nuisance_config: wide
+    n_records: 1750
+    config_hash: b657bedc9d5859b7
+    git_commit: 3fd3286cf420fd99971456b06f4c64a3d940e5c4
+    sealed: false
+  test2_shift:
+    split_seed: 5005
+    nuisance_config: shift
+    n_records: 1750
+    config_hash: b657bedc9d5859b7
+    git_commit: 3fd3286cf420fd99971456b06f4c64a3d940e5c4
+    sealed: true
+  test2_novel:
+    split_seed: 6006
+    nuisance_config: novel
+    n_records: 1750
+    config_hash: b657bedc9d5859b7
+    git_commit: 3fd3286cf420fd99971456b06f4c64a3d940e5c4+dirty
+    sealed: true
+  preview_wide:
+    split_seed: 9101
+    nuisance_config: wide
+    n_records: 70
+    config_hash: b657bedc9d5859b7
+    git_commit: 3fd3286cf420fd99971456b06f4c64a3d940e5c4+dirty
+    sealed: false
+  preview_novel:
+    split_seed: 9102
+    nuisance_config: novel
+    n_records: 140
+    config_hash: b657bedc9d5859b7
+    git_commit: 3fd3286cf420fd99971456b06f4c64a3d940e5c4+dirty
+    sealed: false
+arms:
+  R:
+    source: configs/frozen_methods.yaml rules.thresholds (Stage 1, unchanged)
+    thresholds:
+      dip_pu: 0.9
+      swell_pu: 1.1
+      rho_th: 0.25
+      osc_mag_pct: 1.0
+      osc_ang_deg: 1.0
+      osc_prom: 4.0
+      jump_deg: 5.0
+      jump_max_dv1: 0.1
+      df_hz: 0.2
+  G0:
+    source: configs/frozen_methods.yaml gbm_embedded (Stage 1, unchanged)
+    models:
+    - seed: 0
+      path: models/gbm_embedded.json
+      sha256: e25501759a5f84fe90af605a709559d17ad06164f0d06379ee080a107233d95a
+      size_bytes: 13972
+    - seed: 1
+      path: models/gbm_embedded_seed1.json
+      sha256: 491c83b8e918ce7e00f712688df8b51d7400c8920e547f4b0e994d599f04a154
+      size_bytes: 13972
+    - seed: 2
+      path: models/gbm_embedded_seed2.json
+      sha256: 097210a8757c127fe4a00b586b5883103e9a1d61e5a2b1d9ce2167ce93a0edd2
+      size_bytes: 13972
+  GW:
+    recipe: Stage 1 GBM-embedded (gridmon.ml_gbm, configs/ml.yaml unchanged)
+    trained_on: train_wide
+    selected_on: val_wide
+    feature_subset: all37
+    n_features_used: 37
+    features:
+    - urms_min_1
+    - urms_min_2
+    - urms_min_3
+    - urms_max_1
+    - urms_max_2
+    - urms_max_3
+    - t_below_090
+    - t_above_110
+    - v1_ref
+    - v1_min_rel
+    - v1_max_rel
+    - v1_end_rel
+    - u2_ref
+    - u2_max
+    - u2_end
+    - rho
+    - j_max_deg
+    - j_sign
+    - f_ref
+    - df_end
+    - df_max
+    - rocof_max
+    - t_rocof_02
+    - rocof_end
+    - dfpll_max
+    - t_fpll_05
+    - env_mag_amp_pct
+    - env_mag_freq
+    - env_mag_prom
+    - env_ang_amp_deg
+    - env_ang_freq
+    - env_ang_prom
+    - env_mag_rms_pct
+    - env_ang_rms_deg
+    - thd_first
+    - thd_last
+    - thd_max
+    config:
+      n_estimators: 20
+      max_leaf_nodes: 4
+      learning_rate: 0.2
+      subsample: 1.0
+    seeds: &id001
+    - 0
+    - 1
+    - 2
+    primary_seed: 0
+    val_wide_macro_f1_mean: 1.0
+    pre_event_only_control_mean: 0.13297622951797886
+    evaluation: float32 reference walker (gridmon.export_gbm.Float32Walker) on the exported JSON
+    models:
+    - seed: 0
+      path: models/s2e1/gbm_gw_seed0.json
+      sha256: 501c4297c948da819667b19b3b2c9ffb8f908e9c543a7878649640d0fd2d3448
+      size_bytes: 13972
+      n_trees: 140
+      sum_max_depth: 385
+    - seed: 1
+      path: models/s2e1/gbm_gw_seed1.json
+      sha256: 7f5b2f88502220d7602b487eee2577cf29338695d8bfa26bcbd0e1ba338bc3a3
+      size_bytes: 13972
+      n_trees: 140
+      sum_max_depth: 385
+    - seed: 2
+      path: models/s2e1/gbm_gw_seed2.json
+      sha256: 8fe146c5a6297cf008c3e6329475eb6b3ad7f319efa3d03272dbffd8dc3aec38
+      size_bytes: 13972
+      n_trees: 140
+      sum_max_depth: 385
+    c_tables: c/generated_s2e1/gw
+  GP:
+    recipe: Stage 1 GBM-embedded (gridmon.ml_gbm, configs/ml.yaml unchanged)
+    trained_on: train_wide
+    selected_on: val_wide
+    feature_subset: physics
+    n_features_used: 23
+    features:
+    - urms_min_1
+    - urms_min_2
+    - urms_min_3
+    - urms_max_1
+    - urms_max_2
+    - urms_max_3
+    - t_below_090
+    - t_above_110
+    - v1_ref
+    - v1_min_rel
+    - v1_max_rel
+    - v1_end_rel
+    - u2_ref
+    - u2_max
+    - u2_end
+    - rho
+    - j_max_deg
+    - j_sign
+    - df_end
+    - env_mag_amp_pct
+    - env_ang_amp_deg
+    - env_mag_rms_pct
+    - env_ang_rms_deg
+    config:
+      n_estimators: 20
+      max_leaf_nodes: 4
+      learning_rate: 0.2
+      subsample: 1.0
+    seeds: *id001
+    primary_seed: 0
+    val_wide_macro_f1_mean: 1.0
+    pre_event_only_control_mean: 0.14215106670273076
+    evaluation: float32 reference walker (gridmon.export_gbm.Float32Walker) on the exported JSON
+    models:
+    - seed: 0
+      path: models/s2e1/gbm_gp_seed0.json
+      sha256: 91a6dcd247da3dd6340ab020e272590886c5b21b12484fdf64664656d3311493
+      size_bytes: 13972
+      n_trees: 140
+      sum_max_depth: 389
+    - seed: 1
+      path: models/s2e1/gbm_gp_seed1.json
+      sha256: 4c049ac72a78b3e6a863852d80f9569767dad60814bb1b425783b28c27823e6e
+      size_bytes: 13972
+      n_trees: 140
+      sum_max_depth: 389
+    - seed: 2
+      path: models/s2e1/gbm_gp_seed2.json
+      sha256: b39399d2b4fba873360ec67602cf85cc5cad9e7444990a9a23d92cfaf6d7ea12
+      size_bytes: 13972
+      n_trees: 140
+      sum_max_depth: 389
+    c_tables: c/generated_s2e1/gp
+hybrid:
+  threshold: 0.5
+  H0: G0 label if max proba >= threshold else R
+  HW: GW label if max proba >= threshold else R
+  per_seed: true
+evaluation_plan:
+  sealed_sets:
+  - test2_shift
+  - test2_novel
+  runs: 1
+  primary_metric: macro_f1
+  reporting: 'macro-F1 per arm (ML: mean +/- sd over seeds; hybrids: per seed and mean), per-class F1, false-alarm rate (normal
+    records called an event), miss rate (event records called normal), critical confusions (phase_jump <-> freq_event, sag_*
+    -> normal, sag_bal <-> sag_unbal); confusion matrices of the primary seed (0)'
+  bootstrap:
+    resamples: 2000
+    stratified_by_class: true
+    paired: true
+    seed: 20261102
+    statistic: macro-F1(arm) - macro-F1(reference), seed-mean over the arm's seeds (and the reference's seeds for GW - G0)
+  mcnemar: 'exact binomial, two-sided, per seed: arm seed k vs R; for GW - G0: GW seed k vs G0 seed k'
+  primary_comparisons:
+  - GW-R
+  - GP-R
+  secondary_comparisons:
+  - HW-R
+  - H0-R
+  - GW-G0
+  snr_bins_db:
+  - 25
+  - 30
+  - 35
+  - 40
+  - 50
+  - 60
+  breakdowns:
+    snr: macro-F1 per SNR bin, every arm, both sets
+    transient: test2_shift, with vs without the Stage 1 transient (manifest tr_on)
+    interharmonic: test2_novel, with vs without the interharmonic (manifest ih_on)
+    interharmonic_beat_primary: 'test2_novel interharmonic records by |f_ih - 50|: < 25 Hz vs >= 25 Hz'
+    interharmonic_beat_secondary_edges_hz:
+    - 20
+    - 25
+    - 40
+    - 100
+    - 900
+    severity_recall: Stage 1 bins (gridmon.evaluation.SEVERITY)
+  pre_event_only_control:
+    arms:
+    - GW
+    - GP
+    definition: selected configuration refit on features of the first 750 samples (OBS = REF), train_wide -> val_wide
+    pass_if_mean_macro_f1_le: 0.25
+    expected: about 0.14 (chance = 1/7)
+  unseen_nuisance_survival:
+    statistic: delta = macro-F1(records with interharmonic) - macro-F1(records without), seed-mean; unpaired bootstrap stratified
+      by class within each subset, 2000 resamples
+    survives: 95 % CI lower bound >= -0.03
+    fails: 95 % CI upper bound < 0 and delta <= -0.03
+    otherwise: inconclusive
+decision_rules:
+  ml_better: CI lies above 0 on BOTH sealed sets
+  ml_matches: CI includes 0 or lies above 0 on BOTH sealed sets (and not ml_better)
+  rules_better: CI lies below 0 on at least one sealed set
+  primary_arms:
+  - GW
+  - GP
+hypotheses:
+  H1: GW matches or beats the rules (decision rule) on both sealed sets
+  H2: GP matches or beats the rules on both sealed sets
+  H3: GW is better than G0 on test2_shift (CI of GW - G0 above 0)
+  H4: HW matches or beats the rules on both sealed sets
+  H5: R survives the unseen interharmonic (survival rule)
+  H6: GW survives the unseen interharmonic (survival rule)
+  null_outcomes_valid: '"Rules still win" or "no significant difference" are valid outcomes and will be reported as such.'
+method_files:
+  src/gridmon/s2e1.py: 562ed1847596080fd146c12db27ecc391c37562a334c3a50314edc11758b92d9
+  configs/s2e1.yaml: b1725212bfc63d1c2820940f7aef53e188ad1e57fbaf57291b8862b2379db841
