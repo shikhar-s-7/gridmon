@@ -1,78 +1,92 @@
-# HANDOFF — gridmon session 4 (PROMPT_04: decisions, M8 website, final docs, clean clone), 2026-11-02
+# HANDOFF — gridmon session 5 (PROMPT_05: Stage 2 experiment S2E1), 2026-11-02
 
-Simulation-only; every result is [SIM]. **Stage 1 is complete (M1-M8, ladder L0-L2).** Previous handoffs: docs/handoffs/.
+Simulation-only; every result is [SIM]. Stage 1 complete and frozen; **S2E1 (STAGE2_PLAN item 3) done**. Previous handoffs:
+docs/handoffs/ (session 4 archived as HANDOFF_session4_PROMPT04.md). Branch `claude/new-session-2q6d5l`, author shikhar-s-7.
 
-## 1. Status and commits (branch claude/new-session-7mqosi, restarted from main b71b95f; author shikhar-s-7)
-- `2f4e792` D: decisions D-069..D-074, D-076 (L2), rho SIL gate · `e9cc0e2` M8: website + WASM ·
-  `ca85e6a` Docs: README, Stage 2 plan, summary (+ fix: web/dist and web/src/data were git-ignored by the generic
-  `data/`/`dist/` rules; anchored to the root, now committed and tested) · `735759f` interim handoff ·
-  `e63bcbe` Repro: REPRODUCIBILITY.md · wrap-up = this commit.
-- No method file touched: `frozen.verify()` passes (CLAUDE.md 4b). pytest: see section 8.
+## 1. Commits
+| commit | what |
+|---|---|
+| `8996518` | Housekeeping: rho SIL gate urms_min_1 < 0.90 (D-079); SIL re-run on regenerated data |
+| `3fd3286` | **S2E1-prereg**: docs/S2E1_PREREG.md + configs/s2e1.yaml, interharmonic generator option, gridmon.s2e1, data script, tests (D-080..D-082) — before any S2E1 split existed |
+| `886999e` | data generated at the prereg commit (reports/s2e1_data_summary.json) + training script |
+| `ac850d8` | GW/GP trained and selected on train_wide/val_wide; models/s2e1, c/generated_s2e1, freeze/eval scripts, figures/report code |
+| `b11b67a` | **S2E1-freeze**: configs/s2e1_frozen.yaml (model SHA-256, S2E1 method files, Stage 1 freeze ref, plan) |
+| `e7d39e6` | **S2E1-results**: one evaluation at b11b67a -> reports/s2e1_results.json, S2E1_RESULTS.md, 3 figures |
+| `9f4d674` | Website Experiment 2 section, README line, STAGE2_PLAN/PROGRESS/DECISIONS (D-083), CLAUDE.md |
+| wrap-up | this handoff |
+Stage 1 files: no method file touched; gridmon.frozen.verify and gridmon.s2e1.verify pass. Prompt says branch main; the session's
+designated branch was used (nothing pushed to main).
 
-## 2. Decisions (docs/DECISIONS.md)
-- D-069 rho SIL gate (urms_min_1 < 0.95; comparison only). Re-run: within tolerance everywhere except **1 test_iid
-  record** (535, urms_min_1 = 0.942: inside the 0.95 gate, not a dip, rule unaffected); ungated still 2 (452, 535).
-- D-070 GBM stays on for C2000; L2 flash cost of GBM: +245 code words + 6,986 const words (~14.5 KB, 1.4 % of 1 MB/CPU).
-- D-071 envelope trigger 1.5 %; D-072 secondary captures kept; D-073 recovery profile/50 ms budget [ASSUMED] until L3;
-  D-074 TIDA-01606 sensing/ISR names [ASSUMED] (STAGE2_PLAN item 7 prerequisite).
-- D-075 WASM path (a) zig wasm32-wasi reactor; D-076 L2 result + compile-check fixes (user); D-077 export_web reads the
-  sealed splits for display only (third allow_test caller, tested); D-078 site architecture.
+## 2. Housekeeping (A2)
+- rho gate 0.95 -> 0.90 (= dip_pu): SIL re-run (full regenerated data, ziglang 0.17.0 for -m32/msp430): 0 gated values outside
+  tolerance on val/test_iid/test_shift/train; ungated test_iid 452/535 unchanged; golden 27/27, rules 100 %, GBM bit-exact.
+- No LICENSE file in the repo -> nothing to mention or create (owner chooses).
 
-## 3. L2 (user's local run, integrated)
-CCS 20.5.1 / cl2000 25.11.0.LTS: all 15 core + port files compile, GBM on and off, no warnings. Compile-only words:
-code 13,785 (GBM off 13,540), const 10,913 (DSP 2,700, model 6,986, FIR 1,124), data 0 (reports/m7_c28x_size.json).
-`-v28` not in this compiler's --help (dropped; default target). Script fixes logged (D-076); C2000_BUILD.md updated
-(C2000_C_DIR no longer needed). VALIDATION.md: L2 done.
+## 3. Data (scripts/s2e1_make_data.py at 3fd3286, 78 s)
+| split | n | seed | nuisance | checks |
+|---|---|---|---|---|
+| train_wide | 5,600 | 1101 | wide | margins hold; 3 D-039 oscillation fallbacks |
+| val_wide | 1,750 | 2202 | wide | margins hold |
+| test2_shift | 1,750 | 5005 | Stage 1 shift (by reference) | margins hold; 1 D-039 fallback; transient in 495 |
+| test2_novel | 1,750 | 6006 | wide + interharmonic p 0.5 | margins hold; 1 D-039 fallback; interharmonic in 872 (8 with beat < 25 Hz), 70.6-939.9 Hz, >= 10.0 Hz from harmonics, 0.50-2.00 % |
+| preview_wide / preview_novel | 70 / 140 | 9101 / 9102 | dev / dry run | margins hold |
+Interharmonic = one balanced positive-sequence component, fixed frequency, whole record (D-080); Stage 1 data/manifests
+bit-identical with the new generator code (preview_iid/preview_shift regenerated and compared; tested).
 
-## 4. Website (web/, built by scripts/build_site.py)
-- Pages: Overview, Results, Explorer, Try it, Firmware, About; banner on every page; numbers via build-time tokens from
-  reports/*.json (no hand-typed results); own SVG charts (validated palette), light/dark, keyboard/phone friendly.
-- Sizes: web/dist 5.76 MB (limit 15 MB); data 5.14 MB; explorer 70 records = 4.96 MB (limit 8 MB): 10 per class from
-  val/test_iid/test_shift, the 6 m4_disagreements records, 20 rules-vs-GBM disagreements; 2 example CSVs (464 KB).
-- WASM (D-075): zig 0.17.0 `cc -target wasm32-wasi -mexec-model=reactor`, 45 KB, **no imports**. Equivalence in Node
-  (reports/m8_wasm_equivalence.json): 97/97 records (27 golden + 70 explorer) identical rule label, reason and GBM label vs
-  native C; features within SIL tolerances (96 % bit-identical; libm ulps), NaN pattern equal. Also in tests/test_web.py.
-- Headless check (Playwright/Chromium, reports/m8_site_check.json): 0 console errors on 6 pages, banner everywhere, no
-  horizontal scroll at 390 px, explorer re-classification reproduced 5/5, try-it synthesised sample per class classified as
-  its class 7/7 (rules and GBM), LN example CSV -> sag_unbal. Dark mode checked visually.
-- Deployment: `.github/workflows/pages.yml` **was accepted by the push** (on this branch). It deploys after the branch is
-  merged to main and **Settings -> Pages -> Source = GitHub Actions** is set (docs/DEPLOY.md, 3 steps). Expected URL:
-  https://shikhar-s-7.github.io/gridmon/ (not live yet).
-- Screenshots: reports/figures/m8_overview.png, m8_results.png, m8_explorer.png, m8_tryit.png.
+## 4. Arms (scripts/s2e1_train.py, 412 s)
+- GW (37 features) and GP (23-feature physics subset, D-081): Stage 1 recipe unchanged; val_wide saturated again (31/33 and 33/33
+  feasible configs within 0.002 of 1.000) -> both **20 stages x 4 leaves, lr 0.2, subsample 1.0, 13,972 B** (seeds 0-2).
+- Float32 walker == sklearn (labels 100 %, 0 branch mismatches); C SIL with c/generated_s2e1/{gw,gp} tables: raw scores bit-exact
+  on 1,750 val_wide records; pre-event-only control 0.133 (GW), 0.142 (GP) (<= 0.25).
+- R, G0 = Stage 1 frozen; H0/HW = ML label if max p >= 0.5 else rules.
 
-## 5. Clean-clone check (docs/REPRODUCIBILITY.md)
-Fresh clone of this branch (commit ca85e6a), new venv, nothing copied: pip install of every pin 33 s; `run_all.py --fast`
-**63 s** (limit 10 min: dataset 14 s, baseline 9 s, golden 1 s, GBM 29 s, evaluation 8 s); pytest (fast) **144 passed,
-4 skipped** (3 need ziglang, installed later by build_site -> re-run 15/15 pass; 1 needs full-data features.csv);
-build_c 3 s; run_sil --fast 12 s (golden 27/27, rules 100 %, GBM bit-exact); build_site 30 s (export skipped without
-full data; ziglang installed on demand). Total ~3 min. Rebuilt web/dist differs only in the build-commit stamp; the WASM
-is bit-identical. No packaging problem in the clone (the .gitignore issue was fixed just before, ca85e6a).
+## 5. Headline (macro-F1, ML mean +/- sd over 3 seeds; reports/S2E1_RESULTS.md)
+| arm | test2_shift | test2_novel | false alarms shift / novel |
+|---|---|---|---|
+| R rules | 0.9880 | 0.9937 | 0.4 % / 0.0 % |
+| G0 Stage 1 GBM | 0.8581 +/- 0.0019 | 0.9396 +/- 0.0006 | 27.9 % / 18.5 % |
+| GW wide GBM | 0.9960 | 0.9985 +/- 0.0003 | 1.2 % / 0.0 % |
+| GP physics GBM | 0.9989 | 0.9994 | 0.0 % / 0.0 % |
+| HW hybrid GW/R | 0.9977 | 0.9985 +/- 0.0003 | 1.2 % / 0.0 % |
+| H0 hybrid G0/R | 0.9931 | 0.9937 | 0.8 % / 0.8 % |
 
-## 6. Final documentation
-README.md (landing page; results block generated by scripts/update_readme.py, tested), docs/STAGE2_PLAN.md (8 items,
-S/M/L, goal/proof/prerequisites/risks), docs/PROJECT_SUMMARY.md, DEPLOY.md, REPRODUCIBILITY.md; PROGRESS (Stage 1
-complete), VALIDATION, CLAUDE.md (site commands, layout, rule 4), DECISIONS (D-069..D-078).
+CIs (paired bootstrap, 2,000 class-stratified resamples; arm - R): GW +0.0080 [+0.0028, +0.0136] / +0.0048 [+0.0008, +0.0089];
+GP +0.0108 [+0.0063, +0.0159] / +0.0058 [+0.0023, +0.0098]; HW +0.0097 [+0.0051, +0.0148] / +0.0048 [+0.0008, +0.0089];
+H0 +0.0051 [+0.0017, +0.0090] / +0.0000 [-0.0045, +0.0046]; GW - G0 +0.1379 [+0.1246, +0.1521] (shift).
+**Decision rule verdict: GW "ML better", GP "ML better"** (primary); HW "ML better", H0 "ML matches" (secondary).
+Survival of the interharmonic (CI lower >= -0.03): R, GW, GP, HW, H0 survive; G0 inconclusive. H1-H6 all supported.
+Safety-critical confusions (phase_jump <-> freq_event, sag -> normal): 0 for every arm on both sets.
 
-## 7. Stage 1 definition of done (brief B10)
-| # | item | status |
-|---|---|---|
-| 1 | fresh clone -> run_all regenerates everything; --fast < 10 min | done: --fast 63 s in a fresh clone (full run ~10 min, session 2) |
-| 2 | pytest passes (generator, DSP, leakage, determinism, float32, C SIL) | done (section 8) |
-| 3 | RESULTS.md + results.json: CIs, confusions, breakdowns, size-vs-F1, pre-event control, naive PLL, findings with tags | done (CNN optional, not done) |
-| 4 | C core SIL on val/test_iid/test_shift (rules >= 99.5 %: 100 %; GBM as B8) + C28x compile with size report | done; features within tolerance except 1 documented rho value (D-069) |
-| 5 | firmware/c2000 monitor-only port layer + integration guide; VALIDATION shows L0-L2 done | done |
-| 6 | web/: static, local + GitHub Pages deployable, overview/results/explorer/in-browser classification via WASM | done; live once merged + Pages enabled |
-| 7 | docs current; README and website carry the simulation-only banner | done |
+## 6. Top 3 findings in plain language
+1. Trained on the conditions it will meet, the same 14 KB tree model no longer loses to the standards-based rules; on these synthetic
+   sets it is slightly better (<= 1.1 macro-F1 points). Stage 1's "rules are more robust" becomes "ML needs representative training".
+2. Stage 1 replicated exactly on fresh data (R 0.988, G0 0.858); the failure was training coverage (low SNR), not tree models.
+3. The unseen interharmonic was mostly harmless (filtered by the one-cycle DFT/100 Hz envelope); oscillation look-alikes appeared only
+   at 20-25 Hz beats (8 records), for the learned models except GP. A confidence gate rescued the mis-trained G0 (0.858 -> 0.993).
 
-## 8. Tests
-Working repository (full data): **148 passed, 0 failed, 0 skipped** in 55 s (session 3: 141; new: test_web.py 7,
-plus the rho-gate update in test_c_sil and the export_web allow-list in test_freeze). Clean clone (fast): see section 5.
+## 7. Website, docs, tests
+- Results page: "Experiment 2 (Stage 2)" section at the end (headline, decision rule, comparisons, survival, SNR chart + table,
+  plain-language findings; tokens/JS from site_data.js `s2e1`, exported from s2e1_results.json; no hand-typed numbers).
+  build_site.py --check: WASM == native C 97/97; headless check: 0 console errors, no unresolved tokens, phone width OK.
+- README results block: one S2E1 line (update_readme.py). STAGE2_PLAN item 3 done; PROGRESS; DECISIONS D-079..D-083; CLAUDE.md
+  (rule 4 incl. test2_*, commands, layout). VALIDATION unchanged.
+- pytest (full data): **165 passed, 0 skipped** (32 s; session 4: 148; new: 16 in tests/test_s2e1.py, 1 rho-gate test).
+- Compute this session ~15 min (Stage 1 data 2.8 min, SIL 2 x 25 s, S2E1 data 78 s, training 7 min, evaluation 10 s, site 33 s).
+
+## 8. Deviations / notes (D-083)
+- Dry run used val_wide + preview_novel (pre-registered stand-ins) after training, before the freeze; no method change afterwards.
+- Added and labelled as not pre-registered: G0 - R comparison, C SIL of the GW/GP tables, post-hoc cause of the rules' 6
+  oscillation -> swell errors (gain error / transient). S2E1_RESULTS.md re-rendered with the findings after the run (no number changed).
+- Stale hash: CLAUDE.md, RESULTS.md and the S2E1 prereg cite the M4-freeze as 6240f60; in this history it is b3afdec (CLAUDE.md fixed).
 
 ## 9. Open questions for the project lead
-1. rho gate: keep 0.95 (1 documented exceedance at urms_min_1 0.942) or use 0.90, exactly where the rules read rho?
-2. Licence: the repository has none (default copyright; README and About say so). Choose one before publishing the site?
-3. Publishing: merge this branch, then set Pages source to GitHub Actions (docs/DEPLOY.md) — OK to make the site public?
-4. Stage 2 start: L3 LaunchPad PIL first (hardware evidence) or the new-sealed-splits robustness experiment (STAGE2_PLAN 2 vs 3)?
-5. The explorer shows sealed test records (display only, D-077); fine for a public site?
+1. Validation saturates even with wide ranges (selection = smallest model). Use a harder selection split (e.g. 25-30 dB only) or
+   a proper scoring rule (log-loss) in the next experiment?
+2. GP looked more robust than GW (2 vs 7 errors on test2_shift, post hoc). Worth a dedicated sealed comparison, or adopt GP as the
+   C2000 model candidate (same size, same C tables format) after such a test?
+3. The rules' remaining errors are the D-035 half-cycle-RMS artefact at large phase jumps and calibration: fix the rule (new method,
+   new sealed splits) or rely on HW (rules as fallback only)?
+4. Next Stage 2 item: L3 LaunchPad PIL (hardware evidence) or item 4 (FLL, multi-event, long-stream false triggers)?
+5. Publishing: merge this branch and enable Pages (docs/DEPLOY.md); the explorer still shows Stage 1 sealed records (D-077).
 
-**Bring back:** docs/HANDOFF.md, the site URL or deployment status, reports/figures/m8_*.png
+**Bring back:** tell the project lead S2E1 is done (the repo is public).
