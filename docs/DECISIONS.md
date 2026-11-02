@@ -407,3 +407,15 @@ Evidence tags as in B3.
   web/tools/check_site.mjs -> reports/m8_site_check.json): no console errors, banner on every page, no horizontal scroll
   at 390 px, explorer re-classification reproduced on 5/5 records, one synthesised sample per class and the LN example
   CSV classified as intended. No licence file exists yet (About page says so; open question).
+
+## Stage 2, S2E1 (PROMPT_05)
+- **D-079** — 2026-11-02 — *rho SIL comparison gate moved from urms_min_1 < 0.95 to < 0.90* (session-4 open question 1,
+  project lead's answer). 0.90 is exactly the rules' dip condition (dip_pu), i.e. where the rules read rho; a
+  documentation/comparison gate, not a method change (features.py and the C core unchanged; frozen.verify passes).
+  gridmon.c_sil.SIL_GATES_BELOW, FEATURES.md, C_CORE.md updated; new test (gate == frozen dip_pu). Re-run of
+  scripts/run_sil.py on regenerated full data (2026-11-02): rho compared on 503 val / 500 test_iid / 508 test_shift /
+  169 train records, **0 values outside tolerance on every split** (record 535, urms_min_1 = 0.942, is no longer
+  compared); ungated exceedances unchanged (test_iid 452 and 535, float32 argmin ties, D-060); golden 27/27, rules
+  100 %, GBM bit-exact, sanitizer, -m32 and 16-bit-int compiles pass. Alternative: keep 0.95 (one documented
+  exceedance outside any dip).
+

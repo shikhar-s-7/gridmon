@@ -183,10 +183,10 @@ class CCore:
 
 # ---------------------------------------------------------------------- SIL comparison gates
 # D-069 (documentation-only, no method change): on top of the FEATURES.md gates (features.TOL_GATES, "reference
-# column >= value"), the SIL compares rho only where the rules use it: reference urms_min_1 < 0.95 (dips and
-# their neighbourhood). Outside that, rho depends on the first argmin of a flat |V1|, where float32 ties are
-# legitimate (D-060); such differences are still counted and reported as "ungated".
-SIL_GATES_BELOW: dict[str, list[tuple[str, float]]] = {"rho": [("urms_min_1", 0.95)]}
+# column >= value"), the SIL compares rho only where the rules use it: reference urms_min_1 < 0.90, exactly the
+# rules' dip condition (dip_pu; the gate was 0.95 until D-079). Outside that, rho depends on the first argmin of a
+# flat |V1|, where float32 ties are legitimate (D-060); such differences are still counted and reported as "ungated".
+SIL_GATES_BELOW: dict[str, list[tuple[str, float]]] = {"rho": [("urms_min_1", 0.90)]}
 
 
 def sil_gate(F_ref: pd.DataFrame, name: str) -> np.ndarray:

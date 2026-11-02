@@ -127,10 +127,10 @@ Results: docs/HANDOFF.md section 2 and reports/m6_sil.json.
   can round to the same float32 |V1| (ulp 1.2e-7 at 1 pu) while float64 still orders them; the first index
   then differs and V2(m*) moves by the noise of V2 (up to ~1e-3 pu), i.e. up to |dV2|/0.01 in rho when the
   denominator is floored. Observed: 2 of 1,750 test_iid records (both non-dip: urms_min_1 >= 0.94; rho is
-  only used by the rules inside a dip; GBM labels identical). Since D-069 the SIL compares rho only where
-  the rules use it (reference urms_min_1 < 0.95, a comparison gate, not a method change): 1 of 701 compared
-  test_iid values remains outside (record 535, urms_min_1 = 0.942, still not a dip); the ungated exceedances
-  stay listed in m6_sil.json with their diagnosed cause.
+  only used by the rules inside a dip; GBM labels identical). Since D-069/D-079 the SIL compares rho only where
+  the rules use it (reference urms_min_1 < 0.90 = the rules' dip condition; a comparison gate, not a method change;
+  0.95 until D-079): 0 compared values are outside on every split (500 of 1,750 test_iid records compared); the 2 ungated
+  exceedances (records 452 and 535, urms_min_1 >= 0.94) stay listed in m6_sil.json with their diagnosed cause.
 - **No-signal records** (v1_ref = 0, e.g. all-zero input) are outside the reference's domain: Python yields
   NaN/inf for |V1|-relative features (and numpy's argmax over all-NaN spectra returns env_mag_freq = 3 Hz);
   the C core flags those features invalid (GM_FLAG_NO_SIGNAL) and the rules then give the same label

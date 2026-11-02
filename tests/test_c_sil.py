@@ -141,7 +141,7 @@ def test_val_features_rules_gbm(core, val_subset, thresholds):
     c = core.process(Xs, lsb)
     Fc = c["features"]
     from gridmon.c_sil import sil_tolerance_check
-    tc = sil_tolerance_check(Fp, Fc)  # FEATURES.md gates + D-069 rho gate (urms_min_1 < 0.95)
+    tc = sil_tolerance_check(Fp, Fc)  # FEATURES.md gates + D-069/D-079 rho gate (urms_min_1 < 0.90)
     over = {k: v["n_over_tol"] for k, v in tc.items() if v["n_over_tol"]}
     assert over == {}, over
     assert tc["rho"].get("n_over_tol_ungated", 0) <= max(1, len(Xs) // 200)  # float32 argmin ties (D-060)
@@ -229,3 +229,11 @@ def test_build_dir_is_ignored():
 
 def test_lsb_default_matches_reference():
     assert np.float32(LSB_PU) == np.float32(2.0 ** -10)
+
+
+def test_rho_sil_gate_is_the_rules_dip_condition():
+    """D-079: the rho comparison gate is exactly where the rules read rho (urms_min_1 < dip_pu = 0.90)."""
+    from gridmon.c_sil import SIL_GATES_BELOW
+    dip_pu = load_yaml(ROOT / "configs" / "frozen_methods.yaml")["rules"]["thresholds"]["dip_pu"]
+    assert SIL_GATES_BELOW == {"rho": [("urms_min_1", dip_pu)]}
+    assert dip_pu == 0.90

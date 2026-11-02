@@ -66,7 +66,7 @@
       "u2_ref": 2.208574422669224e-07,
       "u2_max": 1.4965074696116076e-07,
       "u2_end": 4.504027105072591e-08,
-      "rho": 1.2060202099650752e-05,
+      "rho": 4.2068898709057834e-07,
       "j_max_deg": 2.8749446131098866e-05,
       "j_sign": 0.0,
       "f_ref": 2.0590564844269466e-06,
@@ -465,12 +465,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 700,
-            "max_abs_diff": 0.00010275591482855617,
+            "n_compared": 503,
+            "max_abs_diff": 2.13821699995842e-05,
             "n_over_tol": 0,
             "n_over_tol_ungated": 0,
             "n_compared_ungated": 1750,
-            "sil_gate": "urms_min_1 < 0.95"
+            "sil_gate": "urms_min_1 < 0.9"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -660,8 +660,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1030.4673651428727,
-        "python_ms_per_record": 3.2529540988571495
+        "c_us_per_record": 1039.5025634285762,
+        "python_ms_per_record": 2.224939775999993
       }
     },
     "test_iid": {
@@ -669,12 +669,10 @@
       "subset": "all",
       "status_not_ok": 0,
       "features": {
-        "n_features_within_tolerance_on_all_records": 36,
+        "n_features_within_tolerance_on_all_records": 37,
         "n_features": 37,
-        "n_values_outside_tolerance": 1,
-        "outside_by_feature": {
-          "rho": 1
-        },
+        "n_values_outside_tolerance": 0,
+        "outside_by_feature": {},
         "outside_ungated_documented": {
           "rho": 2
         },
@@ -693,7 +691,7 @@
           {
             "record": 535,
             "feature": "rho",
-            "compared_under_sil_gate": true,
+            "compared_under_sil_gate": false,
             "python": 0.02683490806227137,
             "c": 0.029562896117568016,
             "abs_diff": 0.0027279880552966464,
@@ -703,10 +701,10 @@
           }
         ],
         "worst_feature_rel_to_tol": {
-          "feature": "rho",
-          "max_abs_diff": 0.0027279880552966464,
-          "tol": 0.0005,
-          "ratio": 5.4559761105932925
+          "feature": "t_fpll_05",
+          "max_abs_diff": 0.0010000255107879275,
+          "tol": 0.0021,
+          "ratio": 0.47620262418472736
         },
         "nan_pattern_mismatch": {},
         "n_python_nonfinite": {
@@ -837,12 +835,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 701,
-            "max_abs_diff": 0.0027279880552966464,
-            "n_over_tol": 1,
+            "n_compared": 500,
+            "max_abs_diff": 2.938828054244169e-06,
+            "n_over_tol": 0,
             "n_over_tol_ungated": 2,
             "n_compared_ungated": 1750,
-            "sil_gate": "urms_min_1 < 0.95"
+            "sil_gate": "urms_min_1 < 0.9"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -1032,8 +1030,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1089.157781142863,
-        "python_ms_per_record": 2.9033317177142766
+        "c_us_per_record": 977.7165154285481,
+        "python_ms_per_record": 1.8971196679999918
       }
     },
     "test_shift": {
@@ -1182,12 +1180,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 841,
-            "max_abs_diff": 4.607788865929052e-05,
+            "n_compared": 508,
+            "max_abs_diff": 7.621518066769362e-06,
             "n_over_tol": 0,
             "n_over_tol_ungated": 0,
             "n_compared_ungated": 1750,
-            "sil_gate": "urms_min_1 < 0.95"
+            "sil_gate": "urms_min_1 < 0.9"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -1377,8 +1375,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1033.0875834285798,
-        "python_ms_per_record": 2.8877218800000066
+        "c_us_per_record": 982.4565531428756,
+        "python_ms_per_record": 1.8262506640000018
       }
     },
     "train": {
@@ -1527,12 +1525,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 244,
-            "max_abs_diff": 2.623839475779377e-05,
+            "n_compared": 169,
+            "max_abs_diff": 2.2007683937452782e-06,
             "n_over_tol": 0,
             "n_over_tol_ungated": 0,
             "n_compared_ungated": 560,
-            "sil_gate": "urms_min_1 < 0.95"
+            "sil_gate": "urms_min_1 < 0.9"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -1722,8 +1720,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1054.4798285714307,
-        "python_ms_per_record": 4.307106307142813
+        "c_us_per_record": 946.3278696428696,
+        "python_ms_per_record": 2.1719383946427837
       }
     }
   },
@@ -1810,6 +1808,6 @@
     "host_object_compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "n_core_sources": 12
   },
-  "c_us_per_record_mean": 1051.7981395714366,
-  "runtime_s": 59.2
+  "c_us_per_record_mean": 986.5008754107174,
+  "runtime_s": 24.7
 }

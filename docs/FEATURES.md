@@ -31,7 +31,7 @@ candidates, peak above float32 envelope rounding); on other records any value is
 | `u2_ref` | 1 | median abs(V2)/max(abs(V1),0.05) over REF | 1e-05 | - | median of 131 stored ratios |
 | `u2_max` | 1 | max abs(V2)/max(abs(V1),0.05) over OBS | 1e-05 | - | running max |
 | `u2_end` | 1 | mean abs(V2)/max(abs(V1),0.05) over END | 1e-05 | - | running sum |
-| `rho` | 1 | Bollen ratio abs(V2d(m*)-V2d_ref)/max(v1_ref-abs(V1(m*)),0.01), m* = argmin_OBS abs(V1) | 0.0005 | - (SIL: urms_min_1 < 0.95, D-069) | needs f_ref (after REF) and V2 at the running argmin of abs(V1) (store V2(m*) and t_m*) |
+| `rho` | 1 | Bollen ratio abs(V2d(m*)-V2d_ref)/max(v1_ref-abs(V1(m*)),0.01), m* = argmin_OBS abs(V1) | 0.0005 | - (SIL: urms_min_1 < 0.90, D-069/D-079) | needs f_ref (after REF) and V2 at the running argmin of abs(V1) (store V2(m*) and t_m*) |
 | `j_max_deg` | deg | max abs(J) over OBS | 0.001 | - | running max over OBS (J from the angle buffer) |
 | `j_sign` | 1 | sign of J at the first OBS sample with abs(J) >= 0.5 maxabs(J) (first lobe = jump sign); compared when j_max_deg >= 1 | 0 | j_max_deg >= 1 | second pass over J for the first sample >= 0.5 max |
 | `f_ref` | Hz | median f_dft over REF | 0.0001 | - | median of f_dft over REF (92 valid values) |
@@ -79,6 +79,6 @@ candidates, peak above float32 envelope rounding); on other records any value is
 - C core (M6, docs/C_CORE.md): same definitions and tolerances. Known float32 difference: `rho` uses the
   FIRST argmin of |V1| over OBS; when two OBS samples have the same float32 |V1| (flat |V1|, no dip) the C
   index can differ from float64 and rho moves by the V2 noise (D-060). Since D-069 the C-port comparison (SIL)
-  compares rho only where the rules use it (reference urms_min_1 < 0.95); a documentation/comparison gate, not a
-  method change (the float32-numpy check above is unchanged). Invalid values are flagged
+  compares rho only where the rules use it (reference urms_min_1 < 0.90, the rules' dip condition; 0.95 until
+  D-079); a documentation/comparison gate, not a method change (the float32-numpy check above is unchanged). Invalid values are flagged
   (feature_valid) exactly where this reference yields NaN (rocof_end, D-051).
