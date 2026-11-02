@@ -9,7 +9,9 @@
 - [x] M5 — results report (RESULTS.md, results.json, findings and limitations; done with M4)
 - [x] M6 — portable C core + SIL equivalence (B13.1)
 - [x] M7 — C2000 port layer, integration guide, C28x compile/size (B13.2) — compile/size step is a script for a local run (D-067)
-- [ ] M8 — static website with in-browser classification (B13.4)
+- [x] M8 — static website with in-browser classification (B13.4)
+
+**Stage 1 complete (2026-11-02).** Next: docs/STAGE2_PLAN.md.
 
 ## Log
 - 2026-11-01 Setup (commit `b6a7ed7` with M1): Python 3.12.9 venv, numpy 2.5 / scipy 1.18 / sklearn 1.9 pinned; repo initialised.
@@ -52,3 +54,10 @@
   rules and GBM 12/12, 0 false triggers, 0 overruns; LN input identical outcome. C28x compile check script +
   docs/C2000_BUILD.md (ti.com download not possible in the cloud session), LaunchPad PIL template (UNTESTED),
   docs/C2000_INTEGRATION.md. D-062..D-068.
+- 2026-11-02 Session 4 (PROMPT_04): user's local L2 run integrated (cl2000 25.11.0.LTS, all files compile, GBM on/off; D-076);
+  decisions D-069..D-074 (rho SIL gate: 1 remaining test_iid exceedance at urms_min_1 0.942, non-dip).
+- 2026-11-02 M8: website web/ (overview, results, explorer, try it, firmware, about), data exported from the committed reports,
+  C core in WebAssembly (zig wasm32-wasi reactor, 45 KB, no imports; equal to native C on 97 records), headless browser check
+  (no console errors, phone width, explorer re-classification 5/5, try-it 7/7 classes + example CSV), web/dist 5.8 MB,
+  GitHub Pages workflow + docs/DEPLOY.md. D-075, D-077, D-078.
+- 2026-11-02 Docs: README landing page (generated results block), docs/STAGE2_PLAN.md, docs/PROJECT_SUMMARY.md.

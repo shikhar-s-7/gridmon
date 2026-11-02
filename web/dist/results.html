@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results — gridmon</title>
+<meta name="description" content="Sealed test results of gridmon: standards-based rules vs gradient boosting on iid and shifted synthetic test data, with confidence intervals and failure analysis.">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="banner" role="note"><strong>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</strong></div>
+<header class="site"><div class="wrap">
+<a class="brand" href="index.html">gridmon <small>grid-event monitor</small></a>
+<nav class="main" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="results.html" aria-current="page">Results</a></li><li><a href="explorer.html">Explorer</a></li><li><a href="tryit.html">Try it</a></li><li><a href="firmware.html">Firmware</a></li><li><a href="about.html">About</a></li></ul></nav>
+<button class="theme-toggle" type="button">Dark theme</button>
+</div></header>
+<main id="main"><div class="wrap">
+<!-- description: Sealed test results of gridmon: standards-based rules vs gradient boosting on iid and shifted synthetic test data, with confidence intervals and failure analysis. -->
+<!-- scripts: results.js -->
+<h1>Results of the sealed test evaluation</h1>
+<p class="lead">Three methods were frozen on training/validation data (commit 6240f60) and evaluated exactly
+once on two sealed test sets of 1,750 records each: <strong>test_iid</strong> (drawn like the
+training data) and <strong>test_shift</strong> (lower SNR, wider frequency range, more harmonics and unbalance, &plusmn;2 %
+calibration error and an unseen transient). Every number on this page comes from <code>reports/results.json</code>. All results are
+<span class="tag">[SIM]</span>.</p>
+
+<h2>Headline</h2>
+<div id="headline"></div>
+<p class="small muted">Macro-F1 averages the F1 score over the seven classes. ML methods: mean &plusmn; sd over three training seeds.
+False alarm = a normal record labelled as an event; miss = an event labelled normal.</p>
+
+<h2>Are the differences real?</h2>
+<div id="comparisons"></div>
+<p class="small muted">Intervals: paired, class-stratified bootstrap 95 % confidence intervals of the macro-F1 difference (seed mean);
+McNemar: exact test on the records where exactly one of the two methods is right (per seed). "Better" is claimed only if the CI excludes zero.</p>
+
+<h2>Confusion matrices</h2>
+<div class="filters">
+  <div><label for="cm-method">Method</label><br>
+  <select id="cm-method"><option value="rules">Rules</option><option value="gbm_embedded">GBM-embedded (seed 0)</option><option value="gbm_unconstrained">GBM-unconstrained (seed 0)</option></select></div>
+</div>
+<div class="grid2"><div id="cm-iid"></div><div id="cm-shift"></div></div>
+
+<h2>Where performance drops: SNR</h2>
+<div class="card"><div id="snr-chart"></div><div id="snr-table"></div></div>
+
+<h2>Severity and the unseen transient (test_shift)</h2>
+<div id="severity"></div>
+<div id="transient"></div>
+
+<h2>The Blue Cut Fire check: a naive PLL frequency rule</h2>
+<p>A naive monitor flags a "frequency event" whenever its PLL frequency deviates by more than 1.0 Hz at any instant.
+That is how many inverters misread a phase jump in 2016. On the same test records:</p>
+<div id="pll"></div>
+<p>The rules and GBM-embedded never confused a phase jump with a frequency event on either test set
+(critical confusion phase_jump&harr;freq_event: rules 0.0,
+GBM-embedded 0.0 on test_shift).</p>
+
+<h2>Model size versus validation F1</h2>
+<div class="card"><div id="size-chart"></div>
+<p class="small muted">Every GBM-embedded grid configuration (largest size over 3 seeds) against its validation macro-F1. The selected model
+(13,972 bytes) is the smallest of the configurations tied at the top; GBM-unconstrained
+(~174,888 bytes equivalent) was the size-unbounded reference. Validation was saturated, so size could not buy robustness here.</p></div>
+
+<h2>Findings, in plain words</h2>
+<ol>
+<li><strong>On data like the training data, both are equally good.</strong> test_iid: GBM-embedded 1.0000
+vs rules 0.9983; difference +0.0017,
+95 % CI [+0.0000, +0.0040] &mdash; no significant difference.</li>
+<li><strong>Under shift the rules are significantly better.</strong> test_shift: rules 0.9902,
+GBM-embedded 0.8653 (difference &minus;0.1250,
+CI [&minus;0.1407, &minus;0.1101]). From iid to shift the rules lose &minus;0.008,
+the tree model &minus;0.135. <em>When noise and nuisances leave the training range, the learned model degrades sharply; the rules barely move.</em></li>
+<li><strong>Where the model fails: phase jumps and false alarms at low SNR.</strong> GBM-embedded (seed 0) on test_shift recognised only
+38 % of phase jumps (107 called normal,
+38 oscillation) and flagged 56 normal records
+(53 as oscillation). Seed mean: 23.3 % false alarms,
+7.3 % misses. <em>The model learned noise-dependent shortcuts; the physical jump threshold does not depend on noise.</em></li>
+<li><strong>A bigger model did not help.</strong> GBM-unconstrained: test_iid 1.0000,
+test_shift 0.8484 with 58.1 % false alarms.</li>
+<li><strong>Safety-critical confusions stay at zero</strong> for the rules and GBM-embedded (phase jump vs frequency event, sag vs normal), while the naive PLL
+rule flags 100 % of phase jumps as frequency events.</li>
+<li><strong>The rules' errors come from the measurement chain.</strong> The rules made 17 errors on test_shift
+(3 on test_iid), 13 of them phase jumps whose half-cycle RMS crossed 0.90/1.10 transiently;
+the others come from calibration error and the unseen transient. <em>Fixed IEC thresholds are robust to noise but sensitive to calibration &mdash; which is why the C2000 integration makes calibration mandatory.</em></li>
+<li><strong>Embedded cost does not decide.</strong> The tree model adds about 239 comparisons and
+13,972 bytes of flash to a 1,517,143-operation feature pipeline that both methods share. Robustness decides.</li>
+</ol>
+
+<h2>Limitations</h2>
+<ul>
+<li>Synthetic data from this project's own generator: training, validation and both test sets share its physics; the shift is one designed nuisance configuration. The rules were written by people who know the generator.</li>
+<li>Strong-grid assumption; no converter or PCS dynamics; single-label records with label margins (no multi-event or threshold-straddling records).</li>
+<li>No measured data (no <span class="tag">[EXP]</span> evidence); timings are from a PC.</li>
+<li>Validation was saturated (many GBM configurations tied at the top), so model selection could not prefer robust models; the GBM was trained without noise augmentation.</li>
+</ul>
+
+<h2>What would change the conclusion</h2>
+<ul>
+<li>A GBM trained on shift-like conditions (wider SNR and calibration ranges) that then matches the rules on new shift-like data: the finding would become "ML needs representative training conditions".</li>
+<li>Restricting the model to physically motivated features or monotonic constraints.</li>
+<li>Measured PCS records with real noise, converter dynamics, calibration drift and multi-event cases &mdash; the rules' fixed thresholds could fail there too.</li>
+<li>A confidence-gated hybrid (use the model only when it is confident, otherwise the rules), evaluated on <em>new</em> sealed data (the current test sets are no longer blind).</li>
+</ul>
+
+</div></main>
+<footer class="site"><div class="wrap">
+<p>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</p>
+<p>gridmon Stage 1 &middot; numbers on this site are generated from the committed reports at build time
+(commit e9cc0e2) &middot; <a href="https://github.com/shikhar-s-7/gridmon">source repository</a> &middot; no tracking, no cookies, no external requests.</p>
+</div></footer>
+<script src="data/site_data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/results.js"></script>
+</body>
+</html>

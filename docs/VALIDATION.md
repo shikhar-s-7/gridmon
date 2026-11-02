@@ -20,3 +20,6 @@ M7 host evidence (not a ladder level): the port layer (calibration, LN->LL, poly
 trigger, record placement, telemetry) on a 120 s, 50 kHz stream with 14 events: 12/12 events captured, onset at
 0.225-0.288 s of the record, rules and GBM 12/12, 0 false triggers, 0 overruns (reports/m7_port_stream.json;
 docs/C2000_INTEGRATION.md section 7). What L3-L6 prove: docs/C2000_INTEGRATION.md section 8.
+M8 host evidence: the same core compiled to WebAssembly (zig wasm32-wasi) gives the native C rule labels, reasons and GBM labels
+on 97/97 records (27 golden + 70 explorer), features within the SIL tolerances (reports/m8_wasm_equivalence.json).
+Stage 1 = L0-L2: complete. Stage 2 plan: docs/STAGE2_PLAN.md.

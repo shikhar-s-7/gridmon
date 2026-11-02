@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Firmware — gridmon</title>
+<meta name="description" content="The gridmon portable C core, its software-in-the-loop verification, the monitor-only C2000 port layer and the validation ladder.">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="banner" role="note"><strong>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</strong></div>
+<header class="site"><div class="wrap">
+<a class="brand" href="index.html">gridmon <small>grid-event monitor</small></a>
+<nav class="main" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="results.html">Results</a></li><li><a href="explorer.html">Explorer</a></li><li><a href="tryit.html">Try it</a></li><li><a href="firmware.html" aria-current="page">Firmware</a></li><li><a href="about.html">About</a></li></ul></nav>
+<button class="theme-toggle" type="button">Dark theme</button>
+</div></header>
+<main id="main"><div class="wrap">
+<!-- description: The gridmon portable C core, its software-in-the-loop verification, the monitor-only C2000 port layer and the validation ladder. -->
+<!-- scripts: firmware.js -->
+<h1>Firmware: one C core, three targets</h1>
+<p class="lead">The Python implementation is the reference. A single C99 float32 core reproduces it and runs on a PC (verification),
+on TI C2000 microcontrollers (monitor-only port layer) and in this browser (WebAssembly). Its version string:
+<code>gridmon-core 0.6.0 (model gbm_embedded seed0 sha256 e25501759a5f84fe; tables 17f72797b3f4fbba; gbm on)</code>.</p>
+
+<h2>C core API and memory</h2>
+<div class="grid3">
+  <div class="card"><div class="kpi">15,816 B</div><div class="kpi-label">working state (gm_ctx_t, caller-provided; budget 32,768 B; no malloc, no static RAM)</div></div>
+  <div class="card"><div class="kpi">5,400 B + 13,972 B</div><div class="kpi-label">constant DSP tables + GBM model (flash)</div></div>
+  <div class="card"><div class="kpi">1,030 &micro;s</div><div class="kpi-label">per 1 s record on the PC (indicative)</div></div>
+</div>
+<pre><code>gm_ctx_t ctx; gm_result_t res;
+gm_init(&amp;ctx);
+gm_process_record(&amp;ctx, x /* int16 [ab | bc | ca], 3 x 5000 */, 5000, lsb_pu, &amp;res);
+/* res.rule_label, res.rule_reason, res.onset_estimate_s   -> PRIMARY output (rules)
+   res.gbm_label, res.gbm_proba[7]                         -> ADVISORY output (logged, never acted on)
+   res.features[37] + res.feature_valid[37], res.flags, res.status */</code></pre>
+
+<h2>Software-in-the-loop: does the C core reproduce Python?</h2>
+<div id="sil"></div>
+<p class="small muted">Golden vectors: 27/27 pass on every intermediate trace, feature, rule label and reason.
+Sanitizer build (address + undefined behaviour): pass. The sealed test sets were read for equivalence only. "Outside" counts feature values
+beyond the documented float32 tolerances under the comparison gates; the only cases are float32 ties in the argmin of |V1| that feed the
+Bollen ratio rho, on records that are not dips (the rules use rho only in a dip).</p>
+
+<h2>WebAssembly build (this site)</h2>
+<p>Toolchain: <code>zig 0.17.0 cc -target wasm32-wasi -mexec-model=reactor</code>, 44,994 bytes, no imports. Equivalence with the native C core on the golden
+vectors and every explorer record: see <code>reports/m8_wasm_equivalence.json</code> in the repository.</p>
+
+<h2>C2000 port layer (monitor-only)</h2>
+<p>The control interrupt calls <code>gm_port_push()</code> once per sample: calibration trim (mandatory), optional line-to-neutral to line-to-line
+conversion, a polyphase anti-alias filter and decimation to 5 kHz into a 50,352-byte structure that includes a 1.6 s
+ring buffer. A background task triggers, places a 1 s record around the estimated onset, classifies it and publishes telemetry. It never
+writes a control variable.</p>
+<div id="isr"></div>
+<h3>Host stream test (120 s at 50,000 Hz, seed 7007)</h3>
+<div class="grid3">
+  <div class="card"><div class="kpi">12/12</div><div class="kpi-label">events captured</div></div>
+  <div class="card"><div class="kpi">12/12</div><div class="kpi-label">captured records labelled correctly by the rules</div></div>
+  <div class="card"><div class="kpi">0 / 0</div><div class="kpi-label">false triggers / buffer overruns</div></div>
+</div>
+<figure class="figure"><img src="data/m7_port_stream.png" alt="The 120 s test stream: the positive-sequence voltage magnitude and the frequency over time, with the 14 event windows shaded, a marker at each capture and the true and rule labels of each event; all 12 non-normal events are captured and correctly labelled, the 2 normal episodes are not triggered.">
+<figcaption>Stream test (reports/figures/m7_port_stream.png). Onset inside the captured records: 0.225&ndash;0.288 s
+(the classifier expects 0.2&ndash;0.4 s). Integration evidence only (n = 14), not an accuracy result.</figcaption></figure>
+<div id="events"></div>
+
+<h2>C28x compile and size (L2)</h2>
+<div id="c28x"></div>
+
+<h2>Validation ladder</h2>
+<div id="ladder"></div>
+
+<h2>Integration notes</h2>
+<ul>
+<li><strong>TIDA-01606 (three-phase, 50 kHz control ISR):</strong> one <code>gm_port_push()</code> call after the control law; decimation by 10;
+LN or LL sensing selectable (which one the board uses is still to be confirmed from TI's SDK source); per-channel calibration trim is mandatory
+because the rules are calibration-sensitive; background processing in the main loop or on CPU2.</li>
+<li><strong>TIDM-HV-1PH-DCAC (single-phase):</strong> one board sees one phase, so the three-phase features do not exist there. For three boards
+120&deg; apart, run this unchanged three-phase core on a <em>separate monitor node</em> (for example a LaunchPad with isolated line-to-neutral sensing of
+all three phases), independent of the inverter controllers. A single-phase variant is Stage 2.</li>
+<li><strong>Safety:</strong> both reference designs are high-voltage hardware (800 V and 380 V DC). Board work only under qualified supervision,
+with isolated debug connections, and only after the LaunchPad steps (L3, L4) have passed. The module stays monitor-only until separately validated.</li>
+</ul>
+
+</div></main>
+<footer class="site"><div class="wrap">
+<p>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</p>
+<p>gridmon Stage 1 &middot; numbers on this site are generated from the committed reports at build time
+(commit e9cc0e2) &middot; <a href="https://github.com/shikhar-s-7/gridmon">source repository</a> &middot; no tracking, no cookies, no external requests.</p>
+</div></footer>
+<script src="data/site_data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/firmware.js"></script>
+</body>
+</html>

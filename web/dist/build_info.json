@@ -1,0 +1,19 @@
+{
+ "commit": "e9cc0e2",
+ "wasm": {
+  "toolchain": "zig 0.17.0 cc -target wasm32-wasi -mexec-model=reactor",
+  "bytes": 44994,
+  "sha256": "28beebd6553ce2fcf1262d597a7ccd7f0bfc56539b499e59b86cf5f56c1f1aa6"
+ },
+ "pages": [
+  "index",
+  "results",
+  "explorer",
+  "tryit",
+  "firmware",
+  "about"
+ ],
+ "bytes_total": 5755865,
+ "bytes_data": 5142751,
+ "n_explorer_records": 70
+}

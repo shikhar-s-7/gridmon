@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — gridmon</title>
+<meta name="description" content="gridmon: recognising grid events in battery-inverter voltage records with standards-based rules and a small tree model, ported to C, a C2000 microcontroller and this browser.">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="banner" role="note"><strong>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</strong></div>
+<header class="site"><div class="wrap">
+<a class="brand" href="index.html">gridmon <small>grid-event monitor</small></a>
+<nav class="main" aria-label="Main"><ul><li><a href="index.html" aria-current="page">Overview</a></li><li><a href="results.html">Results</a></li><li><a href="explorer.html">Explorer</a></li><li><a href="tryit.html">Try it</a></li><li><a href="firmware.html">Firmware</a></li><li><a href="about.html">About</a></li></ul></nav>
+<button class="theme-toggle" type="button">Dark theme</button>
+</div></header>
+<main id="main"><div class="wrap">
+<!-- description: gridmon: recognising grid events in battery-inverter voltage records with standards-based rules and a small tree model, ported to C, a C2000 microcontroller and this browser. -->
+<h1>Recognising grid events at a battery inverter</h1>
+<p class="lead">A battery energy storage system (BESS) connects to the grid through a power conversion system (PCS), an
+inverter. When the grid voltage dips, swells, jumps in phase, changes frequency or starts to wobble, the PCS must
+respond differently to each case. gridmon is a research prototype that looks at one second of three-phase voltage
+and says which of seven situations it was in &mdash; and it compares a transparent, standards-based rule set with a
+small machine-learning model on exactly the same physics features.</p>
+
+<div class="grid3">
+  <div class="card"><div class="kpi">0.998 / 1.000</div>
+    <div class="kpi-label">macro-F1 of rules / GBM on test data like the training data (test_iid): no significant difference</div></div>
+  <div class="card"><div class="kpi">0.990 / 0.865</div>
+    <div class="kpi-label">rules / GBM under distribution shift (more noise, calibration error, an unseen transient): rules significantly better</div></div>
+  <div class="card"><div class="kpi">1,750 / 1,750</div>
+    <div class="kpi-label">records where the portable C core reproduces the Python rule label (test_shift; same on val and test_iid)</div></div>
+</div>
+
+<h2>What the PCS must recognise &mdash; and why it matters</h2>
+<div class="table-wrap"><table>
+<caption>The seven classes (single label per 1 s record)</caption>
+<thead><tr><th scope="col">class</th><th scope="col">what happens to the voltage</th><th scope="col">typical cause</th><th scope="col">PCS response it would drive (context only)</th></tr></thead>
+<tbody>
+<tr><td>normal</td><td>nothing beyond small everyday changes (the "hard negatives": small steps, ramps, harmonic changes)</td><td>&mdash;</td><td>none</td></tr>
+<tr><td>sag_bal</td><td>all three phases drop together (below 0.9 pu)</td><td>three-phase fault</td><td>low-voltage ride-through, positive-sequence reactive current</td></tr>
+<tr><td>sag_unbal</td><td>one or two phases drop more than the others</td><td>single/two-phase fault</td><td>ride-through with negative-sequence handling</td></tr>
+<tr><td>swell</td><td>all phases rise above 1.1 pu</td><td>load rejection, capacitor switching</td><td>high-voltage ride-through, absorb reactive power</td></tr>
+<tr><td>phase_jump</td><td>the voltage angle steps by several degrees, magnitude almost unchanged</td><td>switching, faults elsewhere</td><td>ride through &mdash; and must <strong>not</strong> be read as a frequency event</td></tr>
+<tr><td>freq_event</td><td>the frequency ramps or steps and stays away from 50 Hz</td><td>generator or load trip</td><td>frequency response</td></tr>
+<tr><td>oscillation</td><td>slow (5&ndash;25 Hz) wobble of magnitude and angle</td><td>poorly damped control interactions</td><td>alarm / damping</td></tr>
+</tbody></table></div>
+<p class="small muted">Why the phase-jump row matters: in the 2016 Blue Cut Fire event in California, many inverters misread a phase jump
+as a frequency excursion and tripped [LIT]. The naive frequency rule on this site's Results page reproduces that failure
+mode; the rules and the small tree model here never confused the two on either test set.</p>
+
+<h2>How it works</h2>
+<div class="card diagram">
+<svg viewBox="0 0 900 230" role="img" aria-labelledby="pipe-t pipe-d">
+<title id="pipe-t">Processing pipeline</title>
+<desc id="pipe-d">Three line-to-line voltages are sampled at 5 kHz, converted into 37 physics features, then classified by the rules (primary output) and by a gradient-boosting model (advisory). The same C99 core runs on a PC, a C2000 microcontroller and in this browser.</desc>
+<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker></defs>
+<rect x="10" y="20" width="150" height="70" rx="8"/><text x="85" y="48" text-anchor="middle">3 LL voltages</text><text x="85" y="68" text-anchor="middle" class="sub">5 kHz, 1 s, int16</text>
+<rect x="200" y="20" width="190" height="70" rx="8"/><text x="295" y="44" text-anchor="middle">DSP</text><text x="295" y="62" text-anchor="middle" class="sub">Urms(1/2), DFT phasors, f, ROCOF,</text><text x="295" y="76" text-anchor="middle" class="sub">jump metric, PLL, envelope, THD</text>
+<rect x="430" y="20" width="150" height="70" rx="8"/><text x="505" y="48" text-anchor="middle">37 features</text><text x="505" y="68" text-anchor="middle" class="sub">same for both methods</text>
+<rect x="620" y="5" width="270" height="45" rx="8"/><text x="755" y="25" text-anchor="middle">Rules (IEC thresholds) &rarr; label</text><text x="755" y="41" text-anchor="middle" class="sub">PRIMARY output</text>
+<rect x="620" y="60" width="270" height="45" rx="8"/><text x="755" y="80" text-anchor="middle">GBM, 140 trees, 13.6 KB &rarr; label</text><text x="755" y="96" text-anchor="middle" class="sub">ADVISORY (logged, never acted on)</text>
+<path class="arrow" d="M160 55 H195"/><path class="arrow" d="M390 55 H425"/><path class="arrow" d="M580 50 L615 30"/><path class="arrow" d="M580 60 L615 80"/>
+<rect x="10" y="140" width="880" height="80" rx="8"/>
+<text x="450" y="164" text-anchor="middle">One C99 float32 core (no malloc, 15,816 B of state), verified against the Python reference</text>
+<text x="160" y="198" text-anchor="middle" class="sub">PC: software-in-the-loop tests</text>
+<text x="450" y="198" text-anchor="middle" class="sub">TI C2000: monitor-only port layer (compiles, L2)</text>
+<text x="740" y="198" text-anchor="middle" class="sub">Browser: WebAssembly (Try it)</text>
+</svg>
+</div>
+
+<h2>System boundary and assumptions</h2>
+<p class="small">Evidence tags: <span class="tag">[STD]</span> standard &middot; <span class="tag">[LIT]</span> literature &middot;
+<span class="tag">[ASSUMED]</span> engineering assumption &middot; <span class="tag">[SIM]</span> this project's simulations &middot;
+<span class="tag">[EXP]</span> experimentally validated (none in Stage 1).</p>
+<ul>
+<li>Measurement: three line-to-line voltages at the PCS terminals (3-wire, so zero sequence is unobservable) <span class="tag">[ASSUMED]</span>.</li>
+<li>Records: 1 s at 5 kHz, 12-bit ADC over &plusmn;2 pu, from a triggered recorder; the event starts 0.2&ndash;0.4 s into the record and the first 0.15 s is pre-event <span class="tag">[ASSUMED]</span>.</li>
+<li>Dip and swell thresholds 0.90 / 1.10 pu follow IEC 61000-4-30 practice and IEEE 1159 categories <span class="tag">[STD]</span>; dip types follow Bollen's classification <span class="tag">[LIT]</span>.</li>
+<li>Strong grid: the PCS current does not change the voltage; no converter dynamics, no weak grids <span class="tag">[ASSUMED]</span>.</li>
+<li>All data are synthetic, from this project's physics-based generator (version 0.2.0): 5,600 training, 1,750 validation and 2 &times; 1,750 sealed test records <span class="tag">[SIM]</span>.</li>
+</ul>
+
+<h2>Monitor-only</h2>
+<p>gridmon only <em>listens</em>. On a controller it receives copies of the voltages, keeps its own buffer and publishes a report;
+it never writes a control variable, a PWM register, a protection flag or a setpoint. Nothing from this project may be used for
+protection or control without separate validation on hardware and in the field (the validation ladder on the
+<a href="firmware.html">Firmware</a> page).</p>
+
+<h2>Where to go next</h2>
+<ul>
+<li><a href="results.html">Results</a>: the sealed test evaluation, with confidence intervals and where each method fails.</li>
+<li><a href="explorer.html">Explorer</a>: 70 validation and test records with every signal-chain trace; re-classify any of them in your browser.</li>
+<li><a href="tryit.html">Try it</a>: synthesise an event or upload your own CSV and classify it with the C core compiled to WebAssembly.</li>
+<li><a href="firmware.html">Firmware</a>: the portable C core, the C2000 port layer and the validation ladder.</li>
+<li>Source code, data generator and reports: <a href="https://github.com/shikhar-s-7/gridmon">github.com/shikhar-s-7/gridmon</a>.</li>
+</ul>
+
+</div></main>
+<footer class="site"><div class="wrap">
+<p>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</p>
+<p>gridmon Stage 1 &middot; numbers on this site are generated from the committed reports at build time
+(commit e9cc0e2) &middot; <a href="https://github.com/shikhar-s-7/gridmon">source repository</a> &middot; no tracking, no cookies, no external requests.</p>
+</div></footer>
+<script src="data/site_data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+
+</body>
+</html>

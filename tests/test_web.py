@@ -115,3 +115,23 @@ def test_explorer_set():
     assert figure <= {r["record"] for r in idx if r["split"] == "test_shift"}
     size = sum(p.stat().st_size for p in (SRC / "data" / "explorer").glob("*.json"))
     assert size <= 8 * 1024 * 1024
+
+
+def test_readme_results_block_current():
+    """README's results block is generated from the reports (scripts/update_readme.py --check)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("update_readme", ROOT / "scripts" / "update_readme.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    assert mod.main(["--check"]) == 0
+
+
+def test_site_files_are_tracked_by_git():
+    """web/dist (served by GitHub Pages without a toolchain) and the exported data are committed; data/ stays ignored."""
+    if shutil.which("git") is None or not (ROOT / ".git").exists():
+        pytest.skip("not a git checkout")
+    for rel in ("web/dist/index.html", "web/dist/wasm/gridmon.wasm", "web/dist/data/site_data.js",
+                "web/src/data/explorer_index.js"):
+        r = subprocess.run(["git", "check-ignore", "-q", rel], cwd=ROOT)
+        assert r.returncode == 1, f"{rel} is git-ignored"
+    assert subprocess.run(["git", "check-ignore", "-q", "data/val/X.npy"], cwd=ROOT).returncode == 0

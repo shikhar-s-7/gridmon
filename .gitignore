@@ -1,12 +1,12 @@
 .venv/
-data/
+/data/
 __pycache__/
 *.pyc
 *.egg-info/
 .pytest_cache/
 reports/fast/
 build/
-dist/
+/dist/
 models/fast/
 c/generated/fast/
 reports/dryrun/

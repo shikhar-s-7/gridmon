@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — gridmon</title>
+<meta name="description" content="What gridmon simulates, what it assumes, what is validated (nothing experimentally yet), how to reproduce it and its licence.">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="banner" role="note"><strong>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</strong></div>
+<header class="site"><div class="wrap">
+<a class="brand" href="index.html">gridmon <small>grid-event monitor</small></a>
+<nav class="main" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="results.html">Results</a></li><li><a href="explorer.html">Explorer</a></li><li><a href="tryit.html">Try it</a></li><li><a href="firmware.html">Firmware</a></li><li><a href="about.html" aria-current="page">About</a></li></ul></nav>
+<button class="theme-toggle" type="button">Dark theme</button>
+</div></header>
+<main id="main"><div class="wrap">
+<!-- description: What gridmon simulates, what it assumes, what is validated (nothing experimentally yet), how to reproduce it and its licence. -->
+<h1>About this project</h1>
+<p class="lead">gridmon is a Stage 1 research prototype: an offline monitor that detects and classifies grid events in triggered three-phase
+voltage records at a battery inverter, and an honest comparison of transparent rules with a small learned model.</p>
+
+<h2>Simulated, assumed, validated</h2>
+<div class="table-wrap"><table>
+<caption>Evidence levels used throughout the project</caption>
+<thead><tr><th scope="col">tag</th><th scope="col">meaning</th><th scope="col">examples here</th></tr></thead>
+<tbody>
+<tr><td><span class="tag">[SIM]</span></td><td>result of this project's simulations</td><td>every accuracy number, the C-core equivalence, the port-layer stream test</td></tr>
+<tr><td><span class="tag">[STD]</span></td><td>standard or regulatory document</td><td>0.90 / 1.10 pu dip and swell thresholds (IEC 61000-4-30 practice, IEEE 1159 categories)</td></tr>
+<tr><td><span class="tag">[LIT]</span></td><td>literature or incident report</td><td>Bollen dip types, DSOGI-PLL, the 2016 Blue Cut Fire phase-jump misreading</td></tr>
+<tr><td><span class="tag">[ASSUMED]</span></td><td>illustrative engineering assumption</td><td>strong grid, 3-wire LL sensing, 1 s records with 0.2&ndash;0.4 s onset, trigger thresholds, frequency recovery profile</td></tr>
+<tr><td><span class="tag">[EXP]</span></td><td>experimentally validated</td><td><strong>none</strong> &mdash; nothing has been run on hardware or measured data</td></tr>
+</tbody></table></div>
+<p>The C2000 code compiles with TI's compiler (validation level L2), but it has not run on a microcontroller yet (L3). See the
+<a href="firmware.html">validation ladder</a>.</p>
+
+<h2>How to reproduce</h2>
+<pre><code>git clone https://github.com/shikhar-s-7/gridmon
+cd gridmon
+python3.12 -m venv .venv            # Windows: py -3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pip install -e .
+.venv/bin/python scripts/run_all.py --fast   # data, rules, golden vectors, GBM, sealed evaluation (fast subset)
+.venv/bin/python -m pytest
+.venv/bin/python scripts/build_c.py          # C core for the PC
+.venv/bin/python scripts/run_sil.py --fast   # C core vs Python
+.venv/bin/python scripts/build_site.py       # this website (web/dist)
+python -m http.server -d web/dist 8000       # preview at http://localhost:8000</code></pre>
+<p class="small muted">All random numbers come from seeded generators; every report records the git commit and configuration hash. This site was built from
+commit e9cc0e2; its numbers are read from the committed reports at build time.</p>
+
+<h2>Privacy</h2>
+<p>This site is static. It sets no cookies, has no analytics or tracking and makes no requests to other servers. The theme choice is kept in your
+browser's local storage. Uploaded CSV files never leave your browser.</p>
+
+<h2>Licence and use</h2>
+<p>Research prototype, provided as is, without warranty. Nothing from this project may be used for protection or control of any power system
+without separate validation on hardware and in the field. No open-source licence has been chosen for the repository yet; until the owner adds
+one, the default copyright applies (all rights reserved).</p>
+
+</div></main>
+<footer class="site"><div class="wrap">
+<p>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</p>
+<p>gridmon Stage 1 &middot; numbers on this site are generated from the committed reports at build time
+(commit e9cc0e2) &middot; <a href="https://github.com/shikhar-s-7/gridmon">source repository</a> &middot; no tracking, no cookies, no external requests.</p>
+</div></footer>
+<script src="data/site_data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+
+</body>
+</html>

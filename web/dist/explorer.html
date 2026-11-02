@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorer — gridmon</title>
+<meta name="description" content="Explore validation and test records: waveforms, the signal chain, the rule decision trace and GBM probabilities, and re-classify them in your browser with the C core compiled to WebAssembly.">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="banner" role="note"><strong>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</strong></div>
+<header class="site"><div class="wrap">
+<a class="brand" href="index.html">gridmon <small>grid-event monitor</small></a>
+<nav class="main" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="results.html">Results</a></li><li><a href="explorer.html" aria-current="page">Explorer</a></li><li><a href="tryit.html">Try it</a></li><li><a href="firmware.html">Firmware</a></li><li><a href="about.html">About</a></li></ul></nav>
+<button class="theme-toggle" type="button">Dark theme</button>
+</div></header>
+<main id="main"><div class="wrap">
+<!-- description: Explore validation and test records: waveforms, the signal chain, the rule decision trace and GBM probabilities, and re-classify them in your browser with the C core compiled to WebAssembly. -->
+<!-- scripts: data/explorer_index.js, gm_core.js, explorer.js -->
+<h1>Record explorer</h1>
+<p class="lead">70 records from the validation and the two test sets (10 per class). They include the records shown in the
+M4 disagreement figure and up to 20 records where the rules and the GBM disagree (test_shift has
+224 such records in total, test_iid 3).
+Stored results come from the Python reference; the button re-runs the C core in your browser on the stored waveform.
+The test records are shown after the one-shot sealed evaluation; nothing here was used to choose a method.</p>
+<div class="filters" role="group" aria-label="Filters">
+  <div><label for="f-class">True class</label><br><select id="f-class"><option value="">all</option></select></div>
+  <div><label for="f-split">Split</label><br><select id="f-split"><option value="">all</option><option>val</option><option>test_iid</option><option>test_shift</option></select></div>
+  <div><label for="f-agree">Rules vs GBM</label><br><select id="f-agree"><option value="">all</option><option value="agree">agree</option><option value="disagree">disagree</option><option value="rules_wrong">rules wrong</option><option value="gbm_wrong">GBM wrong</option></select></div>
+  <div class="muted small" id="f-count" aria-live="polite"></div>
+</div>
+<div class="explorer-layout">
+  <div><div class="list-records" id="rec-list" role="listbox" aria-label="Records"></div></div>
+  <div id="rec-view"><p class="muted">Select a record.</p></div>
+</div>
+
+</div></main>
+<footer class="site"><div class="wrap">
+<p>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</p>
+<p>gridmon Stage 1 &middot; numbers on this site are generated from the committed reports at build time
+(commit e9cc0e2) &middot; <a href="https://github.com/shikhar-s-7/gridmon">source repository</a> &middot; no tracking, no cookies, no external requests.</p>
+</div></footer>
+<script src="data/site_data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+<script src="data/explorer_index.js"></script><script src="js/gm_core.js"></script><script src="js/explorer.js"></script>
+</body>
+</html>
