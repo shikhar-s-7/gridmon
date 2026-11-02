@@ -205,3 +205,63 @@ def test_generated_data_margins_and_nuisances(s2):
             ih = v["interharmonic"]
             assert ih["f_in_range"] and ih["harmonic_exclusion_holds"] and 0.35 < ih["share_on"] < 0.65
             assert ih["amp_pct_min"] >= 0.5 and ih["amp_pct_max"] <= 2.0
+
+
+# ---------------------------------------------------------------------------------------------- freeze, refusal, results
+def test_s2e1_evaluate_refuses_without_valid_freeze(monkeypatch):
+    """s2e1_evaluate.main returns 3 and never loads a sealed split if the S2E1 freeze (or its absence) fails."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("s2e1_evaluate", ROOT / "scripts" / "s2e1_evaluate.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+
+    def no_loading(*a, **k):
+        raise AssertionError("a sealed split was loaded despite a failed freeze check")
+
+    if (ROOT / s2e1.S2E1_FROZEN).exists():
+        real = s2e1.load_frozen
+
+        def tampered(root=ROOT):
+            f = copy.deepcopy(real(root))
+            f["arms"]["GW"]["models"][0]["sha256"] = "0" * 64
+            return f
+        monkeypatch.setattr(s2e1, "load_frozen", tampered)
+    monkeypatch.setattr(mod, "load_waveforms", no_loading)
+    monkeypatch.setattr(mod, "load_labels", no_loading)
+    assert mod.main([]) == 3
+
+
+def test_s2e1_freeze_verifies():
+    if not (ROOT / s2e1.S2E1_FROZEN).exists():
+        pytest.skip("S2E1 not frozen yet")
+    frozen = s2e1.load_frozen()
+    assert s2e1.verify(ROOT, frozen, check_models=True, check_git=False) == []
+    tr = json.loads((ROOT / "reports" / "s2e1_train.json").read_text())
+    for arm in s2e1.TRAINED_ARMS:
+        assert frozen["arms"][arm]["config"] == tr["arms"][arm]["selected"]["config"]
+        assert [m["sha256"] for m in frozen["arms"][arm]["models"]] == [m["sha256"] for m in tr["arms"][arm]["models"]]
+        assert all(m["size_bytes"] <= 65536 for m in frozen["arms"][arm]["models"])
+        assert tr["arms"][arm]["pre_event_only_control"]["pass"]
+        assert all(e["pass"] for e in tr["arms"][arm]["equivalence_val_wide"])
+    assert frozen["hybrid"]["threshold"] == 0.5
+    assert frozen["arms"]["GP"]["features"] == s2e1.load_config()["feature_subsets"]["physics"]
+
+
+def test_s2e1_results_consistent():
+    p = ROOT / "reports" / "s2e1_results.json"
+    if not p.exists():
+        pytest.skip("S2E1 not evaluated yet")
+    res = json.loads(p.read_text())
+    assert not res["dry_run"] and not res["fast"]
+    for arm, v in res["decision"].items():
+        assert v["verdict"] == s2e1.decision(v["ci95_by_set"])
+        for s, ci in v["ci95_by_set"].items():
+            assert ci == res["per_set"][s]["comparisons"][f"{arm}-R"]["ci95_seed_mean"]
+    for name in s2e1.SEALED:
+        d = res["per_set"][name]
+        assert d["n"] == 1750 and d["data_meta"]["split"] == name
+        assert d["arms"]["R"]["n_seeds"] == 1 and d["arms"]["GW"]["n_seeds"] == 3
+    md = (ROOT / "reports" / "S2E1_RESULTS.md").read_text()
+    assert len(md.splitlines()) <= 150
+    for f in res["figures"]:
+        assert (ROOT / "reports" / "figures" / f).exists()
