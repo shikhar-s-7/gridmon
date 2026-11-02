@@ -23,7 +23,9 @@
 once on two sealed test sets of 1,750 records each: <strong>test_iid</strong> (drawn like the
 training data) and <strong>test_shift</strong> (lower SNR, wider frequency range, more harmonics and unbalance, &plusmn;2 %
 calibration error and an unseen transient). Every number on this page comes from <code>reports/results.json</code>. All results are
-<span class="tag">[SIM]</span>.</p>
+<span class="tag">[SIM]</span>.
+Stage 2 retrained the model on representative conditions and tested it on new sealed data: see
+<a href="#experiment-2">Experiment 2</a> at the end of this page.</p>
 
 <h2>Headline</h2>
 <div id="headline"></div>
@@ -98,17 +100,57 @@ the others come from calibration error and the unseen transient. <em>Fixed IEC t
 
 <h2>What would change the conclusion</h2>
 <ul>
-<li>A GBM trained on shift-like conditions (wider SNR and calibration ranges) that then matches the rules on new shift-like data: the finding would become "ML needs representative training conditions".</li>
-<li>Restricting the model to physically motivated features or monotonic constraints.</li>
+<li>A GBM trained on shift-like conditions (wider SNR and calibration ranges) that then matches the rules on new shift-like data: the finding would become "ML needs representative training conditions". <a href="#experiment-2">Tested in Experiment 2.</a></li>
+<li>Restricting the model to physically motivated features or monotonic constraints (physics subset: <a href="#experiment-2">Experiment 2</a>).</li>
 <li>Measured PCS records with real noise, converter dynamics, calibration drift and multi-event cases &mdash; the rules' fixed thresholds could fail there too.</li>
-<li>A confidence-gated hybrid (use the model only when it is confident, otherwise the rules), evaluated on <em>new</em> sealed data (the current test sets are no longer blind).</li>
+<li>A confidence-gated hybrid (use the model only when it is confident, otherwise the rules), evaluated on <em>new</em> sealed data (the current test sets are no longer blind). <a href="#experiment-2">Tested in Experiment 2.</a></li>
 </ul>
+
+<h2 id="experiment-2">Experiment 2 (Stage 2): does ML catch up with representative training data?</h2>
+<p class="lead">Stage 1 left one obvious objection: the GBM never saw low SNR or calibration error during training. Experiment 2 (S2E1) was
+pre-registered (commit 3fd3286) before any of its data existed: the same GBM recipe was retrained on the full nuisance ranges
+(SNR 25-60 dB, &plusmn;2 % gain and offset, wider frequency, more harmonics and unbalance; no transients), once with all 37 features (GW) and once with a
+physics-only subset (GP, 23 features), frozen (commit b11b67a) and evaluated once on two <em>new</em>
+sealed sets of 1,750 records: <strong>test2_shift</strong> (the Stage 1 shift conditions with new random draws, incl. the unseen
+transient) and <strong>test2_novel</strong> (training-like conditions plus a nuisance no method has seen: an interharmonic of 0.5-2 % between 70 and 950 Hz
+in half of the records). The Stage 1 rules (R) and GBM (G0) were not changed. Hybrids use the GBM only when its top probability is at least 0.5,
+otherwise the rules. Every number here comes from <code>reports/s2e1_results.json</code>; all are <span class="tag">[SIM]</span>.</p>
+<div id="s2-headline"></div>
+<p class="small muted">Selected models: GW 20 stages &times; 4 leaves,
+13,972 bytes; GP 20 stages &times; 4 leaves,
+13,972 bytes (both within the 64 KB budget). Pre-event-only control (chance level expected): GW 0.133, GP 0.142.</p>
+<div id="s2-decision"></div>
+<div id="s2-comparisons"></div>
+<div id="s2-survival"></div>
+<div class="card"><div id="s2-snr-chart"></div><div id="s2-snr-table"></div></div>
+<h3>Experiment 2 findings, in plain words</h3>
+<ol>
+<li><strong>With representative training, the tree model no longer loses to the rules &mdash; it is slightly better.</strong> The pre-registered rule
+(confidence interval of the difference to the rules above zero on <em>both</em> new sets) gives "ML better" for GW and
+"ML better" for GP: GW &minus; R +0.0080 (CI [+0.0028, +0.0136]) on test2_shift and
++0.0048 (CI [+0.0008, +0.0089]) on test2_novel; GP &minus; R +0.0108 and
++0.0058. The differences are small. <em>Stage 1's "rules are more robust" becomes "ML needs representative training conditions".</em></li>
+<li><strong>Stage 1 replicates on fresh data, and retraining removes the failure.</strong> On test2_shift the unchanged rules reach 0.9880 and
+the unchanged Stage 1 GBM 0.8581; the same recipe trained on the wide ranges gains +0.138.
+<em>The Stage 1 failure was a training-coverage problem.</em></li>
+<li><strong>The unseen interharmonic is mostly harmless.</strong> Macro-F1 with minus without it: rules &minus;0.0017, GW &minus;0.0031,
+GP &minus;0.0013 (all "survives" by the pre-registered rule). The intended look-alike of an oscillation appeared only for beats of
+20-25 Hz (8 records): accuracy rules 1.00,
+GW 0.67, GP 1.00 &mdash; too few records for a claim.</li>
+<li><strong>A confidence gate rescues a mis-trained model.</strong> The Stage 1 GBM used only when its top probability is at least 0.5 (otherwise the rules) rises from
+0.858 to 0.993 on test2_shift, handing 78 % of the records to the model.</li>
+<li><strong>Safety-critical confusions stay at zero</strong> (phase jump vs frequency event: GW 0.0,
+rules 0.0 on test2_shift; sag called normal: 0 for every arm).</li>
+</ol>
+<p class="small muted">Limits: one generator for training and test (test2_shift's ranges lie inside the wide training ranges; only its data and the transient are new);
+validation was saturated again, so the smallest model was selected; the rules were not re-tuned. Full report: <code>reports/S2E1_RESULTS.md</code>;
+pre-registration: <code>docs/S2E1_PREREG.md</code>.</p>
 
 </div></main>
 <footer class="site"><div class="wrap">
 <p>Simulation-only research prototype. Not validated on measured data. Not for protection or control.</p>
 <p>gridmon Stage 1 &middot; numbers on this site are generated from the committed reports at build time
-(commit e9cc0e2) &middot; <a href="https://github.com/shikhar-s-7/gridmon">source repository</a> &middot; no tracking, no cookies, no external requests.</p>
+(commit e7d39e6) &middot; <a href="https://github.com/shikhar-s-7/gridmon">source repository</a> &middot; no tracking, no cookies, no external requests.</p>
 </div></footer>
 <script src="data/site_data.js"></script>
 <script src="js/common.js"></script>

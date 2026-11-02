@@ -4,7 +4,8 @@ Writes
   web/src/data/site_data.js      window.GM_SITE = {...}: results subset (reports/results.json), size-vs-F1 grid
                                  (reports/m3_gbm_val.json), M2 budget, C core / SIL (reports/m6_sil.json), port
                                  stream (reports/m7_port_stream.json), C28x sizes (reports/m7_c28x_size.json, if
-                                 present), validation ladder (docs/VALIDATION.md), thresholds, names
+                                 present), validation ladder (docs/VALIDATION.md), thresholds, names, Stage 2
+                                 experiment S2E1 subset (reports/s2e1_results.json, if evaluated)
   web/src/data/explorer_index.js window.GM_EXPLORER = [...] (record list for the explorer)
   web/src/data/explorer/<id>.json one file per explorer record: int16 waveform (base64), lsb, plot traces (float32
                                  base64), 37 features + aux, rule label/reason/onset, GBM-embedded (seed 0) proba,
@@ -130,6 +131,40 @@ def results_subset(r: dict) -> dict:
     return out
 
 
+def s2e1_subset(r2: dict | None) -> dict | None:
+    """Stage 2 experiment S2E1 (reports/s2e1_results.json): what the Results page's Experiment 2 section shows."""
+    if not r2 or r2.get("dry_run") or r2.get("fast"):
+        return None
+    arms = ["R", "G0", "GW", "GP", "HW", "H0"]
+    out: dict[str, Any] = {"commits": {"prereg": str(r2["prereg_commit"])[:7], "freeze": str(r2["s2e1_freeze_commit"])[:7],
+                                       "evaluated": r2["git_commit"][:7]},
+                           "arms": arms, "sets": {}, "decision": r2["decision"],
+                           "hypotheses": {h: {"text": v["text"], "supported": v["supported"]} for h, v in r2["hypotheses"].items()},
+                           "survival": r2.get("survival_test2_novel", {}), "selected": {}}
+    for a in ("GW", "GP"):
+        x = r2["frozen"]["arms"][a]
+        out["selected"][a] = {"config": x["config"], "bytes": x["models"][0]["size_bytes"], "n_features": x["n_features_used"],
+                              "val_f1": x["val_wide_macro_f1_mean"], "control": x["pre_event_only_control_mean"]}
+    for s, d in r2["per_set"].items():
+        bd = d["breakdowns"]
+        e: dict[str, Any] = {"n": d["n"], "arms": {}, "comparisons": {}, "hybrid_ml_share": d["hybrid_ml_share"],
+                             "snr": bd["snr"], "transient": bd["transient"]}
+        for k in ("interharmonic", "interharmonic_beat_primary", "interharmonic_beat_secondary"):
+            if k in bd:
+                e[k] = bd[k]
+        for a in arms:
+            v = d["arms"][a]
+            e["arms"][a] = {"macro_f1": v["macro_f1"], "false_alarm_rate": v["false_alarm_rate"], "miss_rate": v["miss_rate"],
+                            "per_class_f1_mean": v["per_class_f1_mean"], "critical_confusions_mean": v["critical_confusions_mean"],
+                            "n_seeds": v["n_seeds"], "confusion": v["primary"]["confusion"]}
+        for c, v in d["comparisons"].items():
+            e["comparisons"][c] = {"diff": v["diff_seed_mean"], "ci95": v["ci95_seed_mean"], "reading": v["reading"],
+                                   "role": v["role"], "mcnemar_p": [x["p_value"] for x in v["mcnemar_per_seed"]],
+                                   "mcnemar_counts": [[x["a_correct_b_wrong"], x["a_wrong_b_correct"]] for x in v["mcnemar_per_seed"]]}
+        out["sets"][s] = e
+    return out
+
+
 def site_data() -> dict:
     r = json.loads((ROOT / "reports" / "results.json").read_text())
     m3 = json.loads((ROOT / "reports" / "m3_gbm_val.json").read_text())
@@ -177,7 +212,7 @@ def site_data() -> dict:
                                                     "unconstrained_bytes": r["frozen"]["gbm_unconstrained"]["bytes_equivalent"],
                                                     "unconstrained_val_f1": r["frozen"]["gbm_unconstrained"]["val_macro_f1_mean"]},
         "budget": m2b.get("totals", {}), "sil": sil, "port": port, "c28x": c28x, "ladder": validation_ladder(),
-        "dataset_counts": counts,
+        "dataset_counts": counts, "s2e1": s2e1_subset(_load(ROOT / "reports" / "s2e1_results.json")),
     })
 
 

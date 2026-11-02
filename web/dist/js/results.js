@@ -90,4 +90,62 @@ document.addEventListener("DOMContentLoaded", () => {
   const leg = GMC.legend([{ name: "grid configuration within budget", color: "var(--series-2)" }, { name: "over budget", color: "var(--text-3)" },
     { name: "selected (smallest tied)", color: "var(--series-1)" }, { name: "GBM-unconstrained reference", color: "var(--series-3)" }]);
   $("#size-chart").prepend(leg);
+
+  // ---------------------------------------------------------------- Experiment 2 (Stage 2, S2E1)
+  const E = GM_SITE.s2e1;
+  if (E && $("#s2-headline")) {
+    const ARM = { R: "R: Stage 1 rules", G0: "G0: Stage 1 GBM", GW: "GW: GBM, wide training", GP: "GP: GBM, physics subset",
+      HW: "HW: hybrid GW / rules", H0: "H0: hybrid G0 / rules" };
+    const VAR = { R: "var(--series-1)", G0: "var(--series-2)", GW: "var(--series-3)", GP: "var(--series-4)" };
+    const sets = ["test2_shift", "test2_novel"];
+    const sw = (a) => (VAR[a] ? `<span class="swatch" style="background:${VAR[a]}"></span>` : "");
+    let t = `<div class="table-wrap"><table><caption>Experiment 2: macro-F1, false alarms and misses on the two new sealed sets</caption><thead><tr>
+      <th scope="col">arm</th><th scope="col" class="num">test2_shift</th><th scope="col" class="num">test2_novel</th>
+      <th scope="col" class="num">false alarms shift / novel</th><th scope="col" class="num">misses shift / novel</th></tr></thead><tbody>`;
+    for (const a of E.arms) {
+      const x = E.sets.test2_shift.arms[a], y = E.sets.test2_novel.arms[a];
+      t += `<tr><th scope="row">${sw(a)}${ARM[a]}</th><td class="num">${pm(x.macro_f1)}</td><td class="num">${pm(y.macro_f1)}</td>
+        <td class="num">${pct(x.false_alarm_rate.mean)} / ${pct(y.false_alarm_rate.mean)}</td><td class="num">${pct(x.miss_rate.mean)} / ${pct(y.miss_rate.mean)}</td></tr>`;
+    }
+    $("#s2-headline").innerHTML = t + "</tbody></table></div>";
+    let c2 = `<div class="table-wrap"><table><caption>Experiment 2: differences in macro-F1 (positive = first arm better)</caption><thead><tr><th scope="col">comparison</th>
+      <th scope="col">role</th><th scope="col">set</th><th scope="col" class="num">difference</th><th scope="col" class="num">95 % CI</th><th scope="col">CI vs 0</th>
+      <th scope="col" class="num">McNemar discordant (per seed)</th></tr></thead><tbody>`;
+    for (const k of Object.keys(E.sets.test2_shift.comparisons)) {
+      for (const sp of sets) {
+        const x = E.sets[sp].comparisons[k];
+        c2 += `<tr><td>${k.replace("-", " − ")}</td><td>${x.role.split(":")[0]}</td><td>${sp}</td><td class="num">${signed(x.diff, 4)}</td>
+          <td class="num">${ci(x.ci95, 4)}</td><td class="${x.reading === "below 0" ? "bad" : ""}">${x.reading}</td>
+          <td class="num">${x.mcnemar_counts.map((q) => q.join(" vs ")).join("; ")}</td></tr>`;
+      }
+    }
+    $("#s2-comparisons").innerHTML = c2 + "</tbody></table></div>";
+    let d2 = `<div class="table-wrap"><table><caption>Pre-registered decision rule (CI of arm − R on both sealed sets)</caption><thead><tr><th scope="col">arm</th>
+      <th scope="col">role</th><th scope="col" class="num">CI test2_shift</th><th scope="col" class="num">CI test2_novel</th><th scope="col">verdict</th></tr></thead><tbody>`;
+    for (const [a, v] of Object.entries(E.decision)) {
+      d2 += `<tr><th scope="row">${ARM[a]}</th><td>${v.role}</td><td class="num">${ci(v.ci95_by_set.test2_shift, 4)}</td>
+        <td class="num">${ci(v.ci95_by_set.test2_novel, 4)}</td><td><strong>${v.verdict}</strong></td></tr>`;
+    }
+    $("#s2-decision").innerHTML = d2 + "</tbody></table></div>";
+    let s2 = `<div class="table-wrap"><table><caption>Unseen interharmonic (test2_novel): macro-F1 without and with it</caption><thead><tr><th scope="col">arm</th>
+      <th scope="col" class="num">without</th><th scope="col" class="num">with</th><th scope="col" class="num">change (95 % CI)</th><th scope="col">survives? (CI lower bound ≥ −0.03)</th></tr></thead><tbody>`;
+    for (const [a, v] of Object.entries(E.survival)) {
+      s2 += `<tr><th scope="row">${ARM[a]}</th><td class="num">${fmt(v.f1_without, 4)}</td><td class="num">${fmt(v.f1_with, 4)}</td>
+        <td class="num">${signed(v.delta, 4)} ${ci(v.ci95, 4)}</td><td>${v.verdict}</td></tr>`;
+    }
+    $("#s2-survival").innerHTML = s2 + "</tbody></table></div>";
+    const sn = E.sets.test2_novel.snr, bins = sn.bins.filter((b) => sn.R[b].n > 0);
+    const mid2 = bins.map((b) => { const [lo, hi] = b.split("-").map(Number); return (lo + hi) / 2; });
+    const show = ["R", "G0", "GW", "GP"];
+    GMC.line($("#s2-snr-chart"), show.map((a) => ({ name: ARM[a], x: mid2, y: bins.map((b) => sn[a][b].value), color: VAR[a], width: 2 })),
+      { title: "Experiment 2: macro-F1 by SNR bin on test2_novel", xlabel: "SNR (dB, bin centre)", ylabel: "macro-F1", height: 240, ymax: 1,
+        desc: "Line chart: macro-F1 against SNR on test2_novel for the rules, the Stage 1 GBM and the two retrained GBMs." });
+    let st2 = `<div class="table-wrap"><table><caption>Macro-F1 by SNR bin, both new sets (table view)</caption><thead><tr><th scope="col">arm</th><th scope="col">set</th>
+      ${sn.bins.map((b) => `<th scope="col" class="num">${b} dB</th>`).join("")}</tr></thead><tbody>`;
+    for (const a of E.arms) for (const sp of sets) {
+      const z = E.sets[sp].snr;
+      st2 += `<tr><th scope="row">${ARM[a]}</th><td>${sp}</td>${z.bins.map((b) => `<td class="num">${z[a][b].n ? fmt(z[a][b].value, 3) + ` <span class="muted small">(n ${int(z[a][b].n)})</span>` : "—"}</td>`).join("")}</tr>`;
+    }
+    $("#s2-snr-table").innerHTML = st2 + "</tbody></table></div>";
+  }
 });

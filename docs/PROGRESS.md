@@ -13,6 +13,9 @@
 
 **Stage 1 complete (2026-11-02).** Next: docs/STAGE2_PLAN.md.
 
+## Stage 2
+- [x] S2E1 — representative-training experiment with new sealed splits (STAGE2_PLAN item 3; reports/S2E1_RESULTS.md)
+
 ## Log
 - 2026-11-01 Setup (commit `b6a7ed7` with M1): Python 3.12.9 venv, numpy 2.5 / scipy 1.18 / sklearn 1.9 pinned; repo initialised.
 - 2026-11-01 M1 (`b6a7ed7`): generator (Bollen phasors, 7 event models, nuisances, 20 kHz synthesis, 49-tap AA FIR,
@@ -61,3 +64,12 @@
   (no console errors, phone width, explorer re-classification 5/5, try-it 7/7 classes + example CSV), web/dist 5.8 MB,
   GitHub Pages workflow + docs/DEPLOY.md. D-075, D-077, D-078.
 - 2026-11-02 Docs: README landing page (generated results block), docs/STAGE2_PLAN.md, docs/PROJECT_SUMMARY.md.
+- 2026-11-02 Session 5 (PROMPT_05), Linux cloud VM: venv re-created, Stage 1 data regenerated (config hashes equal to the committed
+  summary). Housekeeping `8996518`: rho SIL gate urms_min_1 < 0.90 (D-079), SIL re-run: 0 gated exceedances, ungated 2 (unchanged).
+- 2026-11-02 S2E1: prereg `3fd3286` (docs/S2E1_PREREG.md, configs/s2e1.yaml, interharmonic generator option with Stage 1 data
+  bit-identical, D-080..D-082) -> data `886999e` (6 splits generated at the prereg commit in 78 s; margins hold except 5 documented
+  D-039 fallbacks; 872 interharmonic records) -> GW/GP training `ac850d8` (412 s; both 20 stages x 4 leaves, lr 0.2, 13,972 B;
+  val_wide saturated; C SIL bit-exact; controls 0.133/0.142) -> freeze `b11b67a` -> one evaluation, results `e7d39e6`: macro-F1
+  test2_shift / test2_novel R 0.9880 / 0.9937, G0 0.8581 / 0.9396, GW 0.9960 / 0.9985, GP 0.9989 / 0.9994; decision rule GW and
+  GP "ML better", HW "ML better", H0 "ML matches"; H1-H6 supported. Website Results page: Experiment 2 section; README line. D-083.
+

@@ -5,7 +5,9 @@
 once on two sealed test sets of {{results.splits.test_iid.n|int}} records each: <strong>test_iid</strong> (drawn like the
 training data) and <strong>test_shift</strong> (lower SNR, wider frequency range, more harmonics and unbalance, &plusmn;2 %
 calibration error and an unseen transient). Every number on this page comes from <code>reports/results.json</code>. All results are
-<span class="tag">[SIM]</span>.</p>
+<span class="tag">[SIM]</span>.
+Stage 2 retrained the model on representative conditions and tested it on new sealed data: see
+<a href="#experiment-2">Experiment 2</a> at the end of this page.</p>
 
 <h2>Headline</h2>
 <div id="headline"></div>
@@ -80,8 +82,48 @@ the others come from calibration error and the unseen transient. <em>Fixed IEC t
 
 <h2>What would change the conclusion</h2>
 <ul>
-<li>A GBM trained on shift-like conditions (wider SNR and calibration ranges) that then matches the rules on new shift-like data: the finding would become "ML needs representative training conditions".</li>
-<li>Restricting the model to physically motivated features or monotonic constraints.</li>
+<li>A GBM trained on shift-like conditions (wider SNR and calibration ranges) that then matches the rules on new shift-like data: the finding would become "ML needs representative training conditions". <a href="#experiment-2">Tested in Experiment 2.</a></li>
+<li>Restricting the model to physically motivated features or monotonic constraints (physics subset: <a href="#experiment-2">Experiment 2</a>).</li>
 <li>Measured PCS records with real noise, converter dynamics, calibration drift and multi-event cases &mdash; the rules' fixed thresholds could fail there too.</li>
-<li>A confidence-gated hybrid (use the model only when it is confident, otherwise the rules), evaluated on <em>new</em> sealed data (the current test sets are no longer blind).</li>
+<li>A confidence-gated hybrid (use the model only when it is confident, otherwise the rules), evaluated on <em>new</em> sealed data (the current test sets are no longer blind). <a href="#experiment-2">Tested in Experiment 2.</a></li>
 </ul>
+
+<h2 id="experiment-2">Experiment 2 (Stage 2): does ML catch up with representative training data?</h2>
+<p class="lead">Stage 1 left one obvious objection: the GBM never saw low SNR or calibration error during training. Experiment 2 (S2E1) was
+pre-registered (commit {{s2e1.commits.prereg}}) before any of its data existed: the same GBM recipe was retrained on the full nuisance ranges
+(SNR 25-60 dB, &plusmn;2 % gain and offset, wider frequency, more harmonics and unbalance; no transients), once with all 37 features (GW) and once with a
+physics-only subset (GP, {{s2e1.selected.GP.n_features|int}} features), frozen (commit {{s2e1.commits.freeze}}) and evaluated once on two <em>new</em>
+sealed sets of {{s2e1.sets.test2_shift.n|int}} records: <strong>test2_shift</strong> (the Stage 1 shift conditions with new random draws, incl. the unseen
+transient) and <strong>test2_novel</strong> (training-like conditions plus a nuisance no method has seen: an interharmonic of 0.5-2 % between 70 and 950 Hz
+in half of the records). The Stage 1 rules (R) and GBM (G0) were not changed. Hybrids use the GBM only when its top probability is at least 0.5,
+otherwise the rules. Every number here comes from <code>reports/s2e1_results.json</code>; all are <span class="tag">[SIM]</span>.</p>
+<div id="s2-headline"></div>
+<p class="small muted">Selected models: GW {{s2e1.selected.GW.config.n_estimators|int}} stages &times; {{s2e1.selected.GW.config.max_leaf_nodes|int}} leaves,
+{{s2e1.selected.GW.bytes|int}} bytes; GP {{s2e1.selected.GP.config.n_estimators|int}} stages &times; {{s2e1.selected.GP.config.max_leaf_nodes|int}} leaves,
+{{s2e1.selected.GP.bytes|int}} bytes (both within the 64 KB budget). Pre-event-only control (chance level expected): GW {{s2e1.selected.GW.control|f3}}, GP {{s2e1.selected.GP.control|f3}}.</p>
+<div id="s2-decision"></div>
+<div id="s2-comparisons"></div>
+<div id="s2-survival"></div>
+<div class="card"><div id="s2-snr-chart"></div><div id="s2-snr-table"></div></div>
+<h3>Experiment 2 findings, in plain words</h3>
+<ol>
+<li><strong>With representative training, the tree model no longer loses to the rules &mdash; it is slightly better.</strong> The pre-registered rule
+(confidence interval of the difference to the rules above zero on <em>both</em> new sets) gives "{{s2e1.decision.GW.verdict}}" for GW and
+"{{s2e1.decision.GP.verdict}}" for GP: GW &minus; R {{s2e1.sets.test2_shift.comparisons.GW-R.diff|signed4}} (CI {{s2e1.sets.test2_shift.comparisons.GW-R.ci95|ci4}}) on test2_shift and
+{{s2e1.sets.test2_novel.comparisons.GW-R.diff|signed4}} (CI {{s2e1.sets.test2_novel.comparisons.GW-R.ci95|ci4}}) on test2_novel; GP &minus; R {{s2e1.sets.test2_shift.comparisons.GP-R.diff|signed4}} and
+{{s2e1.sets.test2_novel.comparisons.GP-R.diff|signed4}}. The differences are small. <em>Stage 1's "rules are more robust" becomes "ML needs representative training conditions".</em></li>
+<li><strong>Stage 1 replicates on fresh data, and retraining removes the failure.</strong> On test2_shift the unchanged rules reach {{s2e1.sets.test2_shift.arms.R.macro_f1.mean|f4}} and
+the unchanged Stage 1 GBM {{s2e1.sets.test2_shift.arms.G0.macro_f1.mean|f4}}; the same recipe trained on the wide ranges gains {{s2e1.sets.test2_shift.comparisons.GW-G0.diff|signed3}}.
+<em>The Stage 1 failure was a training-coverage problem.</em></li>
+<li><strong>The unseen interharmonic is mostly harmless.</strong> Macro-F1 with minus without it: rules {{s2e1.survival.R.delta|signed4}}, GW {{s2e1.survival.GW.delta|signed4}},
+GP {{s2e1.survival.GP.delta|signed4}} (all "{{s2e1.survival.GW.verdict}}" by the pre-registered rule). The intended look-alike of an oscillation appeared only for beats of
+20-25 Hz ({{s2e1.sets.test2_novel.interharmonic_beat_secondary.R.20-25.n|int}} records): accuracy rules {{s2e1.sets.test2_novel.interharmonic_beat_secondary.R.20-25.value|f2}},
+GW {{s2e1.sets.test2_novel.interharmonic_beat_secondary.GW.20-25.value|f2}}, GP {{s2e1.sets.test2_novel.interharmonic_beat_secondary.GP.20-25.value|f2}} &mdash; too few records for a claim.</li>
+<li><strong>A confidence gate rescues a mis-trained model.</strong> The Stage 1 GBM used only when its top probability is at least 0.5 (otherwise the rules) rises from
+{{s2e1.sets.test2_shift.arms.G0.macro_f1.mean|f3}} to {{s2e1.sets.test2_shift.arms.H0.macro_f1.mean|f3}} on test2_shift, handing {{s2e1.sets.test2_shift.hybrid_ml_share.H0.0|pct0}} of the records to the model.</li>
+<li><strong>Safety-critical confusions stay at zero</strong> (phase jump vs frequency event: GW {{s2e1.sets.test2_shift.arms.GW.critical_confusions_mean.phase_jump<->freq_event|f1}},
+rules {{s2e1.sets.test2_shift.arms.R.critical_confusions_mean.phase_jump<->freq_event|f1}} on test2_shift; sag called normal: 0 for every arm).</li>
+</ol>
+<p class="small muted">Limits: one generator for training and test (test2_shift's ranges lie inside the wide training ranges; only its data and the transient are new);
+validation was saturated again, so the smallest model was selected; the rules were not re-tuned. Full report: <code>reports/S2E1_RESULTS.md</code>;
+pre-registration: <code>docs/S2E1_PREREG.md</code>.</p>

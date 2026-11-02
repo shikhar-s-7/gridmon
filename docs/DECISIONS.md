@@ -440,4 +440,17 @@ Evidence tags as in B3.
   per seed; unseen-nuisance survival rule on test2_novel (delta with - without interharmonic: survives if CI lower
   >= -0.03, fails if CI upper < 0 and delta <= -0.03, else inconclusive); secondary |f_ih - 50| bins [20, 25, 40, 100, 900] Hz
   because the pre-registered < 25 Hz bin holds only ~1 % of the interharmonic records.
+- **D-083** — 2026-11-02 — *S2E1 execution notes (no deviation from the pre-registered design).* (a) The pre-registered dry run
+  used val_wide and preview_novel (non-sealed) in place of test2_shift/test2_novel, after GW/GP were trained and before the
+  freeze; no method or plan was changed afterwards (figure layout and report formatting only). (b) Added, labelled as not
+  pre-registered: the comparison G0 - R (replication of Stage 1), the C SIL of the exported GW/GP tables, and a post-hoc
+  diagnosis of the rules' 6 oscillation -> swell errors on test2_shift (5 oscillation peaks near 1.08 pu lifted over 1.10 by
+  +1.7-2.0 % gain error, 1 by the transient). (c) GW and GP selected identical hyperparameters because val_wide saturated
+  (31/33 and 33/33 feasible configurations within tie_tol at 1.000); the tie rule picked the smallest. (d) S2E1_RESULTS.md was
+  re-rendered after the run to include the hand-written findings (reports/s2e1_findings.md); no number changed. (e) The Stage 1
+  M4-freeze commit in this repository's history is b3afdec ("M4-freeze: ...", the only commit touching
+  configs/frozen_methods.yaml); CLAUDE.md, reports/RESULTS.md and docs/S2E1_PREREG.md section 1 cite 6240f60, a hash that is not
+  reachable here (presumably from before a history rewrite). The S2E1 freeze records b3afdec; gridmon.frozen.verify passes.
+  The committed prereg is left unchanged; CLAUDE.md now cites b3afdec. (f) The website shows S2E1 aggregates only (export_web reads
+  reports/s2e1_results.json; no S2E1 sealed record is exported).
 

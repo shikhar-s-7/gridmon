@@ -10,7 +10,7 @@ any new accuracy claim.
 |---|---|---|---|
 | 1 | Single-phase variant (TIDM-HV-1PH-DCAC) + three-board architecture with a separate three-phase monitor node | L | — |
 | 2 | L3 LaunchPad PIL, then L4 DAC -> ADC replay | M + M | LaunchPad, CCS |
-| 3 | Robustness experiment with NEW sealed splits | M | — |
+| 3 | Robustness experiment with NEW sealed splits — **S2E1 done** (2026-11-02, reports/S2E1_RESULTS.md) | M | — |
 | 4 | FLL, multi-event records, capture merging, long-stream false-trigger study | M | 3 (new data) |
 | 5 | EMT / Simulink cross-check of the generator | M | a PSCAD/Simulink model |
 | 6 | CNN on an NPU device (F28P55x) via TI's model tools | L | 3, F28P55x LaunchPad |
@@ -44,6 +44,13 @@ any new accuracy claim.
   simulated sensor model.
 
 ## 3. Robustness experiment with new sealed splits (M)
+- **Status: done as S2E1 (2026-11-02).** Pre-registered (docs/S2E1_PREREG.md, commit 3fd3286), frozen (b11b67a), evaluated once
+  (reports/S2E1_RESULTS.md): (a) the GBM recipe retrained on SNR 25-60 dB / +/-2 % gain and offset (GW), (b) a physics-only
+  feature subset (GP), (c) confidence-gated hybrids at 0.5 (HW, H0), (e) an unseen interharmonic in a new sealed set; (d) a
+  shift-like validation split (val_wide) was used but saturated again. Outcome [SIM]: GW and GP "ML better" than the rules on both
+  new sealed sets (small margins, <= 1.1 macro-F1 points); every arm except the Stage 1 GBM survives the interharmonic. The finding
+  is now "ML needs representative training conditions". Open: a validation split that does not saturate, monotonic constraints,
+  a D-035-corrected rule set (each a new method: new sealed splits), and measured data (item 8).
 - **Goal:** test the Stage 1 explanations of the shift failure (RESULTS.md findings 3 and 7, "what would change the conclusion"):
   (a) noise/calibration-augmented GBM (train on SNR 25-60 dB, +/-2 % gain), (b) physics-only / monotonic-constrained GBM,
   (c) confidence-gated hybrid (GBM only above a probability threshold, rules otherwise — chosen post hoc, so it must be

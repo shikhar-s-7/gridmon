@@ -1,5 +1,5 @@
 {
- "commit": "e9cc0e2",
+ "commit": "e7d39e6",
  "wasm": {
   "toolchain": "zig 0.17.0 cc -target wasm32-wasi -mexec-model=reactor",
   "bytes": 44994,
@@ -13,7 +13,7 @@
   "firmware",
   "about"
  ],
- "bytes_total": 5755865,
- "bytes_data": 5142751,
+ "bytes_total": 5790088,
+ "bytes_data": 5167698,
  "n_explorer_records": 70
 }
