@@ -18,7 +18,7 @@ from gridmon import CLASSES
 from gridmon.baseline_rules import classify
 from gridmon.c_build import BUILD_DIR, BuildError, build_cli, find_compiler
 from gridmon.export_gbm import Float32Walker, load_model
-from gridmon.features import FEATURE_NAMES, extract_features, tolerance_check
+from gridmon.features import FEATURE_NAMES, extract_features
 from gridmon.io import ROOT, load_baseline_config, load_waveforms, load_yaml
 from gridmon.units import LSB_PU
 
@@ -134,15 +134,17 @@ def test_no_signal_record(core, thresholds):
 
 # ---------------------------------------------------------------------------------------------- VAL equivalence
 def test_val_features_rules_gbm(core, val_subset, thresholds):
-    """VAL: C features within tolerance (except documented float32 argmin ties of |V1| in rho), NaN only where
+    """VAL: C features within tolerance (SIL gates incl. D-069 for rho; ungated rho ties bounded), NaN only where
     the reference is NaN (D-051), rule labels/reasons 100 %, GBM bit-exact on the same C features and 100 %
     end to end."""
     Xs, Fp, lsb = val_subset
     c = core.process(Xs, lsb)
     Fc = c["features"]
-    tc = tolerance_check(Fp, Fc)
+    from gridmon.c_sil import sil_tolerance_check
+    tc = sil_tolerance_check(Fp, Fc)  # FEATURES.md gates + D-069 rho gate (urms_min_1 < 0.95)
     over = {k: v["n_over_tol"] for k, v in tc.items() if v["n_over_tol"]}
-    assert set(over) <= {"rho"} and over.get("rho", 0) <= max(1, len(Xs) // 200), over
+    assert over == {}, over
+    assert tc["rho"].get("n_over_tol_ungated", 0) <= max(1, len(Xs) // 200)  # float32 argmin ties (D-060)
     for k in FEATURE_NAMES:
         assert np.array_equal(np.isfinite(Fp[k].to_numpy()), np.isfinite(Fc[k].to_numpy())), k
     rp = classify(Fp, thresholds)

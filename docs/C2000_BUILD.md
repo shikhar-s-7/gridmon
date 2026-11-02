@@ -2,9 +2,13 @@
 
 **What this is:** a check that the gridmon C code compiles for Texas Instruments C2000 microcontrollers
 and how much memory it needs. It does **not** run anything on a board and does not touch any hardware.
-**Why you have to do it:** the TI compiler could not be downloaded inside the cloud session (an automated
-download from ti.com was not permitted there), so this one step runs on your own computer. It takes about
+**Why it runs on your computer:** the TI compiler could not be downloaded inside the cloud session (an
+automated download from ti.com was not permitted there), so this one step runs locally. It takes about
 15 minutes, most of it downloading.
+
+**Status: done (2026-11-02).** Run with CCS 20.5.1 (cl2000 25.11.0.LTS) on Windows 11: every file compiles,
+GBM on and off, no warnings; sizes in `reports/m7_c28x_size.json` (summary in docs/VALIDATION.md, L2, and
+D-076). Re-run it after any change to `c/` or `firmware/c2000/`.
 
 ## What you need
 - A Windows PC (macOS/Linux work the same way; use the Linux/macOS installer and `/` paths).
@@ -34,18 +38,27 @@ download from ti.com was not permitted there), so this one step runs on your own
 
 ## What the script does (details)
 - Reads `cl2000 --help` and keeps only the options this compiler version supports (the JSON lists any option
-  it had to drop). Requested: `-v28 -ml -mt --float_support=fpu32 --tmu_support=tmu0 --abi=eabi -O2
+  it had to drop; cl2000 25.11 does not list `-v28`, which is the default target anyway).
+- Passes the compiler's own header folder (`<cgt>/include`) itself, like CCS does. **You no longer need to set
+  the `C2000_C_DIR` environment variable** (that was the workaround before the script fix of 2026-11-02).
+- Requested options: `-v28 -ml -mt --float_support=fpu32 --tmu_support=tmu0 --abi=eabi -O2
   --fp_mode=relaxed --c99 --float_operations_allowed=32` (the last one makes the compiler reject any 64-bit
   `double` operation — the core is float-only).
 - Compiles (no linking) every core file (`c/src`, `c/tables/gm_tables.c`, `c/generated/gm_model_gbm.c`) and the
   port layer (`firmware/c2000/gm_port.c`, `gm_port_fir.c`, `gm_port_c2000.c`) twice: with the GBM advisory model
   (`GM_ENABLE_GBM=1`) and without it (`GM_ENABLE_GBM=0`). Objects go to `build/c28x/` (not committed).
-- Runs `ofd2000 -x` on each object and adds up the sections: code (`.text`), constants (`.const`/`.econst`:
-  DSP tables, GBM model, FIR taps) and data. Sizes are in 16-bit words (the C28x memory unit); bytes = 2 x words.
+- Runs `ofd2000` on each object and reads its text listing ("Section Information", allocated sections only),
+  adding up code (`.text`), constants (`.const`/`.econst`: DSP tables, GBM model, FIR taps) and data
+  (`.bss`/`.data`/`.TI.noinit`). Sizes are in 16-bit words (the C28x memory unit); bytes = 2 x words. They are
+  compile-only object sizes (an upper bound: the linker removes unused sections; the map file at L3 is final).
 - `--dry-run` prints the compiler commands without running anything (useful to inspect the options).
 
-## Known risks to look for in the output
-- C99 hexadecimal float constants (`0x1.921fb6p+1f`, used for all generated tables, D-054) need C99 mode
-  (`--c99`); if your compiler rejects them, report the error line.
-- `CHAR_BIT` is 16 on C28x: the code never assumes 8-bit bytes (checked on the host), but only cl2000 proves it.
-- Warnings about `#pragma` or unused functions are harmless; errors are not.
+## Result of the 2026-11-02 run (cl2000 25.11.0.LTS)
+| configuration | code (words) | const (words) | data (words) |
+|---|---|---|---|
+| GBM on (default, D-070) | 13,785 | 10,913 | 0 |
+| GBM off | 13,540 | 10,913 (model object still compiled; unreferenced at link time) | 0 |
+Const = DSP tables 2,700 + GBM model 6,986 + FIR taps for all four input rates 1,124 + version string 103.
+Data 0: the core and the port keep no static RAM (all state is in the caller's structs). The two earlier risks
+did not materialise: C99 hexadecimal float constants compile with `--c99`, and nothing assumes 8-bit chars.
+On a re-run, warnings about `#pragma` or unused functions are harmless; errors are not.

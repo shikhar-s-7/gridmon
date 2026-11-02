@@ -7,6 +7,7 @@
     "flags": "-std=c99 -Wall -Wextra -Wpedantic -Wconversion -Wdouble-promotion -Wfloat-conversion -Wvla -Werror -ffp-contract=off -O2",
     "sil": "build/libgridmon_sil.so",
     "cli": "build/gm_cli",
+    "port_sim": "build/libgridmon_port.so",
     "asan": "build/gm_cli_asan"
   },
   "build_checks": {
@@ -65,7 +66,7 @@
       "u2_ref": 2.208574422669224e-07,
       "u2_max": 1.4965074696116076e-07,
       "u2_end": 4.504027105072591e-08,
-      "rho": 1.4750125688509086e-05,
+      "rho": 1.2060202099650752e-05,
       "j_max_deg": 2.8749446131098866e-05,
       "j_sign": 0.0,
       "f_ref": 2.0590564844269466e-06,
@@ -327,6 +328,7 @@
         "n_features": 37,
         "n_values_outside_tolerance": 0,
         "outside_by_feature": {},
+        "outside_ungated_documented": {},
         "outside_values": [],
         "worst_feature_rel_to_tol": {
           "feature": "t_fpll_05",
@@ -463,9 +465,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 1750,
-            "max_abs_diff": 0.00010942787835954704,
-            "n_over_tol": 0
+            "n_compared": 700,
+            "max_abs_diff": 0.00010275591482855617,
+            "n_over_tol": 0,
+            "n_over_tol_ungated": 0,
+            "n_compared_ungated": 1750,
+            "sil_gate": "urms_min_1 < 0.95"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -655,8 +660,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1732.1987325711752,
-        "python_ms_per_record": 4.075166102857111
+        "c_us_per_record": 1030.4673651428727,
+        "python_ms_per_record": 3.2529540988571495
       }
     },
     "test_iid": {
@@ -666,14 +671,18 @@
       "features": {
         "n_features_within_tolerance_on_all_records": 36,
         "n_features": 37,
-        "n_values_outside_tolerance": 2,
+        "n_values_outside_tolerance": 1,
         "outside_by_feature": {
+          "rho": 1
+        },
+        "outside_ungated_documented": {
           "rho": 2
         },
         "outside_values": [
           {
             "record": 452,
             "feature": "rho",
+            "compared_under_sil_gate": false,
             "python": 0.05373065825327558,
             "c": 0.046235427260398865,
             "abs_diff": 0.007495230992876717,
@@ -684,6 +693,7 @@
           {
             "record": 535,
             "feature": "rho",
+            "compared_under_sil_gate": true,
             "python": 0.02683490806227137,
             "c": 0.029562896117568016,
             "abs_diff": 0.0027279880552966464,
@@ -694,9 +704,9 @@
         ],
         "worst_feature_rel_to_tol": {
           "feature": "rho",
-          "max_abs_diff": 0.007495230992876717,
+          "max_abs_diff": 0.0027279880552966464,
           "tol": 0.0005,
-          "ratio": 14.990461985753434
+          "ratio": 5.4559761105932925
         },
         "nan_pattern_mismatch": {},
         "n_python_nonfinite": {
@@ -827,9 +837,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 1750,
-            "max_abs_diff": 0.007495230992876717,
-            "n_over_tol": 2
+            "n_compared": 701,
+            "max_abs_diff": 0.0027279880552966464,
+            "n_over_tol": 1,
+            "n_over_tol_ungated": 2,
+            "n_compared_ungated": 1750,
+            "sil_gate": "urms_min_1 < 0.95"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -1019,8 +1032,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1252.3660942855972,
-        "python_ms_per_record": 3.0589930325713794
+        "c_us_per_record": 1089.157781142863,
+        "python_ms_per_record": 2.9033317177142766
       }
     },
     "test_shift": {
@@ -1032,6 +1045,7 @@
         "n_features": 37,
         "n_values_outside_tolerance": 0,
         "outside_by_feature": {},
+        "outside_ungated_documented": {},
         "outside_values": [],
         "worst_feature_rel_to_tol": {
           "feature": "t_fpll_05",
@@ -1168,9 +1182,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 1750,
-            "max_abs_diff": 7.0197413484685e-05,
-            "n_over_tol": 0
+            "n_compared": 841,
+            "max_abs_diff": 4.607788865929052e-05,
+            "n_over_tol": 0,
+            "n_over_tol_ungated": 0,
+            "n_compared_ungated": 1750,
+            "sil_gate": "urms_min_1 < 0.95"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -1360,8 +1377,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1192.9118234285331,
-        "python_ms_per_record": 3.4687948074286914
+        "c_us_per_record": 1033.0875834285798,
+        "python_ms_per_record": 2.8877218800000066
       }
     },
     "train": {
@@ -1373,6 +1390,7 @@
         "n_features": 37,
         "n_values_outside_tolerance": 0,
         "outside_by_feature": {},
+        "outside_ungated_documented": {},
         "outside_values": [],
         "worst_feature_rel_to_tol": {
           "feature": "t_fpll_05",
@@ -1509,9 +1527,12 @@
             "unit": "1",
             "tol": 0.0005,
             "rel_tol": 0.0,
-            "n_compared": 560,
-            "max_abs_diff": 5.147079159995016e-05,
-            "n_over_tol": 0
+            "n_compared": 244,
+            "max_abs_diff": 2.623839475779377e-05,
+            "n_over_tol": 0,
+            "n_over_tol_ungated": 0,
+            "n_compared_ungated": 560,
+            "sil_gate": "urms_min_1 < 0.95"
           },
           "j_max_deg": {
             "unit": "deg",
@@ -1701,8 +1722,8 @@
         "disagreements": []
       },
       "time": {
-        "c_us_per_record": 1479.691687498936,
-        "python_ms_per_record": 3.871276667856754
+        "c_us_per_record": 1054.4798285714307,
+        "python_ms_per_record": 4.307106307142813
       }
     }
   },
@@ -1789,6 +1810,6 @@
     "host_object_compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "n_core_sources": 12
   },
-  "c_us_per_record_mean": 1414.2920844460605,
-  "runtime_s": 36.6
+  "c_us_per_record_mean": 1051.7981395714366,
+  "runtime_s": 59.2
 }

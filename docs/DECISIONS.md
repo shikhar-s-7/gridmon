@@ -348,3 +348,35 @@ Evidence tags as in B3.
   (sag_unbal, phase_jump, freq_event) as const int16 arrays with the host-L1 expected labels and features
   (scripts/make_pil_records.py; `--check` compares features numerically because libm atan2f/expf may differ by
   an ulp between platforms), CPU Timer 1 cycle count, SCI-A output, PASS/FAIL per record.
+
+## Session 4 (PROMPT_04): decisions on the session-3 open questions, L2
+- **D-069** — 2026-11-02 — *rho float32 argmin ties accepted.* Documentation-only comparison gate: FEATURES.md
+  and the SIL (gridmon.c_sil.sil_tolerance_check, scripts/run_sil.py, tests) compare rho only where the rules use
+  it, i.e. reference urms_min_1 < 0.95; ungated exceedances are still counted and reported
+  (`n_over_tol_ungated`, `outside_ungated_documented` in reports/m6_sil.json). features.py (frozen) is unchanged.
+  Result (run_sil 2026-11-02): rho compared on 700 val / 701 test_iid / 841 test_shift / 244 train records; within
+  tolerance everywhere except 1 test_iid record (535: urms_min_1 = 0.942, inside the 0.95 gate but not a dip, so the
+  rule never reads rho there; float32 argmin tie as in D-060). Ungated: 2 test_iid values (records 452, 535).
+- **D-070** — 2026-11-02 — *GM_ENABLE_GBM stays 1 on C2000* (advisory logging next to the rule labels is useful
+  Stage 2 evidence). Flash re-check with the L2 sizes: the walker adds 245 code words (gm_gbm.c 911 vs 670 words,
+  gm_api.c +4) and the model tables 6,986 const words: ~7.2 K words (~14.5 KB) of the 512 K words (1 MB) flash per
+  CPU of an F28379D (1.4 %). Kept on.
+- **D-071** — 2026-11-02 — *Envelope trigger stays at 1.5 %* (documented gap to the 1.0 % oscillation rule); a
+  false-trigger study on long normal streams is Stage 2 (docs/STAGE2_PLAN.md).
+- **D-072** — 2026-11-02 — *Secondary captures during frequency recovery are kept and labelled* (telemetry carries
+  every capture); capture merging is Stage 2.
+- **D-073** — 2026-11-02 — *Frequency recovery profile (1 s hold, 0.2 Hz/s) and the 50 ms background budget remain
+  [ASSUMED]* until L3 (PIL) measures cycles per record.
+- **D-074** — 2026-11-02 — *TIDA-01606 sensing (LN vs LL) and ISR names remain [ASSUMED]*; to be confirmed from the
+  DigitalPower SDK source before any L5 work (docs/STAGE2_PLAN.md item 7 prerequisites).
+- **D-076** — 2026-11-02 — *L2 done (user, local run) and compile-check script fixed.* CCS 20.5.1 with cl2000
+  25.11.0.LTS on Windows 11: all 15 files compile in both configurations (GM_ENABLE_GBM = 1 and 0) without warnings
+  (reports/m7_c28x_size.json, commit b71b95f). Script fixes by the user: (a) the compiler's own include directory
+  `<cgt>/include` is passed with `--include_path` (CCS adds it automatically; a bare cl2000 call needed the
+  C2000_C_DIR environment variable before); (b) sizes are parsed from the ofd2000 text listing ("Section
+  Information", allocated sections only) instead of the XML output, and `.TI.noinit`/`.TI.persistent` count as data.
+  `-v28` is not listed by this cl2000's `--help` and was dropped (C28x is the default target). Result (compile-only
+  objects, 16-bit words): code 13,785 (GBM on) / 13,540 (off), const 10,913 (DSP tables 2,700, GBM model 6,986, FIR
+  taps for all four rates 1,124, version string 103), data 0 (all state is caller-provided: no static RAM in the core
+  or port). Object sizes are an upper bound for the linked image (e.g. gm_gbm.c still reports 670 code words with
+  GBM off, presumably per-object copies of static inline helpers; the linker map at L3 will tell).

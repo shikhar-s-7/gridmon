@@ -181,6 +181,43 @@ class CCore:
         }
 
 
+# ---------------------------------------------------------------------- SIL comparison gates
+# D-069 (documentation-only, no method change): on top of the FEATURES.md gates (features.TOL_GATES, "reference
+# column >= value"), the SIL compares rho only where the rules use it: reference urms_min_1 < 0.95 (dips and
+# their neighbourhood). Outside that, rho depends on the first argmin of a flat |V1|, where float32 ties are
+# legitimate (D-060); such differences are still counted and reported as "ungated".
+SIL_GATES_BELOW: dict[str, list[tuple[str, float]]] = {"rho": [("urms_min_1", 0.95)]}
+
+
+def sil_gate(F_ref: pd.DataFrame, name: str) -> np.ndarray:
+    """Records on which feature `name` is compared (finite reference, FEATURES.md gates, SIL gates)."""
+    from .features import TOL_GATES
+    gate = np.isfinite(F_ref[name].to_numpy(dtype=float))
+    for col, lo in TOL_GATES.get(name, []):
+        gate &= F_ref[col].to_numpy(dtype=float) >= lo
+    for col, hi in SIL_GATES_BELOW.get(name, []):
+        gate &= F_ref[col].to_numpy(dtype=float) < hi
+    return gate
+
+
+def sil_tolerance_check(F_ref: pd.DataFrame, F_test: pd.DataFrame) -> dict[str, dict[str, Any]]:
+    """features.tolerance_check with the SIL gates of D-069; adds n_over_tol_ungated for SIL-gated features."""
+    from .features import FEATURE_SPEC, REL_TOL, tolerance_check
+    out = tolerance_check(F_ref, F_test)
+    for name, unit, tol, _ in FEATURE_SPEC:
+        if name not in SIL_GATES_BELOW:
+            continue
+        a = F_ref[name].to_numpy(dtype=float)
+        d = np.abs(a - F_test[name].to_numpy(dtype=float))
+        gate = sil_gate(F_ref, name)
+        lim = tol + REL_TOL.get(name, 0.0) * np.abs(a)
+        out[name].update({"n_over_tol_ungated": out[name]["n_over_tol"], "n_compared_ungated": out[name]["n_compared"],
+                          "sil_gate": " and ".join(f"{c} < {h}" for c, h in SIL_GATES_BELOW[name]),
+                          "n_compared": int(gate.sum()), "n_over_tol": int((gate & ~(d <= lim)).sum()),
+                          "max_abs_diff": float(d[gate].max()) if gate.any() else 0.0})
+    return out
+
+
 # ---------------------------------------------------------------------- golden comparison
 GOLDEN_TOL: dict[str, float] = {"urms": 1e-5, "v1": 1e-5, "v2": 1e-5, "f_dft": 1e-4, "rocof": 1e-3, "J": 1e-4,
                                 "f_pll": 3e-3, "e_mag": 1e-5, "e_ang": 1.8e-4, "r_mag": 1e-5, "r_ang": 1e-4,
@@ -189,7 +226,7 @@ GOLDEN_TOL: dict[str, float] = {"urms": 1e-5, "v1": 1e-5, "v2": 1e-5, "f_dft": 1
 
 def compare_golden(g: dict[str, Any], c: dict[str, Any]) -> dict[str, Any]:
     """Compare C traces with one golden file (tolerances of golden/README.md, features of FEATURES.md)."""
-    from .features import FEATURE_SPEC, tolerance_check
+    from .features import FEATURE_SPEC
     res: dict[str, Any] = {"traces": {}, "ok": True}
     for key, tol in GOLDEN_TOL.items():
         a = np.asarray(g[key])
@@ -211,7 +248,7 @@ def compare_golden(g: dict[str, Any], c: dict[str, Any]) -> dict[str, Any]:
     names = [f[0] for f in FEATURE_SPEC]
     Fg = pd.DataFrame([np.concatenate([g["features"], g["aux"]])], columns=names + AUX_NAMES)
     Fc = pd.DataFrame([np.concatenate([c["features"], c["aux"]])], columns=names + AUX_NAMES)
-    tc = tolerance_check(Fg, Fc)
+    tc = sil_tolerance_check(Fg, Fc)
     nan_eq = bool(np.array_equal(np.isfinite(g["features"]), np.isfinite(c["features"])))
     res["features_over_tol"] = [k for k, v in tc.items() if v["n_over_tol"]]
     res["features_nan_pattern_equal"] = nan_eq

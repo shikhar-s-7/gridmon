@@ -2,14 +2,16 @@
 
 The TI C2000 Code Generation Tools (C2000-CGT, free, ti.com) are NOT installed in the cloud VM (the
 automated download was not possible there), so this script is for a local machine. Steps for Windows:
-docs/C2000_BUILD.md.
+docs/C2000_BUILD.md. Run by the user on 2026-11-02 with CCS 20.5.1 / cl2000 25.11.0.LTS: every file
+compiles, GBM on and off, no warnings (reports/m7_c28x_size.json, D-076).
 
 What it does
   1. finds cl2000 (argument, $C2000_CGT_ROOT, or PATH) and reads `cl2000 --help` to keep only supported flags
   2. compiles c/src/*.c, c/tables/gm_tables.c, c/generated/gm_model_gbm.c, firmware/c2000/gm_port*.c
-     (compile only, no link) twice: GM_ENABLE_GBM=1 and GM_ENABLE_GBM=0
-  3. reads every object's section sizes with ofd2000 (XML) and writes reports/m7_c28x_size.json
-     (sizes in 16-bit words = C28x addressable units, and bytes)
+     (compile only, no link) twice: GM_ENABLE_GBM=1 and GM_ENABLE_GBM=0; the compiler's own include
+     directory (<cgt>/include, added automatically by CCS) is passed explicitly, so no C2000_C_DIR is needed
+  3. reads every object's allocated sections (alloc = Y) from the ofd2000 text listing ("Section
+     Information") and writes reports/m7_c28x_size.json (16-bit words = C28x addressable units, and bytes)
 Wanted flags (dropped with a note if this cl2000 does not list them):
   -v28 -ml -mt --float_support=fpu32 --tmu_support=tmu0 --abi=eabi -O2 --fp_mode=relaxed --c99
   --float_operations_allowed=32 (reject any 64-bit double operation) --diag_warning=225 --display_error_number
@@ -31,7 +33,6 @@ import re
 import shutil
 import subprocess
 import sys
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]

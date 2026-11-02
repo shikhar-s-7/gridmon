@@ -79,8 +79,8 @@ the C decimator equals the float64 reference within 0.51 LSB (LSB = 2^-14 pu) at
    | gm_ctx_t | 7,908 | GSx or LSx RAM |
    | record buffer int16 3 x 5000 | 15,000 | GSx RAM |
    | gm_result_t + telemetry | ~200 | any RAM |
-   | DSP tables / GBM model / FIR taps (const) | 2,700 / 6,986 / <= 520 (one f_in) | flash (copy to RAM for speed) |
-   | code | see reports/m7_c28x_size.json (L2, run locally) | flash |
+   | DSP tables / GBM model / FIR taps (const, L2) | 2,700 / 6,986 / 1,124 (all four f_in; one needs <= 520) | flash (copy to RAM for speed) |
+   | code (L2, compile-only objects, cl2000 25.11) | 13,785 (GBM off: 13,540) | flash |
    F28379D (data sheet): 1 MB flash per CPU and 204 KB RAM in total, of which GS0-GS15 = 64 K words are
    shared between CPU1 and CPU2. The ~48 K words of RAM above fit, but plan them with the existing firmware's
    memory map (the control firmware already uses part of GSx RAM).
@@ -128,7 +128,7 @@ frequency recoveries (classified normal), 0 overruns. This is an integration tes
 ## 8. Validation ladder from here (docs/VALIDATION.md)
 | level | what | proves |
 |---|---|---|
-| L2 | cl2000 compile + sizes (scripts/c2000_compile_check.py, docs/C2000_BUILD.md) | the code is valid C28x C (16-bit char, FPU32, no double), and its flash/RAM fits |
+| L2 (done 2026-11-02) | cl2000 compile + sizes (scripts/c2000_compile_check.py, docs/C2000_BUILD.md) | the code is valid C28x C (16-bit char, FPU32, no double) and its flash fits: ~24.7 K words of code + const, no static RAM |
 | L3 | PIL on LAUNCHXL-F28379D (firmware/c2000/pil_launchpad, UNTESTED template) | the C28x produces the host (L1) labels on stored records; cycles per record; effect of TMU/relaxed float |
 | L4 | DAC -> ADC loopback on the LaunchPad (two DACs; v_ca = -(v_ab + v_bc)) with the port layer | the ISR path (ADC, calibration, decimation, trigger, placement) works in real time on analog signals |
 | L5 | monitor-only on a PCS board at low voltage, supervised | integration into a real control ISR without disturbing it (ISR timing margin), real sensor noise |

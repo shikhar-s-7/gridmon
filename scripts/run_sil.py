@@ -30,9 +30,9 @@ from gridmon import CLASSES
 from gridmon.baseline_rules import classify
 from gridmon.c_build import BUILD_DIR, build_all, compiler_version, find_compiler, object_sizes
 from gridmon.c_portability import cross_compile_checks, static_checks
-from gridmon.c_sil import CCore, compare_golden
+from gridmon.c_sil import CCore, compare_golden, sil_gate, sil_tolerance_check
 from gridmon.export_gbm import Float32Walker, load_model
-from gridmon.features import AUX_NAMES, FEATURE_SPEC, extract_features, tolerance_check
+from gridmon.features import AUX_NAMES, FEATURE_SPEC, extract_features
 from gridmon.io import ROOT, load_baseline_config, load_waveforms, load_yaml, reports_root, write_json
 
 SPLITS = ("val", "test_iid", "test_shift", "train")
@@ -70,14 +70,12 @@ COND_FEATURE = {"urms_min_1 < dip_pu": ("urms_min_1", "dip_pu"), "rho > rho_th":
 
 def tolerance_ratios(Fp: pd.DataFrame, Fc: pd.DataFrame) -> dict[str, float]:
     """max over compared (gated) records of |C - Python| / (tol + rel_tol |Python|); tol 0 -> 0 or inf."""
-    from gridmon.features import REL_TOL, TOL_GATES
+    from gridmon.features import REL_TOL
     out = {}
     for name, tol in TOL.items():
         a = Fp[name].to_numpy(dtype=float)
         d = np.abs(a - Fc[name].to_numpy(dtype=float))
-        gate = np.isfinite(a)
-        for col, lo in TOL_GATES.get(name, []):
-            gate &= Fp[col].to_numpy(dtype=float) >= lo
+        gate = sil_gate(Fp, name)  # FEATURES.md gates + the D-069 rho gate
         lim = tol + REL_TOL.get(name, 0.0) * np.abs(a)
         if not gate.any():
             out[name] = 0.0
@@ -136,7 +134,7 @@ def run_golden(core: CCore) -> dict:
             if "max_abs_diff" in v:
                 worst[k] = max(worst.get(k, 0.0), v["max_abs_diff"])
         cols = [f[0] for f in FEATURE_SPEC] + list(AUX_NAMES)
-        tc = tolerance_check(pd.DataFrame([np.concatenate([g["features"], g["aux"]])], columns=cols),
+        tc = sil_tolerance_check(pd.DataFrame([np.concatenate([g["features"], g["aux"]])], columns=cols),
                              pd.DataFrame([np.concatenate([c["features"], c["aux"]])], columns=cols))
         for name, v in tc.items():  # gated as in FEATURES.md
             feat_worst[name] = max(feat_worst.get(name, 0.0), v["max_abs_diff"])
@@ -183,15 +181,18 @@ def run_split(core: CCore, walker: Float32Walker, split: str, fast: bool, fcfg: 
     rp = classify(Fp, th)
     c = core.process(X, lsb)
     Fc = c["features"]
-    tc = tolerance_check(Fp, Fc)
+    tc = sil_tolerance_check(Fp, Fc)
     nan_mismatch = {k: int((np.isfinite(Fp[k].to_numpy()) != np.isfinite(Fc[k].to_numpy())).sum()) for k in Fp.columns
                     if k in TOL}
     over = {k: v["n_over_tol"] for k, v in tc.items() if v["n_over_tol"]}
+    over_ungated = {k: v["n_over_tol_ungated"] for k, v in tc.items() if v.get("n_over_tol_ungated")}
     outside = []
-    for k in over:
+    for k in set(over) | set(over_ungated):
         a, b = Fp[k].to_numpy(dtype=float), Fc[k].to_numpy(dtype=float)
+        g = sil_gate(Fp, k)
         for i in np.where(np.abs(a - b) > TOL[k])[0]:
-            outside.append({"record": int(idx[i]), "feature": k, "python": float(a[i]), "c": float(b[i]),
+            outside.append({"record": int(idx[i]), "feature": k, "compared_under_sil_gate": bool(g[i]),
+                            "python": float(a[i]), "c": float(b[i]),
                             "abs_diff": float(abs(a[i] - b[i])), "tol": TOL[k], "python_rule_label": str(rp["rule_label"][i]),
                             "cause": explain_outside(core, X[i], lsb, k, fcfg)})
     rel = tolerance_ratios(Fp, Fc)
@@ -226,7 +227,8 @@ def run_split(core: CCore, walker: Float32Walker, split: str, fast: bool, fcfg: 
         "status_not_ok": int((c["status"] != 0).sum()),
         "features": {"n_features_within_tolerance_on_all_records": sum(1 for v in tc.values() if v["n_over_tol"] == 0),
                      "n_features": len(tc), "n_values_outside_tolerance": int(sum(over.values())),
-                     "outside_by_feature": over, "outside_values": outside, "worst_feature_rel_to_tol": {"feature": worst, "max_abs_diff":
+                     "outside_by_feature": over, "outside_ungated_documented": over_ungated,
+                     "outside_values": outside, "worst_feature_rel_to_tol": {"feature": worst, "max_abs_diff":
                                                                              tc[worst]["max_abs_diff"], "tol": tc[worst]["tol"],
                                                                              "ratio": rel[worst]},
                      "nan_pattern_mismatch": {k: v for k, v in nan_mismatch.items() if v},

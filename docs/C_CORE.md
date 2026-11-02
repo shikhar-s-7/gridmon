@@ -93,7 +93,7 @@ SHA-256 is in gm_tables.h and its first 16 hex digits in gm_version().
   version string); indices that can exceed 32767 are int32_t; no sizeof in the API except gm_ctx_words.
 - Cross compiles with the same flags: ILP32 (`-m32` via `zig cc -target x86-linux-musl`: the VM's gcc has
   no 32-bit libc headers) and a 16-bit-int target (`zig cc -target msp430-freestanding-none`, stub math.h).
-  CHAR_BIT = 16 itself is only exercised by the TI compiler (M7, L2).
+  CHAR_BIT = 16 itself is exercised by the TI compiler: L2 passed (cl2000 25.11.0.LTS, no warnings, D-076).
 
 ## 6. Build (scripts/build_c.py -> build/, git-ignored)
 Compiler: `$CC`, else cc/gcc/clang, else `python -m pip install ziglang` and `python -m ziglang cc`.
@@ -127,8 +127,10 @@ Results: docs/HANDOFF.md section 2 and reports/m6_sil.json.
   can round to the same float32 |V1| (ulp 1.2e-7 at 1 pu) while float64 still orders them; the first index
   then differs and V2(m*) moves by the noise of V2 (up to ~1e-3 pu), i.e. up to |dV2|/0.01 in rho when the
   denominator is floored. Observed: 2 of 1,750 test_iid records (both non-dip: urms_min_1 >= 0.94; rho is
-  only used by the rules inside a dip; GBM labels identical). Reported in m6_sil.json with the diagnosed
-  cause; not gated (FEATURES.md unchanged).
+  only used by the rules inside a dip; GBM labels identical). Since D-069 the SIL compares rho only where
+  the rules use it (reference urms_min_1 < 0.95, a comparison gate, not a method change): 1 of 701 compared
+  test_iid values remains outside (record 535, urms_min_1 = 0.942, still not a dip); the ungated exceedances
+  stay listed in m6_sil.json with their diagnosed cause.
 - **No-signal records** (v1_ref = 0, e.g. all-zero input) are outside the reference's domain: Python yields
   NaN/inf for |V1|-relative features (and numpy's argmax over all-NaN spectra returns env_mag_freq = 3 Hz);
   the C core flags those features invalid (GM_FLAG_NO_SIGNAL) and the rules then give the same label
