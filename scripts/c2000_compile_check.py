@@ -76,25 +76,28 @@ def supported_flags(cl: Path) -> tuple[list[str], list[str], str]:
 
 def compile_cmds(cl: Path | str, flags: list[str], defs: list[str], outdir: Path) -> list[list[str]]:
     inc = [f"--include_path={p}" for p in INCLUDES]
+    rts_inc = Path(cl).parent.parent / "include"  # the compiler's own headers (CCS adds this automatically)
+    if rts_inc.is_dir():
+        inc.append(f"--include_path={rts_inc}")
     return [[str(cl)] + flags + defs + inc + [f"--obj_directory={outdir}", "--compile_only", str(s)] for s in SOURCES]
 
 
+_SEC_ROW = re.compile(r"^\s*\d+\s+(\S+)\s+0x[0-9a-fA-F]+\s+0x[0-9a-fA-F]+\s+(0x[0-9a-fA-F]+|\d+)\s+\d+\s+([YN])\s*$")
+
+
 def section_sizes(ofd: Path, obj: Path) -> dict[str, int]:
-    """{section name: size in 16-bit words} from `ofd2000 -x` (XML). Empty dict if it cannot be parsed."""
-    r = subprocess.run([str(ofd), "-x", "--xml_indent=0", str(obj)], capture_output=True, text=True)
+    """{allocated section name: size in 16-bit words} from the `ofd2000` text listing ("Section Information").
+
+    Only sections with alloc = Y count (debug/symbol sections are not loaded). Sizes in the listing are in
+    C28x addressable units (16-bit words); e.g. 50 float32 values = 0x64 words. Empty dict if nothing parses.
+    """
+    r = subprocess.run([str(ofd), str(obj)], capture_output=True, text=True)
     out: dict[str, int] = {}
-    try:
-        root = ET.fromstring(r.stdout)
-    except ET.ParseError:
-        return out
-    for sec in root.iter("section"):
-        name = sec.findtext("name")
-        size = sec.findtext("raw_data_size") or sec.findtext("size")
-        if name and size:
-            try:
-                out[name] = out.get(name, 0) + int(size, 0)
-            except ValueError:
-                pass
+    for line in (r.stdout or "").splitlines():
+        m = _SEC_ROW.match(line)
+        if m and m.group(3) == "Y":
+            name, size = m.group(1), int(m.group(2), 0)
+            out[name] = out.get(name, 0) + size
     return out
 
 
@@ -103,7 +106,7 @@ def classify_section(name: str) -> str:
         return "code"
     if name.startswith((".const", ".econst", ".rodata", ".switch", ".cinit")):
         return "const"
-    if name.startswith((".bss", ".ebss", ".data", ".sysmem", ".far")):
+    if name.startswith((".bss", ".ebss", ".data", ".sysmem", ".far", ".TI.noinit", ".TI.persistent")):
         return "data"
     return "other"
 
