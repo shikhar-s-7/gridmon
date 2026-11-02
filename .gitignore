@@ -10,3 +10,5 @@ build/
 models/fast/
 c/generated/fast/
 reports/dryrun/
+models/s2e1/fast/
+c/generated_s2e1/fast/

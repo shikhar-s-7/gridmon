@@ -1,0 +1,634 @@
+{
+  "fast": false,
+  "splits": {
+    "train_wide": {
+      "n_records": 5600,
+      "counts": {
+        "normal": 800,
+        "sag_bal": 800,
+        "sag_unbal": 800,
+        "swell": 800,
+        "phase_jump": 800,
+        "freq_event": 800,
+        "oscillation": 800
+      },
+      "split_seed": 1101,
+      "nuisance_config": "wide",
+      "sealed": false,
+      "config_hash": "b657bedc9d5859b7",
+      "git_commit": "3fd3286cf420fd99971456b06f4c64a3d940e5c4",
+      "runtime_s": 32.46,
+      "margin_rejection_rate": {
+        "freq_event": 0.0,
+        "normal": 0.0,
+        "oscillation": 0.8804542737597131,
+        "phase_jump": 0.0,
+        "sag_bal": 0.0,
+        "sag_unbal": 0.0012484394506866417,
+        "swell": 0.12280701754385964
+      },
+      "max_abs_count": 1513,
+      "n_records_saturated": 0,
+      "osc_band_fallback": 3,
+      "snr_db_range": [
+        25.00031258,
+        59.99763387
+      ],
+      "n_transient": 0,
+      "margins": {
+        "normal": {
+          "n": 800,
+          "n_margin_ok": 800,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_bal": {
+          "n": 800,
+          "n_margin_ok": 800,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_unbal": {
+          "n": 800,
+          "n_margin_ok": 800,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 1
+        },
+        "swell": {
+          "n": 800,
+          "n_margin_ok": 800,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 6
+        },
+        "phase_jump": {
+          "n": 800,
+          "n_margin_ok": 800,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "freq_event": {
+          "n": 800,
+          "n_margin_ok": 800,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "oscillation": {
+          "n": 800,
+          "n_margin_ok": 797,
+          "n_fail": 3,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 3,
+          "max_redraws_used": 501
+        },
+        "all_hold_except_d039_fallback": true
+      },
+      "interharmonic": {
+        "configured": false,
+        "manifest_columns": false
+      }
+    },
+    "val_wide": {
+      "n_records": 1750,
+      "counts": {
+        "normal": 250,
+        "sag_bal": 250,
+        "sag_unbal": 250,
+        "swell": 250,
+        "phase_jump": 250,
+        "freq_event": 250,
+        "oscillation": 250
+      },
+      "split_seed": 2202,
+      "nuisance_config": "wide",
+      "sealed": false,
+      "config_hash": "b657bedc9d5859b7",
+      "git_commit": "3fd3286cf420fd99971456b06f4c64a3d940e5c4",
+      "runtime_s": 9.76,
+      "margin_rejection_rate": {
+        "freq_event": 0.0,
+        "normal": 0.0,
+        "oscillation": 0.8121712997746056,
+        "phase_jump": 0.0,
+        "sag_bal": 0.0,
+        "sag_unbal": 0.0,
+        "swell": 0.13194444444444445
+      },
+      "max_abs_count": 1511,
+      "n_records_saturated": 0,
+      "osc_band_fallback": 0,
+      "snr_db_range": [
+        25.00319466,
+        59.95475533
+      ],
+      "n_transient": 0,
+      "margins": {
+        "normal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_bal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_unbal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "swell": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 3
+        },
+        "phase_jump": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "freq_event": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "oscillation": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 65
+        },
+        "all_hold_except_d039_fallback": true
+      },
+      "interharmonic": {
+        "configured": false,
+        "manifest_columns": false
+      }
+    },
+    "test2_shift": {
+      "n_records": 1750,
+      "counts": {
+        "normal": 250,
+        "sag_bal": 250,
+        "sag_unbal": 250,
+        "swell": 250,
+        "phase_jump": 250,
+        "freq_event": 250,
+        "oscillation": 250
+      },
+      "split_seed": 5005,
+      "nuisance_config": "shift",
+      "sealed": true,
+      "config_hash": "b657bedc9d5859b7",
+      "git_commit": "3fd3286cf420fd99971456b06f4c64a3d940e5c4",
+      "runtime_s": 10.12,
+      "margin_rejection_rate": {
+        "freq_event": 0.0,
+        "normal": 0.0,
+        "oscillation": 0.8699271592091571,
+        "phase_jump": 0.0,
+        "sag_bal": 0.0,
+        "sag_unbal": 0.0,
+        "swell": 0.1554054054054054
+      },
+      "max_abs_count": 1913,
+      "n_records_saturated": 0,
+      "osc_band_fallback": 1,
+      "snr_db_range": [
+        25.0061267,
+        34.99203504
+      ],
+      "n_transient": 495,
+      "margins": {
+        "normal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_bal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_unbal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "swell": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 3
+        },
+        "phase_jump": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "freq_event": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "oscillation": {
+          "n": 250,
+          "n_margin_ok": 249,
+          "n_fail": 1,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 1,
+          "max_redraws_used": 501
+        },
+        "all_hold_except_d039_fallback": true
+      },
+      "interharmonic": {
+        "configured": false,
+        "manifest_columns": false
+      }
+    },
+    "test2_novel": {
+      "n_records": 1750,
+      "counts": {
+        "normal": 250,
+        "sag_bal": 250,
+        "sag_unbal": 250,
+        "swell": 250,
+        "phase_jump": 250,
+        "freq_event": 250,
+        "oscillation": 250
+      },
+      "split_seed": 6006,
+      "nuisance_config": "novel",
+      "sealed": true,
+      "config_hash": "b657bedc9d5859b7",
+      "git_commit": "3fd3286cf420fd99971456b06f4c64a3d940e5c4+dirty",
+      "runtime_s": 10.57,
+      "margin_rejection_rate": {
+        "freq_event": 0.0,
+        "normal": 0.0,
+        "oscillation": 0.838501291989664,
+        "phase_jump": 0.0,
+        "sag_bal": 0.0,
+        "sag_unbal": 0.00398406374501992,
+        "swell": 0.1289198606271777
+      },
+      "max_abs_count": 1492,
+      "n_records_saturated": 0,
+      "osc_band_fallback": 1,
+      "snr_db_range": [
+        25.01322927,
+        59.95201208
+      ],
+      "n_transient": 0,
+      "margins": {
+        "normal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_bal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_unbal": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 1
+        },
+        "swell": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 3
+        },
+        "phase_jump": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "freq_event": {
+          "n": 250,
+          "n_margin_ok": 250,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "oscillation": {
+          "n": 250,
+          "n_margin_ok": 249,
+          "n_fail": 1,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 1,
+          "max_redraws_used": 501
+        },
+        "all_hold_except_d039_fallback": true
+      },
+      "interharmonic": {
+        "configured": true,
+        "n": 1750,
+        "n_on": 872,
+        "share_on": 0.4982857142857143,
+        "share_on_by_class": {
+          "normal": 0.436,
+          "sag_bal": 0.468,
+          "sag_unbal": 0.56,
+          "swell": 0.536,
+          "phase_jump": 0.428,
+          "freq_event": 0.524,
+          "oscillation": 0.536
+        },
+        "f_min": 70.59499367,
+        "f_max": 939.9065575,
+        "f_in_range": true,
+        "min_distance_to_harmonic_hz": 10.00219709999999,
+        "harmonic_exclusion_holds": true,
+        "amp_pct_min": 0.5011153127,
+        "amp_pct_max": 1.999519872,
+        "n_beat_lt_25hz": 8,
+        "n_beat_ge_25hz": 864
+      }
+    },
+    "preview_wide": {
+      "n_records": 70,
+      "counts": {
+        "normal": 10,
+        "sag_bal": 10,
+        "sag_unbal": 10,
+        "swell": 10,
+        "phase_jump": 10,
+        "freq_event": 10,
+        "oscillation": 10
+      },
+      "split_seed": 9101,
+      "nuisance_config": "wide",
+      "sealed": false,
+      "config_hash": "b657bedc9d5859b7",
+      "git_commit": "3fd3286cf420fd99971456b06f4c64a3d940e5c4+dirty",
+      "runtime_s": 0.32,
+      "margin_rejection_rate": {
+        "freq_event": 0.0,
+        "normal": 0.0,
+        "oscillation": 0.6666666666666666,
+        "phase_jump": 0.0,
+        "sag_bal": 0.0,
+        "sag_unbal": 0.0,
+        "swell": 0.0
+      },
+      "max_abs_count": 1461,
+      "n_records_saturated": 0,
+      "osc_band_fallback": 0,
+      "snr_db_range": [
+        25.1800394,
+        59.7381529
+      ],
+      "n_transient": 0,
+      "margins": {
+        "normal": {
+          "n": 10,
+          "n_margin_ok": 10,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_bal": {
+          "n": 10,
+          "n_margin_ok": 10,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_unbal": {
+          "n": 10,
+          "n_margin_ok": 10,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "swell": {
+          "n": 10,
+          "n_margin_ok": 10,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "phase_jump": {
+          "n": 10,
+          "n_margin_ok": 10,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "freq_event": {
+          "n": 10,
+          "n_margin_ok": 10,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "oscillation": {
+          "n": 10,
+          "n_margin_ok": 10,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 7
+        },
+        "all_hold_except_d039_fallback": true
+      },
+      "interharmonic": {
+        "configured": false,
+        "manifest_columns": false
+      }
+    },
+    "preview_novel": {
+      "n_records": 140,
+      "counts": {
+        "normal": 20,
+        "sag_bal": 20,
+        "sag_unbal": 20,
+        "swell": 20,
+        "phase_jump": 20,
+        "freq_event": 20,
+        "oscillation": 20
+      },
+      "split_seed": 9102,
+      "nuisance_config": "novel",
+      "sealed": false,
+      "config_hash": "b657bedc9d5859b7",
+      "git_commit": "3fd3286cf420fd99971456b06f4c64a3d940e5c4+dirty",
+      "runtime_s": 0.69,
+      "margin_rejection_rate": {
+        "freq_event": 0.0,
+        "normal": 0.0,
+        "oscillation": 0.801980198019802,
+        "phase_jump": 0.0,
+        "sag_bal": 0.0,
+        "sag_unbal": 0.047619047619047616,
+        "swell": 0.13043478260869565
+      },
+      "max_abs_count": 1405,
+      "n_records_saturated": 0,
+      "osc_band_fallback": 0,
+      "snr_db_range": [
+        25.79921759,
+        59.85899988
+      ],
+      "n_transient": 0,
+      "margins": {
+        "normal": {
+          "n": 20,
+          "n_margin_ok": 20,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_bal": {
+          "n": 20,
+          "n_margin_ok": 20,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "sag_unbal": {
+          "n": 20,
+          "n_margin_ok": 20,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 1
+        },
+        "swell": {
+          "n": 20,
+          "n_margin_ok": 20,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 1
+        },
+        "phase_jump": {
+          "n": 20,
+          "n_margin_ok": 20,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "freq_event": {
+          "n": 20,
+          "n_margin_ok": 20,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 0
+        },
+        "oscillation": {
+          "n": 20,
+          "n_margin_ok": 20,
+          "n_fail": 0,
+          "n_fail_not_d039_fallback": 0,
+          "n_d039_fallback": 0,
+          "max_redraws_used": 37
+        },
+        "all_hold_except_d039_fallback": true
+      },
+      "interharmonic": {
+        "configured": true,
+        "n": 140,
+        "n_on": 62,
+        "share_on": 0.44285714285714284,
+        "share_on_by_class": {
+          "normal": 0.45,
+          "sag_bal": 0.45,
+          "sag_unbal": 0.35,
+          "swell": 0.35,
+          "phase_jump": 0.5,
+          "freq_event": 0.55,
+          "oscillation": 0.45
+        },
+        "f_min": 74.09389714,
+        "f_max": 931.4987697,
+        "f_in_range": true,
+        "min_distance_to_harmonic_hz": 10.046015300000022,
+        "harmonic_exclusion_holds": true,
+        "amp_pct_min": 0.5168470214,
+        "amp_pct_max": 1.999883643,
+        "n_beat_lt_25hz": 1,
+        "n_beat_ge_25hz": 61
+      }
+    }
+  },
+  "total_runtime_s": 78.0
+}
