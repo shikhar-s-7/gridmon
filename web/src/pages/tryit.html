@@ -1,0 +1,52 @@
+<!-- description: Synthesise a grid event or upload a three-phase CSV and classify it in your browser with the gridmon C core compiled to WebAssembly. -->
+<!-- scripts: gm_core.js, explorer.js, tryit.js -->
+<h1>Try it in your browser</h1>
+<p class="lead">Everything on this page runs locally: the record is made or read in your browser and classified by the gridmon
+C core compiled to WebAssembly (the same C99 source as the PC tests and the C2000 build). Nothing is uploaded anywhere.</p>
+<p class="notice small">The classifier was built for 1 s records at 5 kHz in which the event starts 0.2&ndash;0.4 s into the record and the
+first 0.15 s is undisturbed. Records that do not follow this (an event at the very start, or two events) are outside what it was designed for.</p>
+
+<h2>A. Synthesise an event</h2>
+<div class="card">
+<p class="small muted">A simplified port of the project's phasor-domain generator (sequence phasors, Bollen dip types, a frequency ramp, a
+modulated envelope; harmonics and noise; 12-bit quantisation). It is a demonstration, not the dataset generator: no 20 kHz synthesis
+chain, no anti-alias filter, fixed nuisances.</p>
+<form id="gen-form" class="form-row" onsubmit="return false">
+  <div><label for="g-class">Event</label><select id="g-class">
+    <option value="normal">normal (small step)</option><option value="sag_bal">balanced sag</option><option value="sag_unbal" selected>unbalanced sag (type C)</option>
+    <option value="swell">swell</option><option value="phase_jump">phase jump</option><option value="freq_event">frequency ramp</option><option value="oscillation">oscillation</option></select></div>
+  <div><label for="g-depth">Sag depth V / swell S (pu)</label><input id="g-depth" type="number" step="0.05" min="0" max="1.3" value="0.5"></div>
+  <div><label for="g-dur">Duration (s)</label><input id="g-dur" type="number" step="0.05" min="0.05" max="0.6" value="0.2"></div>
+  <div><label for="g-jump">Jump angle (deg)</label><input id="g-jump" type="number" step="1" min="-40" max="40" value="15"></div>
+  <div><label for="g-rocof">ROCOF (Hz/s)</label><input id="g-rocof" type="number" step="0.1" min="-4" max="4" value="1.0"></div>
+  <div><label for="g-df">Frequency change (Hz)</label><input id="g-df" type="number" step="0.1" min="0.3" max="1.5" value="0.8"></div>
+  <div><label for="g-osc">Oscillation depth (%) / freq (Hz)</label><span><input id="g-osc" type="number" step="0.5" min="1" max="8" value="4" style="width:5em">
+    <input id="g-fm" type="number" step="1" min="5" max="25" value="10" style="width:5em" aria-label="oscillation frequency (Hz)"></span></div>
+  <div><label for="g-t0">Onset t0 (s)</label><input id="g-t0" type="number" step="0.01" min="0.15" max="0.6" value="0.3"></div>
+  <div><label for="g-snr">SNR (dB)</label><input id="g-snr" type="number" step="1" min="20" max="70" value="40"></div>
+  <div><label for="g-seed">Seed</label><input id="g-seed" type="number" step="1" min="0" value="1"></div>
+  <div><button id="g-run" class="primary" type="button">Generate and classify</button></div>
+</form>
+</div>
+
+<h2>B. Upload a CSV</h2>
+<div class="card">
+<p class="small">Three voltage columns (optionally preceded by a time column in seconds), one row per sample, a header line is allowed.
+Give the channel type, the nominal line-to-line RMS voltage and (without a time column) the sample rate. The page converts to per unit,
+forms line-to-line voltages from line-to-neutral if needed, resamples to 5 kHz with a windowed-sinc filter (Blackman window,
+cut-off 0.45 &times; the lower of the two rates, gain normalised to 1), and lets you choose the 1 s window to classify.
+Examples: <a href="examples/example_sag_unbal_LN_10kHz.csv" download>unbalanced sag, LN, 10 kHz</a> &middot;
+<a href="examples/example_phase_jump_LL_5kHz.csv" download>phase jump, LL, 5 kHz</a> (both 400 V).</p>
+<form class="form-row" onsubmit="return false">
+  <div><label for="c-file">CSV file</label><input id="c-file" type="file" accept=".csv,text/csv,text/plain"></div>
+  <div><label for="c-type">Channels</label><select id="c-type"><option value="LL">line-to-line (v_ab, v_bc, v_ca)</option><option value="LN">line-to-neutral (v_a, v_b, v_c)</option></select></div>
+  <div><label for="c-un">Nominal LL RMS (V)</label><input id="c-un" type="number" step="1" min="1" value="400"></div>
+  <div><label for="c-fs">Sample rate (Hz)</label><input id="c-fs" type="number" step="1" min="500" value="5000"></div>
+  <div><label for="c-start">Window start (s)</label><input id="c-start" type="number" step="0.01" min="0" value="0"></div>
+  <div><button id="c-run" class="primary" type="button" disabled>Classify window</button></div>
+</form>
+<p id="c-info" class="small muted" aria-live="polite">No file loaded.</p>
+</div>
+
+<h2>Result</h2>
+<div id="result" aria-live="polite"><p class="muted">Generate a sample or upload a CSV.</p></div>

@@ -1,0 +1,18 @@
+<!-- description: Explore validation and test records: waveforms, the signal chain, the rule decision trace and GBM probabilities, and re-classify them in your browser with the C core compiled to WebAssembly. -->
+<!-- scripts: data/explorer_index.js, gm_core.js, explorer.js -->
+<h1>Record explorer</h1>
+<p class="lead">{{build.n_explorer|int}} records from the validation and the two test sets (10 per class). They include the records shown in the
+M4 disagreement figure and up to 20 records where the rules and the GBM disagree (test_shift has
+{{results.splits.test_shift.rules_vs_gbm_disagreements|int}} such records in total, test_iid {{results.splits.test_iid.rules_vs_gbm_disagreements|int}}).
+Stored results come from the Python reference; the button re-runs the C core in your browser on the stored waveform.
+The test records are shown after the one-shot sealed evaluation; nothing here was used to choose a method.</p>
+<div class="filters" role="group" aria-label="Filters">
+  <div><label for="f-class">True class</label><br><select id="f-class"><option value="">all</option></select></div>
+  <div><label for="f-split">Split</label><br><select id="f-split"><option value="">all</option><option>val</option><option>test_iid</option><option>test_shift</option></select></div>
+  <div><label for="f-agree">Rules vs GBM</label><br><select id="f-agree"><option value="">all</option><option value="agree">agree</option><option value="disagree">disagree</option><option value="rules_wrong">rules wrong</option><option value="gbm_wrong">GBM wrong</option></select></div>
+  <div class="muted small" id="f-count" aria-live="polite"></div>
+</div>
+<div class="explorer-layout">
+  <div><div class="list-records" id="rec-list" role="listbox" aria-label="Records"></div></div>
+  <div id="rec-view"><p class="muted">Select a record.</p></div>
+</div>

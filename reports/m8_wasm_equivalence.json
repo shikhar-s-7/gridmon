@@ -1,0 +1,18 @@
+{
+  "n_records": 97,
+  "n_golden": 27,
+  "n_explorer": 70,
+  "rule_label_equal": 97,
+  "rule_reason_equal": 97,
+  "gbm_label_equal": 97,
+  "features_outside_sil_tolerance": {},
+  "features_bit_identical_fraction": 0.9559765951518528,
+  "max_abs_proba_diff": 1.4901161193847656e-08,
+  "nan_pattern_equal": true,
+  "status": "pass",
+  "wasm": {
+    "toolchain": "zig 0.17.0 cc -target wasm32-wasi -mexec-model=reactor",
+    "bytes": 44994,
+    "sha256": "28beebd6553ce2fcf1262d597a7ccd7f0bfc56539b499e59b86cf5f56c1f1aa6"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "pages": {
+    "index": {
+      "banner": true,
+      "unresolved_tokens": false,
+      "console_errors": 0,
+      "title": "Overview — gridmon"
+    },
+    "results": {
+      "banner": true,
+      "unresolved_tokens": false,
+      "console_errors": 0,
+      "title": "Results — gridmon"
+    },
+    "explorer": {
+      "banner": true,
+      "unresolved_tokens": false,
+      "console_errors": 0,
+      "title": "Explorer — gridmon"
+    },
+    "tryit": {
+      "banner": true,
+      "unresolved_tokens": false,
+      "console_errors": 0,
+      "title": "Try it — gridmon"
+    },
+    "firmware": {
+      "banner": true,
+      "unresolved_tokens": false,
+      "console_errors": 0,
+      "title": "Firmware — gridmon"
+    },
+    "about": {
+      "banner": true,
+      "unresolved_tokens": false,
+      "console_errors": 0,
+      "title": "About — gridmon"
+    }
+  },
+  "explorer": [
+    {
+      "id": "test_shift_0034",
+      "reproduced": true,
+      "text": "Reproduced: rules normal (none),\n          GBM oscillation (max p 0.243) in 3.1 ms.\n          Largest feature difference: 0.46 × its tolerance (v1_max_rel)."
+    },
+    {
+      "id": "test_shift_0034",
+      "reproduced": true,
+      "text": "Reproduced: rules normal (none),\n          GBM oscillation (max p 0.243) in 1.4 ms.\n          Largest feature difference: 0.46 × its tolerance (v1_max_rel)."
+    },
+    {
+      "id": "test_shift_0003",
+      "reproduced": true,
+      "text": "Reproduced: rules phase_jump (phase_jump),\n          GBM normal (max p 0.151) in 3.5 ms.\n          Largest feature difference: 0.42 × its tolerance (urms_max_2)."
+    },
+    {
+      "id": "test_shift_0356",
+      "reproduced": true,
+      "text": "Reproduced: rules sag_bal (dip_balanced),\n          GBM oscillation (max p 0.960) in 3.1 ms.\n          Largest feature difference: 0.50 × its tolerance (v1_max_rel)."
+    },
+    {
+      "id": "test_shift_0050",
+      "reproduced": true,
+      "text": "Reproduced: rules swell (swell),\n          GBM freq_event (max p 0.774) in 1.5 ms.\n          Largest feature difference: 0.95 × its tolerance (t_fpll_05)."
+    }
+  ],
+  "tryit": {
+    "normal": {
+      "rule": "normal",
+      "gbm": "normal"
+    },
+    "sag_bal": {
+      "rule": "sag_bal",
+      "gbm": "sag_bal"
+    },
+    "sag_unbal": {
+      "rule": "sag_unbal",
+      "gbm": "sag_unbal"
+    },
+    "swell": {
+      "rule": "swell",
+      "gbm": "swell"
+    },
+    "phase_jump": {
+      "rule": "phase_jump",
+      "gbm": "phase_jump"
+    },
+    "freq_event": {
+      "rule": "freq_event",
+      "gbm": "freq_event"
+    },
+    "oscillation": {
+      "rule": "oscillation",
+      "gbm": "oscillation"
+    }
+  },
+  "csv": {
+    "file": "example_sag_unbal_LN_10kHz.csv",
+    "rule": "sag_unbal",
+    "gbm": "sag_unbal"
+  },
+  "mobile": {
+    "index": true,
+    "results": true,
+    "explorer": true,
+    "tryit": true,
+    "firmware": true,
+    "about": true
+  },
+  "console_errors": [],
+  "ok": true
+}

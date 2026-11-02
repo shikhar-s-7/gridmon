@@ -25,7 +25,7 @@ compile is a script for a local run, docs/C2000_BUILD.md); next M8 website. Meth
 1. Spec = docs/PROJECT_BRIEF.md. Every deviation/interpretation -> docs/DECISIONS.md (ID, date, what, why, alternatives).
 2. Units: instantaneous pu of nominal LL peak; RMS pu = sqrt(2*mean(v^2)); radians in code, degrees in reports.
 3. Reproducible: numpy Generators from SeedSequence only; no global RNG; config hash + version in meta.json.
-4. Sealed test sets: loader raises unless allow_test=True; only scripts/evaluate_test.py (M4) and the M6 SIL (scripts/run_sil.py) may pass it (tested). M4 has been run once; test_shift is no longer blind, so any new method (e.g. a hybrid or augmented GBM) needs NEW sealed splits (new seeds). Tests may read sealed manifests.
+4. Sealed test sets: loader raises unless allow_test=True; only scripts/evaluate_test.py (M4), the M6 SIL (scripts/run_sil.py, equivalence) and the M8 export (scripts/export_web.py, display only, D-077) may pass it (tested). M4 has been run once; test_shift is no longer blind, so any new method (e.g. a hybrid or augmented GBM) needs NEW sealed splits (new seeds). Tests may read sealed manifests.
 4b. Frozen methods: changing a method file (dsp/*, features, rules, units, ml_gbm, export_gbm, configs/baseline.yaml, configs/ml.yaml, c/generated/*) or a model breaks the freeze; report frozen results first, label post-fix results.
 5. No leakage: features/rules/models see only the waveform array, never manifest fields.
 6. Vectorise over records; recursions (PLL) loop over time with records as arrays; chunk ~250-500 records; every script has --fast.

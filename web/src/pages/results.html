@@ -1,0 +1,87 @@
+<!-- description: Sealed test results of gridmon: standards-based rules vs gradient boosting on iid and shifted synthetic test data, with confidence intervals and failure analysis. -->
+<!-- scripts: results.js -->
+<h1>Results of the sealed test evaluation</h1>
+<p class="lead">Three methods were frozen on training/validation data (commit {{results.freeze_commit}}) and evaluated exactly
+once on two sealed test sets of {{results.splits.test_iid.n|int}} records each: <strong>test_iid</strong> (drawn like the
+training data) and <strong>test_shift</strong> (lower SNR, wider frequency range, more harmonics and unbalance, &plusmn;2 %
+calibration error and an unseen transient). Every number on this page comes from <code>reports/results.json</code>. All results are
+<span class="tag">[SIM]</span>.</p>
+
+<h2>Headline</h2>
+<div id="headline"></div>
+<p class="small muted">Macro-F1 averages the F1 score over the seven classes. ML methods: mean &plusmn; sd over three training seeds.
+False alarm = a normal record labelled as an event; miss = an event labelled normal.</p>
+
+<h2>Are the differences real?</h2>
+<div id="comparisons"></div>
+<p class="small muted">Intervals: paired, class-stratified bootstrap 95 % confidence intervals of the macro-F1 difference (seed mean);
+McNemar: exact test on the records where exactly one of the two methods is right (per seed). "Better" is claimed only if the CI excludes zero.</p>
+
+<h2>Confusion matrices</h2>
+<div class="filters">
+  <div><label for="cm-method">Method</label><br>
+  <select id="cm-method"><option value="rules">Rules</option><option value="gbm_embedded">GBM-embedded (seed 0)</option><option value="gbm_unconstrained">GBM-unconstrained (seed 0)</option></select></div>
+</div>
+<div class="grid2"><div id="cm-iid"></div><div id="cm-shift"></div></div>
+
+<h2>Where performance drops: SNR</h2>
+<div class="card"><div id="snr-chart"></div><div id="snr-table"></div></div>
+
+<h2>Severity and the unseen transient (test_shift)</h2>
+<div id="severity"></div>
+<div id="transient"></div>
+
+<h2>The Blue Cut Fire check: a naive PLL frequency rule</h2>
+<p>A naive monitor flags a "frequency event" whenever its PLL frequency deviates by more than {{results.splits.test_shift.naive_pll.threshold_hz|f1}} Hz at any instant.
+That is how many inverters misread a phase jump in 2016. On the same test records:</p>
+<div id="pll"></div>
+<p>The rules and GBM-embedded never confused a phase jump with a frequency event on either test set
+(critical confusion phase_jump&harr;freq_event: rules {{results.splits.test_shift.methods.rules.critical_confusions_mean.phase_jump<->freq_event|f1}},
+GBM-embedded {{results.splits.test_shift.methods.gbm_embedded.critical_confusions_mean.phase_jump<->freq_event|f1}} on test_shift).</p>
+
+<h2>Model size versus validation F1</h2>
+<div class="card"><div id="size-chart"></div>
+<p class="small muted">Every GBM-embedded grid configuration (largest size over 3 seeds) against its validation macro-F1. The selected model
+({{size_vs_f1.selected.bytes|int}} bytes) is the smallest of the configurations tied at the top; GBM-unconstrained
+(~{{size_vs_f1.unconstrained_bytes|int}} bytes equivalent) was the size-unbounded reference. Validation was saturated, so size could not buy robustness here.</p></div>
+
+<h2>Findings, in plain words</h2>
+<ol>
+<li><strong>On data like the training data, both are equally good.</strong> test_iid: GBM-embedded {{results.splits.test_iid.methods.gbm_embedded.macro_f1.mean|f4}}
+vs rules {{results.splits.test_iid.methods.rules.macro_f1.mean|f4}}; difference {{results.splits.test_iid.comparisons.gbm_embedded_minus_rules.diff|signed4}},
+95 % CI {{results.splits.test_iid.comparisons.gbm_embedded_minus_rules.ci95|ci4}} &mdash; no significant difference.</li>
+<li><strong>Under shift the rules are significantly better.</strong> test_shift: rules {{results.splits.test_shift.methods.rules.macro_f1.mean|f4}},
+GBM-embedded {{results.splits.test_shift.methods.gbm_embedded.macro_f1.mean|f4}} (difference {{results.splits.test_shift.comparisons.gbm_embedded_minus_rules.diff|signed4}},
+CI {{results.splits.test_shift.comparisons.gbm_embedded_minus_rules.ci95|ci4}}). From iid to shift the rules lose {{results.iid_to_shift.rules.change|signed3}},
+the tree model {{results.iid_to_shift.gbm_embedded.change|signed3}}. <em>When noise and nuisances leave the training range, the learned model degrades sharply; the rules barely move.</em></li>
+<li><strong>Where the model fails: phase jumps and false alarms at low SNR.</strong> GBM-embedded (seed 0) on test_shift recognised only
+{{results.derived.test_shift__gbm_embedded__jump_recall|pct0}} of phase jumps ({{results.derived.test_shift__gbm_embedded__jump_to_normal|int}} called normal,
+{{results.derived.test_shift__gbm_embedded__jump_to_osc|int}} oscillation) and flagged {{results.derived.test_shift__gbm_embedded__normal_flagged|int}} normal records
+({{results.derived.test_shift__gbm_embedded__normal_to_osc|int}} as oscillation). Seed mean: {{results.splits.test_shift.methods.gbm_embedded.false_alarm_rate.mean|pct1}} false alarms,
+{{results.splits.test_shift.methods.gbm_embedded.miss_rate.mean|pct1}} misses. <em>The model learned noise-dependent shortcuts; the physical jump threshold does not depend on noise.</em></li>
+<li><strong>A bigger model did not help.</strong> GBM-unconstrained: test_iid {{results.splits.test_iid.methods.gbm_unconstrained.macro_f1.mean|f4}},
+test_shift {{results.splits.test_shift.methods.gbm_unconstrained.macro_f1.mean|f4}} with {{results.splits.test_shift.methods.gbm_unconstrained.false_alarm_rate.mean|pct1}} false alarms.</li>
+<li><strong>Safety-critical confusions stay at zero</strong> for the rules and GBM-embedded (phase jump vs frequency event, sag vs normal), while the naive PLL
+rule flags {{results.splits.test_shift.naive_pll.by_class.phase_jump.rate|pct0}} of phase jumps as frequency events.</li>
+<li><strong>The rules' errors come from the measurement chain.</strong> The rules made {{results.derived.test_shift__rules__errors|int}} errors on test_shift
+({{results.derived.test_iid__rules__errors|int}} on test_iid), {{results.derived.test_shift__rules__jump_to_dip_swell|int}} of them phase jumps whose half-cycle RMS crossed 0.90/1.10 transiently;
+the others come from calibration error and the unseen transient. <em>Fixed IEC thresholds are robust to noise but sensitive to calibration &mdash; which is why the C2000 integration makes calibration mandatory.</em></li>
+<li><strong>Embedded cost does not decide.</strong> The tree model adds about {{results.embedded_cost.gbm_comparisons_per_record_mean.test_iid|int}} comparisons and
+{{results.embedded_cost.gbm_model_bytes|int}} bytes of flash to a {{results.embedded_cost.dsp_features_ops_per_record|int}}-operation feature pipeline that both methods share. Robustness decides.</li>
+</ol>
+
+<h2>Limitations</h2>
+<ul>
+<li>Synthetic data from this project's own generator: training, validation and both test sets share its physics; the shift is one designed nuisance configuration. The rules were written by people who know the generator.</li>
+<li>Strong-grid assumption; no converter or PCS dynamics; single-label records with label margins (no multi-event or threshold-straddling records).</li>
+<li>No measured data (no <span class="tag">[EXP]</span> evidence); timings are from a PC.</li>
+<li>Validation was saturated (many GBM configurations tied at the top), so model selection could not prefer robust models; the GBM was trained without noise augmentation.</li>
+</ul>
+
+<h2>What would change the conclusion</h2>
+<ul>
+<li>A GBM trained on shift-like conditions (wider SNR and calibration ranges) that then matches the rules on new shift-like data: the finding would become "ML needs representative training conditions".</li>
+<li>Restricting the model to physically motivated features or monotonic constraints.</li>
+<li>Measured PCS records with real noise, converter dynamics, calibration drift and multi-event cases &mdash; the rules' fixed thresholds could fail there too.</li>
+<li>A confidence-gated hybrid (use the model only when it is confident, otherwise the rules), evaluated on <em>new</em> sealed data (the current test sets are no longer blind).</li>
+</ul>

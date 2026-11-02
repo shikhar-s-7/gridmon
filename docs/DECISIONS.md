@@ -380,3 +380,30 @@ Evidence tags as in B3.
   taps for all four rates 1,124, version string 103), data 0 (all state is caller-provided: no static RAM in the core
   or port). Object sizes are an upper bound for the linked image (e.g. gm_gbm.c still reports 670 code words with
   GBM off, presumably per-object copies of static inline helpers; the linker map at L3 will tell).
+
+## M8 (website) decisions
+- **D-075** — 2026-11-02 — *WebAssembly path (a): zig cc to wasm32-wasi as a reactor.* `python -m ziglang cc -target
+  wasm32-wasi -mexec-model=reactor -Wl,--no-entry -s` (zig 0.17.0, the same tool as the session-3 ILP32 check) over the
+  same core sources as the PC SIL library plus web/wasm/gm_wasm.c (static buffers, flat float32 outputs, explicit
+  `export_name` exports), GM_TRACES, GM_REPORT_NAN=1, GM_ENABLE_GBM=1 and the same -Werror flag set. Result: a 45 KB
+  module with **no imports** (the JS WASI stub is never used). Equivalence (Node 22, scripts/build_site.py --check ->
+  reports/m8_wasm_equivalence.json): 97 records (27 golden + 70 explorer): rule labels, reasons and GBM labels identical
+  to the native C core, features within the SIL tolerances (96 % of values bit-identical; the rest differ by libm ulps,
+  wasi-libc/musl vs glibc), NaN pattern equal, max |dp| 1.5e-8. Emscripten, Pyodide and precomputed-only were not needed.
+- **D-077** — 2026-11-02 — *Website export reads the sealed test splits for display only.* PROMPT_04 asks for test_iid and
+  test_shift records in the explorer. scripts/export_web.py loads them with allow_test=True (third allowed caller,
+  tests/test_freeze.py and CLAUDE.md rule 4 updated) after the one-shot M4 evaluation, recomputes the frozen reference
+  outputs for the selected records and selects records deterministically (seed 8008); nothing is used to choose or tune
+  a method. Any future method still needs new sealed splits.
+- **D-078** — 2026-11-02 — *Website architecture.* Plain HTML/CSS/JS, no framework and no vendored chart library: small own
+  SVG charts (one y-axis per chart, legends for >= 2 series, crosshair tooltips, a table view next to every chart; series
+  colours = the validated dataviz reference palette slots 1-3, light and dark). Pages are rendered by build_site.py with
+  build-time includes and `{{path|format}}` number tokens resolved against data exported from the committed reports
+  (no hand-typed result numbers; derived counts such as recalls are computed from the confusion matrices in export_web).
+  Explorer: 70 records (10 per class; the 6 records of m4_disagreements.png; up to 20 rules-vs-GBM disagreements; fill
+  records chosen among agreeing records), int16 waveforms and float32 traces in base64, 4.96 MB. Try it: a simplified JS
+  phasor model (documented as a demo) and a CSV path (LN->LL, Blackman-windowed-sinc resampling to 5 kHz, LSB 2^-14 pu).
+  No runtime external requests, no tracking; theme choice in localStorage only. Site 5.8 MB. Headless check (Playwright,
+  web/tools/check_site.mjs -> reports/m8_site_check.json): no console errors, banner on every page, no horizontal scroll
+  at 390 px, explorer re-classification reproduced on 5/5 records, one synthesised sample per class and the LN example
+  CSV classified as intended. No licence file exists yet (About page says so; open question).
