@@ -1,0 +1,151 @@
+# S2E1 (Stage 2, experiment 1) PRE-REGISTRATION, machine-readable part. Prose: docs/S2E1_PREREG.md.
+# Committed in the "S2E1-prereg: ..." commit BEFORE any S2E1 split (train, val, test or preview) was generated.
+# Stage 1 files are untouched: configs/dataset.yaml supplies record, ADC, AA FIR, events, margins, chunking and
+# the 'shift' nuisance unchanged; this file adds nuisance configurations and splits (gridmon.s2e1_data).
+experiment: S2E1
+question: >-
+  When the GBM is trained on the full nuisance ranges it will meet, does it match the rules on fresh shifted
+  data, and do either of them survive a nuisance neither has seen?
+base_dataset_config: configs/dataset.yaml
+
+# ------------------------------------------------------------------------------------------- data
+nuisance:
+  wide: &wide                         # training/selection ranges = the Stage 1 'shift' ranges, SNR down to 25 dB
+    u_pre: [0.96, 1.04]               # unchanged from Stage 1 (not part of the shift)
+    unbalance: [0.0, 0.025]           # background |V2|/|V1|
+    harmonics_pct: {5: [0, 5], 7: [0, 4], 11: [0, 2], 13: [0, 2]}
+    f_pre_hz: [49.5, 50.5]
+    drift_hz_per_s: [-0.03, 0.03]     # unchanged from Stage 1
+    gain: [-0.02, 0.02]
+    offset_pu: [-0.02, 0.02]
+    snr_db: [25.0, 60.0]
+    transient: {p: 0.0}               # NO transients of any kind (Stage 1 capacitor-switching transient stays unseen)
+  novel:                              # test2_novel: wide + the SECOND unseen nuisance (interharmonic) in 50 %
+    <<: *wide
+    interharmonic:                    # balanced positive-sequence component over the whole record; label unchanged
+      p: 0.5
+      freq_hz: [70.0, 950.0]          # uniform over this range ...
+      exclude_harmonic_hz: 10.0       # ... excluding +/- 10 Hz around every multiple of 50 Hz
+      amp_pct: [0.5, 2.0]             # % of the pre-event fundamental (IEEE 1159: interharmonics 0-2 %)
+  # 'shift' (test2_shift) is configs/dataset.yaml nuisance.shift, used by reference (identical incl. 30 % transient)
+
+splits:                               # 250 records/class unless stated; seeds never used before in this project
+  train_wide:    {seed: 1101, per_class: 800, nuisance: wide}
+  val_wide:      {seed: 2202, per_class: 250, nuisance: wide}                  # selection only
+  test2_shift:   {seed: 5005, per_class: 250, nuisance: shift, sealed: true}   # = Stage 1 test_shift config
+  test2_novel:   {seed: 6006, per_class: 250, nuisance: novel, sealed: true}
+  preview_wide:  {seed: 9101, total: 70, nuisance: wide, preview: true}        # development / figures only
+  preview_novel: {seed: 9102, total: 140, nuisance: novel, preview: true}      # development / dry-run only
+used_seeds_stage1: [1001, 2002, 3003, 4004, 9009, 9010, 8008, 20261104]
+label_margins: configs/dataset.yaml margins (incl. D-034 oscillation band, D-039 fallback), unchanged; verified per split
+
+# ------------------------------------------------------------------------------------------- arms
+arms:
+  R:  {kind: rules, source: "configs/frozen_methods.yaml rules.thresholds (Stage 1, frozen)", retrained: false}
+  G0: {kind: gbm_embedded, source: "configs/frozen_methods.yaml gbm_embedded.models (seeds 0, 1, 2)", retrained: false}
+  GW: {kind: gbm_embedded_recipe, train: train_wide, select: val_wide, features: all37}
+  GP: {kind: gbm_embedded_recipe, train: train_wide, select: val_wide, features: physics}
+  H0: {kind: hybrid, ml: G0, fallback: R}
+  HW: {kind: hybrid, ml: GW, fallback: R}
+recipe:                               # identical to Stage 1 GBM-embedded (configs/ml.yaml, unchanged)
+  ml_config: configs/ml.yaml          # embedded grid (n_estimators 20-100 x leaves 4/8/16 x lr 0.1/0.2 x subsample 0.8/1.0),
+                                      # fixed params, seeds [0, 1, 2], budget 65536 B, tie_tol 0.002
+  selection: >-
+    highest mean val_wide macro-F1 over the 3 seeds among configurations whose exported size is <= 65536 B for
+    every seed; configurations within 0.002 of the best -> the smaller model (max bytes over seeds), then higher
+    F1, fewer stages, fewer leaves (gridmon.ml_gbm.select_embedded, unchanged)
+  input_mapping: D-040 (non-finite -> 0.0)
+  scoring_model: float32 reference walker on the exported JSON (= the C model), as G0
+  export: models/s2e1/ and C tables in c/generated_s2e1/ only if every seed fits 64 KB
+feature_subsets:
+  all37: gridmon.features.FEATURE_NAMES
+  physics:                            # fixed by physical reasoning (docs/S2E1_PREREG.md section 4)
+    - urms_min_1                      # magnitude: half-cycle RMS (IEC 61000-4-30 quantity)
+    - urms_min_2
+    - urms_min_3
+    - urms_max_1
+    - urms_max_2
+    - urms_max_3
+    - t_below_090                     # magnitude: duration below/above the IEC dip/swell thresholds
+    - t_above_110
+    - v1_ref                          # magnitude: positive-sequence fundamental
+    - v1_min_rel
+    - v1_max_rel
+    - v1_end_rel
+    - u2_ref                          # sequence: negative-sequence unbalance
+    - u2_max
+    - u2_end
+    - rho                             # Bollen ratio
+    - j_max_deg                       # jump metric
+    - j_sign
+    - df_end                          # f_end - f_ref (jump-masked DFT frequency)
+    - env_mag_amp_pct                 # envelope amplitude (spectral peak of the |V1| / angle envelopes)
+    - env_ang_amp_deg
+    - env_mag_rms_pct                 # envelope amplitude (RMS of the detrended envelopes)
+    - env_ang_rms_deg
+  physics_excluded:                   # 14 features
+    - f_ref                           # absolute pre-event frequency: a nuisance, not an event property
+    - df_max                          # max over OBS of |f_dft - f_ref|: an extreme of a differentiated, noisy signal
+    - rocof_max                       # ROCOF family (derivative of frequency; noise-amplifying)
+    - t_rocof_02
+    - rocof_end
+    - dfpll_max                       # PLL frequency deviation and its time-above (naive-PLL quantity)
+    - t_fpll_05
+    - env_mag_freq                    # envelope peak frequency (not an amplitude)
+    - env_mag_prom                    # envelope prominence features (peak / median ratio: depends on the noise floor)
+    - env_ang_freq
+    - env_ang_prom
+    - thd_first                       # THD features (harmonic background is a nuisance, not an event class)
+    - thd_last
+    - thd_max
+hybrid:
+  threshold: 0.5                      # ML label if max softmax probability (float32 walker) >= 0.5, else rules label
+  source: Stage 1 finding 7 (post-hoc); fixed here, no tuning
+  per_seed: true                      # one hybrid per ML seed
+
+# ------------------------------------------------------------------------------------------- evaluation
+evaluation:
+  sealed_sets: [test2_shift, test2_novel]
+  runs: 1                             # once, after the "S2E1-freeze: ..." commit, at that commit
+  primary_metric: macro_f1
+  reporting: >-
+    macro-F1 per arm (ML: mean +/- sd over seeds; hybrids: per seed and mean), per-class F1, false-alarm rate
+    (normal records called an event), miss rate (event records called normal), critical confusions
+    (phase_jump <-> freq_event, sag_* -> normal, sag_bal <-> sag_unbal); confusion matrices of the primary seed (0)
+  bootstrap: {resamples: 2000, stratified_by_class: true, paired: true, seed: 20261102,
+              statistic: "macro-F1(arm) - macro-F1(reference), seed-mean over the arm's seeds (and the reference's seeds for GW - G0)"}
+  mcnemar: "exact binomial, two-sided, per seed: arm seed k vs R; for GW - G0: GW seed k vs G0 seed k"
+  primary_comparisons: [GW-R, GP-R]   # on both sealed sets
+  secondary_comparisons: [HW-R, H0-R, GW-G0]
+  snr_bins_db: [25, 30, 35, 40, 50, 60]
+  breakdowns:
+    snr: macro-F1 per SNR bin, every arm, both sets
+    transient: test2_shift, with vs without the Stage 1 transient (manifest tr_on)
+    interharmonic: test2_novel, with vs without the interharmonic (manifest ih_on)
+    interharmonic_beat_primary: "test2_novel interharmonic records by |f_ih - 50|: < 25 Hz vs >= 25 Hz"
+    interharmonic_beat_secondary_edges_hz: [20, 25, 40, 100, 900]   # finer bins (n per bin reported)
+    severity_recall: Stage 1 bins (gridmon.evaluation.SEVERITY)
+  pre_event_only_control:
+    arms: [GW, GP]
+    definition: selected configuration refit on features of the first 750 samples (OBS = REF), train_wide -> val_wide
+    pass_if_mean_macro_f1_le: 0.25
+    expected: about 0.14 (chance = 1/7)
+  unseen_nuisance_survival:           # test2_novel, per arm
+    statistic: "delta = macro-F1(records with interharmonic) - macro-F1(records without), seed-mean; unpaired
+      bootstrap stratified by class within each subset, 2000 resamples"
+    survives: 95 % CI lower bound >= -0.03
+    fails: 95 % CI upper bound < 0 and delta <= -0.03
+    otherwise: inconclusive
+decision_rules:                       # applied to the CI of macro-F1(arm) - macro-F1(R) on each sealed set
+  ml_better: CI lies above 0 on BOTH sealed sets
+  ml_matches: CI includes 0 or lies above 0 on BOTH sealed sets (and not ml_better)
+  rules_better: CI lies below 0 on at least one sealed set
+  primary_arms: [GW, GP]              # the verdict of the experiment; HW and H0 get the same reading as secondary results
+hypotheses:
+  H1: GW matches or beats the rules (decision rule) on both sealed sets
+  H2: GP matches or beats the rules on both sealed sets
+  H3: GW is better than G0 on test2_shift (CI of GW - G0 above 0)
+  H4: HW matches or beats the rules on both sealed sets
+  H5: R survives the unseen interharmonic (survival rule)
+  H6: GW survives the unseen interharmonic (survival rule)
+  null_outcomes_valid: '"Rules still win" or "no significant difference" are valid outcomes and will be reported as such.'

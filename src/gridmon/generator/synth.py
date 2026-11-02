@@ -108,6 +108,8 @@ def synth_phase_voltages(pre: PreEvent, ev: Event, t: np.ndarray) -> np.ndarray:
     r1 = [1, a^2, a], r2 = [1, a, a^2]. Harmonic frequencies track f(t) through theta(t).
     Transient (shift nuisance): balanced damped oscillation in phase voltages,
       A e^{-(t-ts)/tau} cos(2 pi f_tr (t - ts) + phi - 2 pi k/3) for t >= ts.
+    Interharmonic (S2E1 novel nuisance, D-080): balanced positive-sequence component over the whole record,
+      a_ih u_pre cos(2 pi f_ih t + phi_ih - 2 pi k/3)  (fixed f_ih; LL amplitude = a_ih u_pre as well).
     """
     V1, V2 = fundamental(pre, ev, t)
     _, theta = freq_theta(pre, ev, t)
@@ -128,6 +130,10 @@ def synth_phase_voltages(pre: PreEvent, ev: Event, t: np.ndarray) -> np.ndarray:
         env = np.where(tau >= 0.0, pre.tr_amp * np.exp(-np.clip(tau, 0.0, None) / pre.tr_tau), 0.0)
         for k in range(3):
             v[k] += env * np.cos(2 * np.pi * pre.tr_f * tau + pre.tr_phase - 2 * np.pi * k / 3)
+    if pre.ih_on:
+        A_ih = pre.ih_amp * pre.u_pre
+        for k in range(3):
+            v[k] += A_ih * np.cos(2 * np.pi * pre.ih_f * t + pre.ih_phase - 2 * np.pi * k / 3)
     return v
 
 

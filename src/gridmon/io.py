@@ -13,7 +13,7 @@ import pandas as pd
 import yaml
 
 ROOT: Path = Path(__file__).resolve().parents[2]
-SEALED_SPLITS: frozenset[str] = frozenset({"test_iid", "test_shift"})
+SEALED_SPLITS: frozenset[str] = frozenset({"test_iid", "test_shift", "test2_shift", "test2_novel"})  # S2E1: test2_*
 
 
 class SealedSplitError(RuntimeError):
@@ -78,8 +78,8 @@ def git_commit() -> str:
 def _check_sealed(split: str, allow_test: bool) -> None:
     if split in SEALED_SPLITS and not allow_test:
         raise SealedSplitError(
-            f"split '{split}' is sealed; only the final evaluation (M4) and the C-equivalence "
-            f"check (M6) may pass allow_test=True")
+            f"split '{split}' is sealed; only the final evaluations (M4 for test_*, S2E1 for test2_*), the "
+            f"C-equivalence check (M6) and the website export may pass allow_test=True")
 
 
 def load_split(split: str, fast: bool = False, allow_test: bool = False,

@@ -418,4 +418,26 @@ Evidence tags as in B3.
   compared); ungated exceedances unchanged (test_iid 452 and 535, float32 argmin ties, D-060); golden 27/27, rules
   100 %, GBM bit-exact, sanitizer, -m32 and 16-bit-int compiles pass. Alternative: keep 0.95 (one documented
   exceedance outside any dip).
+- **D-080** — 2026-11-02 — *S2E1 data implementation (pre-registered).* New nuisance configurations `wide` and `novel` and
+  six splits in configs/s2e1.yaml (Stage 1 configs untouched; gridmon.s2e1.dataset_config merges them with
+  configs/dataset.yaml; test2_shift uses the Stage 1 `shift` dict by reference). Interharmonic generator option
+  (generator/nuisance.py, synth.py): one balanced positive-sequence component over the whole record, fixed frequency
+  uniform over [70, 950] Hz minus +/-10 Hz around every multiple of 50 Hz (one uniform draw mapped onto the allowed
+  intervals), amplitude U[0.5, 2] % of u_pre, uniform phase; drawn after every Stage 1 draw from the pre-event stream and
+  written to the manifest only when configured, so Stage 1 data and manifests are bit-identical (checked by regenerating
+  preview_iid/preview_shift; tested). test2_shift/test2_novel added to the sealed-split guard (io.SEALED_SPLITS).
+  Alternatives: unbalanced or single-phase interharmonic; frequency tracking the grid (rejected: no stated source,
+  not how interharmonic sources behave).
+- **D-081** — 2026-11-02 — *GP physics subset (23 of 37 features), pre-registered.* "Magnitude" and "envelope amplitude"
+  read as whole feature families: urms_min/max (6), t_below_090, t_above_110, v1_ref, v1_min/max/end_rel; u2_ref/max/end;
+  rho; j_max_deg, j_sign; df_end; env_mag_amp_pct, env_ang_amp_deg, env_mag_rms_pct, env_ang_rms_deg. Excluded: f_ref,
+  df_max, rocof_max, t_rocof_02, rocof_end, dfpll_max, t_fpll_05, env_*_freq, env_*_prom, thd_* (reasons in
+  docs/S2E1_PREREG.md section 4). Disclosed: motivated by the Stage 1 test_shift diagnosis. GP models are exported with
+  feature indices remapped to the 37-feature vector (same walker, same C tables). Alternative: amplitude peaks only (no
+  envelope RMS, no time counts).
+- **D-082** — 2026-11-02 — *S2E1 statistics details, pre-registered.* One set of 2,000 class-stratified resamples per sealed
+  set shared by all arms (seed 20261102); GW - G0 uses the seed-mean of both arms and McNemar seed k vs seed k; hybrids
+  per seed; unseen-nuisance survival rule on test2_novel (delta with - without interharmonic: survives if CI lower
+  >= -0.03, fails if CI upper < 0 and delta <= -0.03, else inconclusive); secondary |f_ih - 50| bins [20, 25, 40, 100, 900] Hz
+  because the pre-registered < 25 Hz bin holds only ~1 % of the interharmonic records.
 

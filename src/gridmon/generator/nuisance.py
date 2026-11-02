@@ -27,6 +27,10 @@ class PreEvent:
     theta0: reference phase at t = 0 (rad);
     tr_*: optional damped oscillatory transient (shift only): on/off, time (s), freq (Hz),
     initial amplitude (pu peak), decay time constant (s), phase (rad).
+    ih_*: optional interharmonic (S2E1 'novel' nuisance, D-080): ih_on is None when the nuisance
+    configuration has no interharmonic (Stage 1 configurations: no draw, no manifest columns), else
+    on/off; frequency (Hz, fixed, not tracking f), amplitude (fraction of u_pre), phase (rad). It is a
+    balanced positive-sequence component over the whole record (synth.synth_phase_voltages).
     """
 
     u_pre: float
@@ -46,6 +50,10 @@ class PreEvent:
     tr_amp: float = float("nan")
     tr_tau: float = float("nan")
     tr_phase: float = float("nan")
+    ih_on: bool | None = None
+    ih_f: float = float("nan")
+    ih_amp: float = float("nan")
+    ih_phase: float = float("nan")
 
     @property
     def v1_pre(self) -> complex:
@@ -74,12 +82,44 @@ class PreEvent:
         out.update({"tr_on": int(self.tr_on), "tr_t": self.tr_t, "tr_f": self.tr_f,
                     "tr_amp": self.tr_amp, "tr_tau": self.tr_tau,
                     "tr_phase_deg": float(np.degrees(self.tr_phase))})
+        if self.ih_on is not None:  # S2E1 interharmonic option only (Stage 1 manifests unchanged)
+            out.update({"ih_on": int(self.ih_on), "ih_f": self.ih_f, "ih_amp_pct": 100.0 * self.ih_amp,
+                        "ih_phase_deg": float(np.degrees(self.ih_phase)),
+                        "ih_beat_hz": abs(self.ih_f - 50.0) if self.ih_on else float("nan")})
         return out
 
 
 def _u(rng: np.random.Generator, lohi) -> float:
     lo, hi = lohi
     return float(rng.uniform(lo, hi))
+
+
+def interharmonic_intervals(f_lo: float, f_hi: float, f_nom: float = 50.0,
+                            exclude_hz: float = 10.0) -> list[tuple[float, float]]:
+    """Allowed interharmonic frequency intervals: [f_lo, f_hi] minus (k f_nom - exclude, k f_nom + exclude), k >= 1."""
+    out: list[tuple[float, float]] = []
+    lo = f_lo
+    k = 1
+    while lo < f_hi:
+        a, b = k * f_nom - exclude_hz, k * f_nom + exclude_hz
+        if b <= lo:
+            k += 1
+            continue
+        if a > lo:
+            out.append((lo, min(a, f_hi)))
+        lo = max(lo, b)
+        k += 1
+    return [(a, b) for a, b in out if b > a]
+
+
+def draw_interharmonic_freq(rng: np.random.Generator, icfg: dict[str, Any]) -> float:
+    """Uniform frequency over the allowed intervals (one uniform draw, mapped; fixed draw count)."""
+    iv = interharmonic_intervals(icfg["freq_hz"][0], icfg["freq_hz"][1], 50.0, icfg["exclude_harmonic_hz"])
+    lengths = np.array([b - a for a, b in iv])
+    u = float(rng.uniform(0.0, lengths.sum()))
+    edges = np.concatenate([[0.0], np.cumsum(lengths)])
+    i = int(min(np.searchsorted(edges, u, side="right") - 1, len(iv) - 1))
+    return float(iv[i][0] + (u - edges[i]))
 
 
 def draw_pre_event(rng: np.random.Generator, ncfg: dict[str, Any]) -> PreEvent:
@@ -105,6 +145,13 @@ def draw_pre_event(rng: np.random.Generator, ncfg: dict[str, Any]) -> PreEvent:
                   tr_phase=_u(rng, (0.0, 2 * np.pi)))
         if not on:
             kw = dict(tr_on=False)
+    ih = ncfg.get("interharmonic")
+    if ih is not None:  # S2E1 option, drawn after every Stage 1 draw (Stage 1 streams unchanged)
+        on = bool(rng.random() < ih["p"])
+        f_ih = draw_interharmonic_freq(rng, ih)
+        amp = _u(rng, ih["amp_pct"]) / 100.0
+        ph = _u(rng, (0.0, 2 * np.pi))
+        kw.update(dict(ih_on=on, ih_f=f_ih, ih_amp=amp, ih_phase=ph) if on else dict(ih_on=False))
     return PreEvent(u_pre=u_pre, unb=unb, unb_ang=unb_ang, harm_level=harm_level,
                     harm_phase=harm_phase, f_pre=f_pre, drift=drift, gain=gain,  # type: ignore[arg-type]
                     offset=offset, snr_db=snr_db, theta0=theta0, **kw)  # type: ignore[arg-type]
